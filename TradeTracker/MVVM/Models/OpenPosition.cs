@@ -10,7 +10,7 @@ public class OpenPosition
     public int NumberOfShares { get; set; }  // Ilość akcji
     public decimal? AvgSellPrice { get; set; }  // Średnia cena sprzedaży, może być null jeśli nie ustawiona
 
-    public OpenPosition(string companyName, DateTime date, string duration, decimal entryPrice, int positionSize, int numberOfShares, decimal? avgSellPrice)
+    public OpenPosition(string companyName, DateTime date, string duration, decimal entryPrice, int positionSize, int numberOfShares, decimal? avgSellPrice = 0)
     {
         CompanyName = companyName;
         Date = date;

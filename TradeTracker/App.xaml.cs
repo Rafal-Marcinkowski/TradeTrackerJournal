@@ -48,6 +48,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();
+        containerRegistry.RegisterForNavigation<TransactionsOverviewMenuView>();
     }
 }
 

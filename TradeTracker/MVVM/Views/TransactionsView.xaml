@@ -8,24 +8,24 @@
              xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:prism="http://prismlibrary.com/"          
-            d:DesignHeight="450" d:DesignWidth="800">
+            d:DesignHeight="900" d:DesignWidth="1500">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Style="{StaticResource MahApps.Styles.Button}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
                 Command="{Binding NavigateToAddTransactionCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Otwórz transakcję" VerticalAlignment="Center" FontSize="16"/>
                 <iconPacks:PackIconModern Kind="VectorPenAdd" Width="50" Height="50" Margin="25,0,0,0"/>
             </StackPanel>
         </Button>
-        <Button Style="{StaticResource MahApps.Styles.Button}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
             Command="{Binding NavigateToOpenPositionsCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
                 <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="30,0,0,0"/>
             </StackPanel>
         </Button>
-        <Button Style="{StaticResource MahApps.Styles.Button}" Width="auto" Height="auto" Margin="5"
-         Command="{Binding NavigateToTransactionsOverviewCommand}">
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+         Command="{Binding NavigateToTransactionsOverviewMenuCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Przegląd transakcji" VerticalAlignment="Center" FontSize="16"/>
                 <iconPacks:PackIconModern Kind="BookHardcoverOpen" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>

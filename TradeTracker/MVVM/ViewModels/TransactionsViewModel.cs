@@ -25,8 +25,8 @@ public class TransactionsViewModel : BindableBase
         regionManager.RequestNavigate("MainRegion", nameof(OpenPositionsView));
     });
 
-    public ICommand NavigateToTransactionsOverviewCommand => new DelegateCommand(() =>
+    public ICommand NavigateToTransactionsOverviewMenuCommand => new DelegateCommand(() =>
     {
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
+        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewMenuView));
     });
 }

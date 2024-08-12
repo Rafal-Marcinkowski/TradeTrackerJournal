@@ -1,0 +1,117 @@
+﻿<mah:MetroContentControl x:Class="TradeTracker.MVVM.Views.TransactionsOverviewMenuView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
+             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:local1="clr-namespace:TradeTracker.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="1500">
+    <mah:MetroContentControl.Resources>
+        <local1:NullToCollapsedConverter x:Key="NullToCollapsedConverter"/>
+    </mah:MetroContentControl.Resources>
+    <Grid>
+        <StackPanel x:Name="ButtonsStackPanel" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="50,0,5,0">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="Wybierz spółkę" VerticalAlignment="Center" FontSize="16"/>
+                        <iconPacks:PackIconFontisto Kind="LineChart" Width="30" Height="30" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <TextBox Style="{StaticResource MahApps.Styles.TextBox.Search}"
+                 Margin="0,10,0,0"
+                 BorderThickness="2" Width="200" Height="30" 
+                 Controls:TextBoxHelper.Watermark="Szukaj spółki..." />
+                    <ListBox BorderThickness="2" Width="200" Height="150" Margin="0,5,0,0"
+                 ItemsSource="{Binding FilteredCompanies}"
+                 SelectedItem="{Binding SelectedCompany}"
+                             IsHitTestVisible="True">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Button>
+
+            <!-- Przycisk: Ostatnie X transakcji -->
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Ostatnie X transakcji" VerticalAlignment="Center" FontSize="16"/>
+                    <TextBox Style="{StaticResource MahApps.Styles.TextBox.Search}"
+                 Margin="10,0,0,0"
+                 BorderThickness="2" Width="50" Height="30" 
+                 Controls:TextBoxHelper.Watermark="X"
+                 Text="{Binding NumberOfTransactions}" />
+                    <iconPacks:PackIconLucide Kind="SquareStack" Width="30" Height="30" Margin="10,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Przycisk: Otwarte pozycje -->
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5"
+        Command="{Binding NavigateToOpenPositionsCommand}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
+                    <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="30,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <!-- Przycisk: Wybierz z kalendarza -->
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Wybierz z kalendarza" VerticalAlignment="Center" FontSize="16"/>
+                    <Button Style="{StaticResource MahApps.Styles.Button}" Margin="15,0,0,0"
+                Width="40" Height="35" 
+                Command="{Binding OpenCalendarCommand}">
+                        <iconPacks:PackIconModern Kind="Calendar"/>
+                    </Button>
+                </StackPanel>
+            </Button>
+            <Calendar SelectedDate="{Binding SelectedDate}" 
+              FirstDayOfWeek="Monday"
+              DisplayDateStart="{Binding CalendarStartDate}"
+              DisplayDateEnd="{Binding CalendarEndDate}"
+              Width="250" Height="250"
+              >
+                <Calendar.Resources>
+                    <Style TargetType="CalendarDayButton">
+                        <Setter Property="Width" Value="20"/>
+                        <Setter Property="Height" Value="20"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CalendarDayButton">
+                                    <Grid Width="20" Height="20">
+                                        <Border Background="White" BorderBrush="Gray" BorderThickness="0.5">
+                                            <StackPanel>
+                                                <TextBlock Text="{TemplateBinding Content}" FontWeight="Bold" HorizontalAlignment="Center" />
+                                                <TextBlock Text="{Binding DataContext.TransactionCounts[Content], RelativeSource={RelativeSource AncestorType=Calendar}}" 
+                                           Foreground="DarkBlue" FontSize="12" HorizontalAlignment="Center" 
+                                           Visibility="{Binding DataContext.TransactionCounts[Content], 
+                                                        Converter={StaticResource NullToCollapsedConverter}}"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Calendar.Resources>
+            </Calendar>
+            <!-- Podsumowanie miesiąca -->
+            <!--<TextBlock Text="Podsumowanie miesiąca" FontSize="14" FontWeight="Black" Margin="0,10,0,0"/>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Ilość transakcji: {Binding MonthlyTransactionCount}" />
+            <TextBlock Text="Inne dane..." />
+        </StackPanel>-->
+
+        </StackPanel>
+
+        <!-- Kalendarz po prawej stronie -->
+    </Grid>
+</mah:MetroContentControl>
