@@ -4,14 +4,17 @@
                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                          xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
+                         xmlns:Conv="clr-namespace:TradeTracker.Converters"
                          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                          xmlns:prism="http://prismlibrary.com/"  
                          mc:Ignorable="d" 
                          d:DesignHeight="900" d:DesignWidth="1500">
+    <mah:MetroContentControl.Resources>
+        <Conv:TransactionStatusToIconConverter x:Key="TransactionStatusToIconConverter"/>
+    </mah:MetroContentControl.Resources>
     <Grid Margin="0,15,0,0">
-        <Border BorderBrush="DimGray" BorderThickness="3">
-            <DataGrid ItemsSource="{Binding Transactions}"                  
+        <DataGrid ItemsSource="{Binding Transactions}"                  
                   ColumnHeaderHeight="40" 
                   CanUserAddRows="False"
                   RowHeight="100"          
@@ -21,8 +24,12 @@
                   AutoGenerateColumns="False"
                   CanUserResizeColumns="False">
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Setters>
+                        <Setter Property="BorderBrush" Value="DimGray"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                    </Style.Setters>
                         <Style.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter Property="Background" Value="Transparent" />
@@ -33,19 +40,28 @@
                 </DataGrid.RowStyle>
                 
                 <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="TRANSAKCJA" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn Header="TRANSAKCJA" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}" >
+                    <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>
+                                    <DockPanel>
+                                        <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
+                                            <iconPacks:PackIconModern.ToolTip>
+                                                <ToolTip>
+                                                    <TextBlock Text="{Binding CloseDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
+                                                </ToolTip>
+                                            </iconPacks:PackIconModern.ToolTip>
+                                        </iconPacks:PackIconModern>
+                                        <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="15,0,0,0"/>
+                                    </DockPanel>
                                     <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding EntryDate}" />
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Kurs WE: " FontWeight="DemiBold"/>
                                         <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
-                                        <TextBlock Text="{Binding MedianVolume}" FontWeight="DemiBold"/>
+                                        <TextBlock Text="{Binding EntryMedianVolume}" FontWeight="DemiBold"/>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -69,10 +85,10 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                        <TextBlock Text="{Binding OpenPrice[0]}" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding DayOpenPrice[0]}" HorizontalAlignment="Center"/>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding EndOfDayPrice[0]}"/>
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayPriceChange[0]}" />
                                             <TextBlock Text="%" />
@@ -80,7 +96,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayVolume[0]}" />
-                                        <TextBlock Text="       "/>
+                                        <TextBlock Text="     "/>
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayVolumeChange[0]}"/>
                                             <TextBlock Text="%"/>
@@ -88,7 +104,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayMin[0]}" />
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <TextBlock Text="{Binding DayMax[0]}"/>
                                     </DockPanel>
                                 </StackPanel>
@@ -100,10 +116,10 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding OpenPrice[1]}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding DayOpenPrice[1]}" HorizontalAlignment="Center"/>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding EndOfDayPrice[1]}"/>
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayPriceChange[1]}" />
                                             <TextBlock Text="%" />
@@ -111,7 +127,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayVolume[1]}" />
-                                        <TextBlock Text="       "/>
+                                        <TextBlock Text="     "/>
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayVolumeChange[1]}"/>
                                             <TextBlock Text="%"/>
@@ -119,7 +135,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayMin[1]}" />
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <TextBlock Text="{Binding DayMax[1]}"/>
                                     </DockPanel>
                                 </StackPanel>
@@ -131,10 +147,10 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel>
-                                    <TextBlock Text="{Binding OpenPrice[2]}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding DayOpenPrice[2]}" HorizontalAlignment="Center"/>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding EndOfDayPrice[2]}"/>
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayPriceChange[2]}" />
                                             <TextBlock Text="%" />
@@ -142,7 +158,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayVolume[2]}" />
-                                        <TextBlock Text="       "/>
+                                        <TextBlock Text="     "/>
                                         <DockPanel>
                                             <TextBlock Text="{Binding DayVolumeChange[2]}"/>
                                             <TextBlock Text="%"/>
@@ -150,7 +166,7 @@
                                     </DockPanel>
                                     <DockPanel HorizontalAlignment="Center">
                                         <TextBlock Text="{Binding DayMin[2]}" />
-                                        <TextBlock Text="       " />
+                                        <TextBlock Text="     " />
                                         <TextBlock Text="{Binding DayMax[2]}"/>
                                     </DockPanel>
                                 </StackPanel>
@@ -158,37 +174,37 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="WYKRES" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    
+
+                    <DataGridTemplateColumn Header="" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button  Command="{Binding ShowChartCommand}" Width="50" Margin="5" Background="DimGray" BorderBrush="DimGray">
+                                <StackPanel>
+                                    <Button  Command="{Binding ShowChartCommand}" Width="50" Height="30" Margin="1" Background="DimGray" BorderBrush="DimGray">
+                                        <Button.ToolTip>
+                                            <ToolTip Content="Pokaż wykres."/>
+                                        </Button.ToolTip>
                                     <iconPacks:Fontisto Kind="LineChart"/>
+                                        
                                 </Button>
+                                <Button Command="{Binding ShowInfoCommand}" Width="50" Height="30" Margin="1" Background="DimGray" BorderBrush="DimGray">
+                                        <Button.ToolTip>
+                                            <ToolTip Content="Link do informacji, na którą była reakcja."/>
+                                        </Button.ToolTip>
+                                        <iconPacks:Material Kind="InformationSlabSymbol"/>
+                                </Button>
+                                    <Button Command="{Binding ShowCommentsCommand}" Width="50" Height="30" Margin="1" Background="DimGray" BorderBrush="DimGray">
+                                        <Button.ToolTip>
+                                            <ToolTip Content="Sekcja komentarzy."/>
+                                        </Button.ToolTip>
+                                        <iconPacks:Material Kind="CommentOutline"/>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="INFO" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding ShowInfoCommand}" Width="50" Margin="5" Background="DimGray" BorderBrush="DimGray">
-                                    <iconPacks:Material Kind="InformationSlabSymbol"/>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="KOMENTARZE" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Command="{Binding ShowCommentsCommand}" Width="100" Margin="5" Background="DimGray" BorderBrush="DimGray">
-                                    <iconPacks:Material Kind="CommentOutline"/>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+       
                 </DataGrid.Columns>
             </DataGrid>
-        </Border>
     </Grid>
 </mah:MetroContentControl>

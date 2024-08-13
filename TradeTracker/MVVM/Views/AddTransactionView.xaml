@@ -9,7 +9,7 @@
              xmlns:prism="http://prismlibrary.com/"
              mc:Ignorable="d"
              d:DesignHeight="900" d:DesignWidth="1500">
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="255" />
             <ColumnDefinition Width="175" />
@@ -24,6 +24,10 @@
             <RowDefinition Height="100"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
+
+        <Border Grid.ColumnSpan="6" Grid.RowSpan="4" BorderBrush="DimGray" BorderThickness="3">
+            
+        </Border>
         <StackPanel Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
             <TextBlock Text="Wybrana spółka: "
                        Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="16"/>

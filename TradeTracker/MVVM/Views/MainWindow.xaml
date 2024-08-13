@@ -8,7 +8,8 @@
         xmlns:prism="http://prismlibrary.com/"
         xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
         mc:Ignorable="d"     
-         Title="TradeTrackerJournal" Height="900" Width="1500">
+        Title="TradeTrackerJournal" TitleCharacterCasing="Normal" TitleForeground="Black"
+        Height="900" Width="1500" TitleAlignment="Center">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

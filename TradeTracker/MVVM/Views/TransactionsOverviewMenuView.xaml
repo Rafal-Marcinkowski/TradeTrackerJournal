@@ -66,11 +66,7 @@
             <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Wybierz z kalendarza" VerticalAlignment="Center" FontSize="16"/>
-                    <Button Style="{StaticResource MahApps.Styles.Button}" Margin="15,0,0,0"
-                Width="40" Height="35" 
-                Command="{Binding OpenCalendarCommand}">
-                        <iconPacks:PackIconModern Kind="Calendar"/>
-                    </Button>
+                    <iconPacks:PackIconModern Kind="Calendar" Width="50" Height="35"/>
                 </StackPanel>
             </Button>
             <Calendar SelectedDate="{Binding SelectedDate}" 

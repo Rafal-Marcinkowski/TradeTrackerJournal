@@ -2,6 +2,7 @@
     x:Class="TradeTracker.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:unity="clr-namespace:Prism.Unity;assembly=Prism.Unity.Wpf">
     <Application.Resources>
         <ResourceDictionary>
@@ -24,7 +25,7 @@
                 <Setter Property="BorderBrush" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="Padding" Value="12,8"/>
-                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="FontSize" Value="18"/>
                 <Setter Property="FontWeight" Value="DemiBold"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -116,7 +117,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Steel.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Taupe.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
