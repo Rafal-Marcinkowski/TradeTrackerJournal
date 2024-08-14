@@ -1,11 +1,26 @@
-﻿public class Transaction
+﻿using Prism.Mvvm;
+
+public class Transaction : BindableBase
 {
+    private bool isDetailsVisible;
+    public bool IsDetailsVisible
+    {
+        get => isDetailsVisible;
+        set
+        {
+            isDetailsVisible = value;
+            RaisePropertyChanged();
+        }
+    }
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }
     public DateTime CloseDate { get; set; }
     public decimal EntryPrice { get; set; }
     public int EntryMedianVolume { get; set; }
     public bool IsClosed { get; set; }
+
+    public string InitialDescription { get; set; }
+    public string FinalComment { get; set; }
 
     public List<decimal> DayOpenPrice { get; set; }
     public List<decimal> EndOfDayPrice { get; set; }

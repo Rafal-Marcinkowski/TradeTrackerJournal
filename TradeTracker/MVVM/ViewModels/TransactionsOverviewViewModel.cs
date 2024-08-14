@@ -1,17 +1,96 @@
-﻿using Prism.Mvvm;
+﻿using Prism.Commands;
+using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace TradeTracker.MVVM.ViewModels;
 
 class TransactionsOverviewViewModel : BindableBase
 {
+    public TransactionsOverviewViewModel()
+    {
+        IsCommentBeingEdited = false;
+        HasFinalComment = !string.IsNullOrEmpty(FinalComment);
+    }
 
+    public ICommand ToggleCommentsPanelCommand => new DelegateCommand<Transaction>(transaction =>
+    {
+        transaction.IsDetailsVisible = !transaction.IsDetailsVisible;
+    });
+
+    private string newCommentText;
+    private bool isCommentBeingEdited;
+    private bool hasFinalComment;
+
+    public string FinalComment { get; set; }
+
+    public string NewCommentText
+    {
+        get => newCommentText;
+        set
+        {
+            newCommentText = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public bool IsCommentBeingEdited
+    {
+        get => isCommentBeingEdited;
+        set
+        {
+            isCommentBeingEdited = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public bool HasFinalComment
+    {
+        get => hasFinalComment;
+        set
+        {
+            hasFinalComment = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public ICommand AddCommentCommand => new DelegateCommand(() =>
+    {
+        IsCommentBeingEdited = true;
+        NewCommentText = string.Empty;
+    });
+
+    public ICommand ConfirmCommentCommand => new DelegateCommand(() =>
+    {
+        if (IsCommentBeingEdited)
+        {
+            FinalComment = NewCommentText;
+            HasFinalComment = true;
+            IsCommentBeingEdited = false;
+        }
+    });
+
+    public ICommand EditCommentCommand => new DelegateCommand(() =>
+    {
+        IsCommentBeingEdited = true;
+        NewCommentText = FinalComment;
+    });
+
+    public ICommand DeleteCommentCommand => new DelegateCommand(() =>
+    {
+        FinalComment = string.Empty;
+        HasFinalComment = false;
+        IsCommentBeingEdited = false;
+    });
 
     public ObservableCollection<Transaction> Transactions { get; set; } = new ObservableCollection<Transaction>
     {
+
         new Transaction
     {
         CompanyName = "Columbus",
+        InitialDescription = "bumcykcyk",
+        FinalComment = "halohalo",
         EntryDate = DateTime.Now,
         EntryPrice = 100,
         EntryMedianVolume = 500,
@@ -41,5 +120,7 @@ class TransactionsOverviewViewModel : BindableBase
         DayMax = new List<decimal> { 105, 121, -131 }
     }
     };
+
+
 }
 

@@ -16,8 +16,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Border around the DataGrid -->
-        <!--<Border BorderBrush="SteelBlue" BorderThickness="5" CornerRadius="15" Padding="5" Margin="1">-->
         <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False"  SelectionUnit="CellOrRowHeader"
                       CanUserDeleteRows="False" IsReadOnly="True" ColumnHeaderHeight="30" 
                       RowHeight="30" HeadersVisibility="Column" GridLinesVisibility="All" FontSize="14" FontWeight="DemiBold">
@@ -28,8 +26,6 @@
                         <Setter Property="BorderBrush" Value="DimGray"/>
                         <Setter Property="BorderThickness" Value="0"/>
                     </Style.Setters>
-                    <!--<Setter Property="Background" Value="Transparent" />
-                    <Setter Property="BorderBrush" Value="Transparent" />-->
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="Transparent" />
@@ -100,7 +96,6 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <!-- Column for Average Sell Price with Button to Edit -->
                 <DataGridTemplateColumn Header="CENA SPRZEDAŻY" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -161,6 +156,5 @@
                     </x:Array>
                 </DataGrid.ItemsSource>
             </DataGrid>
-        <!--</Border>-->
     </Grid>
 </mah:MetroContentControl>
