@@ -14,15 +14,18 @@
     <mah:MetroContentControl.Resources>
         <Conv:TransactionStatusToIconConverter x:Key="TransactionStatusToIconConverter"/>
         <Conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <Conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter"/>
     </mah:MetroContentControl.Resources>
-    
+
     <Grid Margin="0,15,0,0">
         <DataGrid ItemsSource="{Binding Transactions}"                  
                   ColumnHeaderHeight="40" 
                   CanUserAddRows="False"
                   RowHeight="100"          
                   Width="1500"
-                  SelectionUnit ="CellOrRowHeader"
+                  SelectionUnit="CellOrRowHeader"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
                   CanUserResizeColumns="False">
@@ -32,68 +35,167 @@
                     <Style.Setters>
                         <Setter Property="BorderBrush" Value="DimGray"/>
                         <Setter Property="BorderThickness" Value="1"/>
-                        <Setter Property="DetailsVisibility" Value="Collapsed" />
+                        <Setter Property="DetailsVisibility" Value="Collapsed"/>
                     </Style.Setters>
-                        <Style.Triggers>
+                    <Style.Triggers>
                         <DataTrigger Binding="{Binding IsDetailsVisible}" Value="True">
-                            <Setter Property="DetailsVisibility" Value="Visible" />
+                            <Setter Property="DetailsVisibility" Value="Visible"/>
                         </DataTrigger>
                         <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="Transparent" />
-                                <Setter Property="BorderBrush" Value="Transparent" />
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.RowStyle>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
 
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <StackPanel Margin="10,0,0,0">
-                        <TextBlock Text="Wstępny opis transakcji:" FontWeight="DemiBold"/>
-                        <TextBlock Text="{Binding InitialDescription}" Margin="5,0,0,10"/>
+                    <StackPanel Margin="5,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Wstępny opis transakcji:" FontWeight="DemiBold" FontSize="12"/>
+                            <TextBlock Text="{Binding InitialDescription}" Margin="5,0,0,10" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Komentarz zamykający:" FontSize="12" FontWeight="DemiBold"
+                                       Visibility="{Binding ClosingDescription, Converter={StaticResource StringToVisibilityConverter}}"/>
+                            <TextBlock Text="{Binding ClosingDescription}" Margin="5,0,0,0" VerticalAlignment="Center"
+                                       Visibility="{Binding ClosingDescription, Converter={StaticResource StringToVisibilityConverter}}"/>
+                        </StackPanel>
 
-                        <TextBlock Text="Komentarz kończący:" FontWeight="DemiBold" Visibility="{Binding HasFinalComment, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <TextBlock Text="{Binding FinalComment}" Margin="5,0,0,10" Visibility="{Binding HasFinalComment, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <DataGrid ItemsSource="{Binding Comments}"                                 
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  BorderBrush="DimGray"
+                                  BorderThickness="3"
+                                  HeadersVisibility="None"
+                                  GridLinesVisibility="None"
+                                  SelectionUnit="Cell"
+                                  Margin="10,0,0,0"
+                                  Visibility="{Binding Comments.Count, Converter={StaticResource IntToVisibilityConverter}}">
 
-                        <!-- Sekcja dodawania komentarza -->
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Visibility="{Binding IsCommentsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Setters>
+                                        <Setter Property="BorderBrush" Value="DimGray"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Data" 
+                                                    Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" 
+                                                    Width="auto" 
+                                                    IsReadOnly="True"/>
+
+                                <DataGridTemplateColumn Header="Komentarz" 
+                                                        Width="auto" 
+                                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding CommentText}" 
+                                                           VerticalAlignment="Center"
+                                                           Margin="5,0,5,0"
+                                                           Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+                                                <TextBox Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" 
+                                                         VerticalAlignment="Center"
+                                                         Margin="5,0,5,0"
+                                                         Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"/>
+                                                <Button Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"
+                                                        Width="30" 
+                                                        Height="30" 
+                                                        Margin="2,0,0,0"
+                                                        Background="Transparent" 
+                                                        BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="PencilOutline"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.ConfirmCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+                                                        Width="30" 
+                                                        Height="30"
+                                                        Margin="2,0,0,0"
+                                                        Background="Transparent" 
+                                                        BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="CheckOutline"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.DiscardCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+                                                        Width="30" 
+                                                        Height="30" 
+                                                        Margin="2,0,0,0"
+                                                        Background="Transparent" 
+                                                        BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="Cancel"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                        CommandParameter="{Binding}"
+                                                        Width="30" 
+                                                        Height="30" 
+                                                        Margin="2,0,0,0"
+                                                        Background="Transparent" 
+                                                        BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="DeleteOutline"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal" 
+                                    VerticalAlignment="Center" 
+                                    Visibility="{Binding IsCommentsPanelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                             <Button Command="{Binding DataContext.AddCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
-                Width="30" 
-                Height="30" 
-                Background="DimGray" 
-                BorderBrush="DimGray">
+                                    Width="30" 
+                                    Height="30" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray">
                                 <iconPacks:Material Kind="CommentPlusOutline"/>
                             </Button>
-
-                            <TextBox Width="300" Margin="10,0,0,0" Text="{Binding NewCommentText}" Visibility="{Binding IsCommentBeingEdited, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
+                            <TextBox Width="300" 
+                                     Margin="10,0,0,0" 
+                                     Text="{Binding NewCommentText}" 
+                                     Visibility="{Binding IsCommentBeingEdited, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                             <Button Command="{Binding DataContext.ConfirmCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
-                        Width="30" 
-                        Height="30" 
-                        Margin="10,0,0,0" 
-                        Background="DimGray" 
-                        BorderBrush="DimGray" 
-                        Visibility="{Binding IsCommentBeingEdited, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Width="30" 
+                                    Height="30" 
+                                    Margin="10,0,0,0" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray" 
+                                    Visibility="{Binding IsCommentBeingEdited, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <iconPacks:Material Kind="CheckOutline"/>
                             </Button>
-
                             <Button Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
-                        Width="30" 
-                        Height="30" 
-                        Margin="10,0,0,0" 
-                        Background="DimGray" 
-                        BorderBrush="DimGray" 
-                        Visibility="{Binding IsCommentExisting, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Width="30" 
+                                    Height="30" 
+                                    Margin="10,0,0,0" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray" 
+                                    Visibility="{Binding IsCommentExisting, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <iconPacks:Material Kind="PencilOutline"/>
                             </Button>
-
                             <Button Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
-                        Width="30" 
-                        Height="30" 
-                        Margin="10,0,0,0" 
-                        Background="DimGray" 
-                        BorderBrush="DimGray" 
-                        Visibility="{Binding IsCommentExisting, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Width="30" 
+                                    Height="30" 
+                                    Margin="10,0,0,0" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray" 
+                                    Visibility="{Binding IsCommentExisting, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <iconPacks:Material Kind="DeleteOutline"/>
                             </Button>
                         </StackPanel>
@@ -102,164 +204,179 @@
             </DataGrid.RowDetailsTemplate>
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="TRANSAKCJA" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}" >
-                    <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <DockPanel>
-                                        <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
-                                            <iconPacks:PackIconModern.ToolTip>
-                                                <ToolTip>
-                                                    <TextBlock Text="{Binding CloseDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
-                                                </ToolTip>
-                                            </iconPacks:PackIconModern.ToolTip>
-                                        </iconPacks:PackIconModern>
-                                        <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="15,0,0,0"/>
-                                    </DockPanel>
-                                    <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Kurs WE: " FontWeight="DemiBold"/>
-                                        <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
-                                        <TextBlock Text="{Binding EntryMedianVolume}" FontWeight="DemiBold"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="Otwarcie: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="Kurs zamknięcia: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="Obrót: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="Min / Max dnia: " FontWeight="DemiBold"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="D1" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                        <TextBlock Text="{Binding DayOpenPrice[0]}" HorizontalAlignment="Center"/>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EndOfDayPrice[0]}"/>
-                                        <TextBlock Text="     " />
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayPriceChange[0]}" />
-                                            <TextBlock Text="%" />
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayVolume[0]}" />
-                                        <TextBlock Text="     "/>
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayVolumeChange[0]}"/>
-                                            <TextBlock Text="%"/>
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayMin[0]}" />
-                                        <TextBlock Text="     " />
-                                        <TextBlock Text="{Binding DayMax[0]}"/>
-                                    </DockPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="D2" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding DayOpenPrice[1]}" HorizontalAlignment="Center"/>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EndOfDayPrice[1]}"/>
-                                        <TextBlock Text="     " />
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayPriceChange[1]}" />
-                                            <TextBlock Text="%" />
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayVolume[1]}" />
-                                        <TextBlock Text="     "/>
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayVolumeChange[1]}"/>
-                                            <TextBlock Text="%"/>
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayMin[1]}" />
-                                        <TextBlock Text="     " />
-                                        <TextBlock Text="{Binding DayMax[1]}"/>
-                                    </DockPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                    <DataGridTemplateColumn Header="D3" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding DayOpenPrice[2]}" HorizontalAlignment="Center"/>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding EndOfDayPrice[2]}"/>
-                                        <TextBlock Text="     " />
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayPriceChange[2]}" />
-                                            <TextBlock Text="%" />
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayVolume[2]}" />
-                                        <TextBlock Text="     "/>
-                                        <DockPanel>
-                                            <TextBlock Text="{Binding DayVolumeChange[2]}"/>
-                                            <TextBlock Text="%"/>
-                                        </DockPanel>
-                                    </DockPanel>
-                                    <DockPanel HorizontalAlignment="Center">
-                                        <TextBlock Text="{Binding DayMin[2]}" />
-                                        <TextBlock Text="     " />
-                                        <TextBlock Text="{Binding DayMax[2]}"/>
-                                    </DockPanel>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTemplateColumn Header="TRANSAKCJA" 
+                                        Width="auto" 
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <Button  Command="{Binding ShowChartCommand}" Width="50" Height="30" Margin="1" Background="DimGray" BorderBrush="DimGray">
+                                <DockPanel>
+                                    <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
+                                        <iconPacks:PackIconModern.ToolTip>
+                                            <ToolTip>
+                                                <TextBlock Text="{Binding CloseDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
+                                            </ToolTip>
+                                        </iconPacks:PackIconModern.ToolTip>
+                                    </iconPacks:PackIconModern>
+                                    <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="15,0,0,0"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Kurs WE: " FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryMedianVolume}" FontWeight="DemiBold"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="Otwarcie: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Kurs zamknięcia: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Obrót: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Min / Max dnia: " FontWeight="DemiBold"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="D1" 
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding DayOpenPrice[0]}" HorizontalAlignment="Center"/>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding EndOfDayPrice[0]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayPriceChange[0]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayVolume[0]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayVolumeChange[0]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayMin[0]}"/>
+                                    <TextBlock Text="     "/>
+                                    <TextBlock Text="{Binding DayMax[0]}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="D2" 
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding DayOpenPrice[1]}" HorizontalAlignment="Center"/>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding EndOfDayPrice[1]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayPriceChange[1]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayVolume[1]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayVolumeChange[1]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayMin[1]}"/>
+                                    <TextBlock Text="     "/>
+                                    <TextBlock Text="{Binding DayMax[1]}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="D3" 
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding DayOpenPrice[2]}" HorizontalAlignment="Center"/>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding EndOfDayPrice[2]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayPriceChange[2]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayVolume[2]}"/>
+                                    <TextBlock Text="     "/>
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DayVolumeChange[2]}"/>
+                                        <TextBlock Text="%"/>
+                                    </DockPanel>
+                                </DockPanel>
+                                <DockPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding DayMin[2]}"/>
+                                    <TextBlock Text="     "/>
+                                    <TextBlock Text="{Binding DayMax[2]}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="" 
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Button Command="{Binding ShowChartCommand}" 
+                                        Width="50" 
+                                        Height="30" 
+                                        Margin="1" 
+                                        Background="DimGray" 
+                                        BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Pokaż wykres"/>
                                     </Button.ToolTip>
                                     <iconPacks:Fontisto Kind="LineChart"/>
-
                                 </Button>
-                                <Button Command="{Binding ShowInfoCommand}" Width="50" Height="30" Margin="1" Background="DimGray" BorderBrush="DimGray">
+                                <Button Command="{Binding ShowInfoCommand}" 
+                                        Width="50" 
+                                        Height="30" 
+                                        Margin="1" 
+                                        Background="DimGray" 
+                                        BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Link do informacji, na którą była reakcja"/>
                                     </Button.ToolTip>
                                     <iconPacks:Material Kind="InformationSlabSymbol"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.ToggleCommentsPanelCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
-                                    CommandParameter="{Binding}"
-                                    Width="50"
-                                    Height="30"
-                                    Margin="1"
-                                    Background="DimGray"
-                                    BorderBrush="DimGray">
+                                        CommandParameter="{Binding}"
+                                        Width="50"
+                                        Height="30"
+                                        Margin="1"
+                                        Background="DimGray"
+                                        BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Pokaż/Ukryj sekcję komentarzy"/>
                                     </Button.ToolTip>
@@ -271,6 +388,6 @@
                 </DataGridTemplateColumn>
 
             </DataGrid.Columns>
-            </DataGrid>
+        </DataGrid>
     </Grid>
 </mah:MetroContentControl>

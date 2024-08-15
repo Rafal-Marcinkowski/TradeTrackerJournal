@@ -1,4 +1,5 @@
 ﻿using Prism.Mvvm;
+using TradeTracker.MVVM.Models;
 
 public class Transaction : BindableBase
 {
@@ -20,7 +21,7 @@ public class Transaction : BindableBase
     public bool IsClosed { get; set; }
 
     public string InitialDescription { get; set; }
-    public string FinalComment { get; set; }
+    public string ClosingDescription { get; set; }
 
     public List<decimal> DayOpenPrice { get; set; }
     public List<decimal> EndOfDayPrice { get; set; }
@@ -29,5 +30,7 @@ public class Transaction : BindableBase
     public List<decimal> DayVolumeChange { get; set; }
     public List<decimal> DayMin { get; set; }
     public List<decimal> DayMax { get; set; }
+
+    public List<TransactionComment> Comments { get; set; }
 }
 

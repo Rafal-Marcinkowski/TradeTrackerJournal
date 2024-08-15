@@ -2,6 +2,7 @@
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using TradeTracker.MVVM.Models;
 
 namespace TradeTracker.MVVM.ViewModels;
 
@@ -54,33 +55,43 @@ class TransactionsOverviewViewModel : BindableBase
         }
     }
 
+    private string editedCommentOldText;
+
     public ICommand AddCommentCommand => new DelegateCommand(() =>
     {
         IsCommentBeingEdited = true;
         NewCommentText = string.Empty;
     });
 
-    public ICommand ConfirmCommentCommand => new DelegateCommand(() =>
+    public ICommand ConfirmCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
     {
-        if (IsCommentBeingEdited)
+        if (comment.IsEditing)
         {
-            FinalComment = NewCommentText;
-            HasFinalComment = true;
-            IsCommentBeingEdited = false;
+            comment.IsEditing = false;
         }
     });
 
-    public ICommand EditCommentCommand => new DelegateCommand(() =>
+    public ICommand DiscardCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
     {
-        IsCommentBeingEdited = true;
-        NewCommentText = FinalComment;
+        if (comment.IsEditing)
+        {
+            comment.CommentText = editedCommentOldText;
+            comment.IsEditing = false;
+        }
     });
 
-    public ICommand DeleteCommentCommand => new DelegateCommand(() =>
+    public ICommand EditCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
     {
-        FinalComment = string.Empty;
-        HasFinalComment = false;
-        IsCommentBeingEdited = false;
+        if (!comment.IsEditing)
+        {
+            editedCommentOldText = comment.CommentText;
+            comment.IsEditing = true;
+        }
+    });
+
+    public ICommand DeleteCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
+    {
+        ///usuwanie linqiem po idtransakcji i komentarza
     });
 
     public ObservableCollection<Transaction> Transactions { get; set; } = new ObservableCollection<Transaction>
@@ -89,8 +100,8 @@ class TransactionsOverviewViewModel : BindableBase
         new Transaction
     {
         CompanyName = "Columbus",
-        InitialDescription = "bumcykcyk",
-        FinalComment = "halohalo",
+        InitialDescription = "Komentarz otwierający Columbus",
+        ClosingDescription = "halohalo",
         EntryDate = DateTime.Now,
         EntryPrice = 100,
         EntryMedianVolume = 500,
@@ -107,6 +118,7 @@ class TransactionsOverviewViewModel : BindableBase
          new Transaction
     {
         CompanyName = "Polwax",
+        InitialDescription = "Komentarz otwierający Polwax",
         EntryDate = DateTime.Now,
         EntryPrice = 79,
         IsClosed= false,
@@ -117,10 +129,21 @@ class TransactionsOverviewViewModel : BindableBase
         DayVolume = new List<decimal> { 11234, 2132, 765 },
         DayVolumeChange = new List<decimal> { 1082, 708, 1232 },
         DayMin = new List<decimal> { 67, 71, 98 },
-        DayMax = new List<decimal> { 105, 121, -131 }
+        DayMax = new List<decimal> { 105, 121, -131 },
+        Comments = new List<TransactionComment>
+        {
+            new TransactionComment()
+        {
+            EntryDate = DateTime.Now,
+            CommentText = "pierwszy komentarz, jakiś tam"
+        }  ,
+        new TransactionComment()
+        {
+            EntryDate= DateTime.Now,
+            CommentText  = "drugi komentatrez dla wyswietlen"
+        }
+        }
     }
     };
-
-
 }
 
