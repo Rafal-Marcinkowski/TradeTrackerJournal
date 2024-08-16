@@ -6,11 +6,11 @@ using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-public class TransactionsViewModel : BindableBase
+public class TransactionsJournalMenuViewModel : BindableBase
 {
     private readonly IRegionManager regionManager;
 
-    public TransactionsViewModel(IRegionManager regionManager)
+    public TransactionsJournalMenuViewModel(IRegionManager regionManager)
     {
         this.regionManager = regionManager;
     }

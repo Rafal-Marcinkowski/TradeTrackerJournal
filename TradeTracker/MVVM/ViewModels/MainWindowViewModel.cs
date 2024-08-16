@@ -22,6 +22,6 @@ public class MainWindowViewModel : BindableBase
 
     public ICommand NavigateToTransactionsCommand => new DelegateCommand(() =>
     {
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsView));
+        regionManager.RequestNavigate("MainRegion", nameof(TransactionsJournalMenuView));
     });
 }

@@ -1,65 +1,99 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Regions;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TradeTracker.MVVM.Models;
+using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-class TransactionsOverviewViewModel : BindableBase
+class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
     public TransactionsOverviewViewModel()
     {
-        IsCommentBeingEdited = false;
+        isCommentBeingEdited = false;
+        isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
+    }
+
+    public void OnNavigatedTo(NavigationContext navigationContext)
+    {
+        if (navigationContext.Parameters.ContainsKey("TransactionId"))
+        {
+            var transactionId = navigationContext.Parameters.GetValue<int>("TransactionId");
+            // Wykonaj operacje z otrzymanym transactionId
+        }
+    }
+
+    public bool IsNavigationTarget(NavigationContext navigationContext)
+    {
+        // Zdecyduj, czy ten ViewModel powinien być celem nawigacji, czy powinien zostać utworzony nowy.
+        return true;
+    }
+
+    public void OnNavigatedFrom(NavigationContext navigationContext)
+    {
+        // Możesz wykonać jakieś operacje przed opuszczeniem widoku, jeśli to konieczne.
     }
 
     public ICommand ToggleCommentsPanelCommand => new DelegateCommand<Transaction>(transaction =>
     {
         transaction.IsDetailsVisible = !transaction.IsDetailsVisible;
+        transaction.IsNewCommentBeingAdded = false;
+
+        IsCommentBeingEdited = false;
+        NewCommentText = string.Empty;
     });
 
-    private string newCommentText;
-    private bool isCommentBeingEdited;
-    private bool hasFinalComment;
+
+    private bool isNewCommentBeingAdded;
+    public bool IsNewCommentBeingAdded
+    {
+        get => isNewCommentBeingAdded;
+        set
+        {
+            SetProperty(ref isNewCommentBeingAdded, value);
+        }
+    }
 
     public string FinalComment { get; set; }
 
+    private string newCommentText;
     public string NewCommentText
     {
         get => newCommentText;
         set
         {
-            newCommentText = value;
-            RaisePropertyChanged();
+            SetProperty(ref newCommentText, value);
         }
     }
 
+    private bool isCommentBeingEdited;
     public bool IsCommentBeingEdited
     {
         get => isCommentBeingEdited;
         set
         {
-            isCommentBeingEdited = value;
-            RaisePropertyChanged();
+            SetProperty(ref isCommentBeingEdited, value);
         }
     }
 
+    private bool hasFinalComment;
     public bool HasFinalComment
     {
         get => hasFinalComment;
         set
         {
-            hasFinalComment = value;
-            RaisePropertyChanged();
+            SetProperty(ref hasFinalComment, value);
         }
     }
 
     private string editedCommentOldText;
 
-    public ICommand AddCommentCommand => new DelegateCommand(() =>
+    public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>((transaction) =>
     {
-        IsCommentBeingEdited = true;
+        transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
         NewCommentText = string.Empty;
     });
 
@@ -70,6 +104,8 @@ class TransactionsOverviewViewModel : BindableBase
             comment.IsEditing = false;
         }
     });
+
+
 
     public ICommand DiscardCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
     {
@@ -89,9 +125,33 @@ class TransactionsOverviewViewModel : BindableBase
         }
     });
 
-    public ICommand DeleteCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
+    public ICommand ConfirmNewCommentCommand => new DelegateCommand<Transaction>((transaction) =>
     {
-        ///usuwanie linqiem po idtransakcji i komentarza
+        if (!String.IsNullOrEmpty(NewCommentText))
+        {
+            TransactionComment transactionComment = new();
+            transactionComment.EntryDate = DateTime.Now;
+            transactionComment.CommentText = NewCommentText;
+            transaction.Comments.Add(transactionComment);
+            NewCommentText = string.Empty;
+            transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
+        }
+    });
+
+    public ICommand EditNewCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
+    {
+
+    });
+
+    public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<TransactionComment, Transaction>>((parameters) =>
+    {
+        var dialog = new ConfirmationDialog();
+        dialog.ShowDialog();
+
+        if (dialog.Result)
+        {
+            parameters.Item2.Comments.Remove(parameters.Item1);
+        }
     });
 
     public ObservableCollection<Transaction> Transactions { get; set; } = new ObservableCollection<Transaction>
@@ -130,7 +190,7 @@ class TransactionsOverviewViewModel : BindableBase
         DayVolumeChange = new List<decimal> { 1082, 708, 1232 },
         DayMin = new List<decimal> { 67, 71, 98 },
         DayMax = new List<decimal> { 105, 121, -131 },
-        Comments = new List<TransactionComment>
+        Comments = new ObservableCollection<TransactionComment>
         {
             new TransactionComment()
         {

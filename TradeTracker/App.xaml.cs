@@ -37,13 +37,13 @@ public partial class App : PrismApplication
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.Register<MainWindowViewModel>();
-        containerRegistry.Register<TransactionsViewModel>();
+        containerRegistry.Register<TransactionsJournalMenuViewModel>();
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
 
-        containerRegistry.RegisterForNavigation<TransactionsView>();
+        containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsView>();
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();

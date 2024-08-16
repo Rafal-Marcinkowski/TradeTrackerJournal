@@ -7,6 +7,7 @@
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:prism="http://prismlibrary.com/"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d"
              d:DesignHeight="900" d:DesignWidth="1500">
         <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -19,7 +20,7 @@
             <ColumnDefinition Width="125" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
+            <RowDefinition Height="55" />
             <RowDefinition Height="100" />
             <RowDefinition Height="100"/>
             <RowDefinition Height="100"/>
@@ -28,31 +29,45 @@
         <Border Grid.ColumnSpan="6" Grid.RowSpan="4" BorderBrush="DimGray" BorderThickness="3">
             
         </Border>
-        <StackPanel Grid.Column="1" Grid.ColumnSpan="3" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Text="Wybrana spółka: "
-                       Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="16"/>
+        <Border BorderBrush="DimGray" BorderThickness="3" Grid.Column="1" Grid.ColumnSpan="3"
+                Margin="5">
+        <StackPanel  VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Text="Spółka: " 
+                       Margin="0,5,0,0" VerticalAlignment="Center"
+                       Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="18"/>
             <TextBlock  
-                       Text="{Binding}"
-                       Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="16"/>             
+                       Margin="0,5,0,0" VerticalAlignment="Center"
+                       Text="{Binding SelectedCompanyName}" 
+                       Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="18"/>             
         </StackPanel>
-        <Button Grid.Row="0" Grid.RowSpan="4" Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5">
+        </Border>
+        <Button 
+            Command="{Binding ConfirmCompanySelectionCommand}"
+            CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
+            Grid.Row="0" Grid.RowSpan="4" Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5">
             <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Wybierz spółkę" VerticalAlignment="Center" FontSize="16"/>
                     <iconPacks:PackIconFontisto Kind="LineChart" Width="30" Height="30" Margin="10,0,0,0"/>
                 </StackPanel>
                 <TextBox Style="{StaticResource MahApps.Styles.TextBox.Search}"
-     Margin="0,10,0,0"
-     BorderThickness="2" Width="200" Height="30" 
-     Controls:TextBoxHelper.Watermark="Szukaj spółki..." />
-                <ListBox BorderThickness="2" Width="200" Height="150" Margin="0,5,0,0"
-     ItemsSource="{Binding FilteredCompanies}"
-     SelectedItem="{Binding SelectedCompany}"
-                         IsHitTestVisible="True"
-                         >
+                         Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,10,0,0"
+                     BorderThickness="2" Width="200" Height="30" 
+                     Controls:TextBoxHelper.Watermark="Szukaj spółki..." />
+                <ListBox x:Name="companyListBox"
+                         BorderThickness="2" Width="200" Height="150" Margin="0,5,0,0"
+                         ItemsSource="{Binding FilteredCompanies}"
+                         IsHitTestVisible="True">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <prism:InvokeCommandAction Command="{Binding ConfirmCompanySelectionCommand}"
+                                       CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock />
+                            <TextBlock Text="{Binding CompanyName}"/>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

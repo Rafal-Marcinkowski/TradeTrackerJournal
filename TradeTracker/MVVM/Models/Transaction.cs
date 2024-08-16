@@ -1,16 +1,32 @@
 ﻿using Prism.Mvvm;
+using System.Collections.ObjectModel;
 using TradeTracker.MVVM.Models;
 
 public class Transaction : BindableBase
 {
+    public Transaction()
+    {
+        Comments = new ObservableCollection<TransactionComment>();
+        isNewCommentBeingAdded = false;
+    }
+
     private bool isDetailsVisible;
     public bool IsDetailsVisible
     {
         get => isDetailsVisible;
         set
         {
-            isDetailsVisible = value;
-            RaisePropertyChanged();
+            SetProperty(ref isDetailsVisible, value);
+        }
+    }
+
+    private bool isNewCommentBeingAdded;
+    public bool IsNewCommentBeingAdded
+    {
+        get => isNewCommentBeingAdded;
+        set
+        {
+            SetProperty(ref isNewCommentBeingAdded, value);
         }
     }
     public string CompanyName { get; set; }
@@ -31,6 +47,6 @@ public class Transaction : BindableBase
     public List<decimal> DayMin { get; set; }
     public List<decimal> DayMax { get; set; }
 
-    public List<TransactionComment> Comments { get; set; }
+    public ObservableCollection<TransactionComment> Comments { get; set; }
 }
 

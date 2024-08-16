@@ -6,19 +6,30 @@
     xmlns:unity="clr-namespace:Prism.Unity;assembly=Prism.Unity.Wpf">
     <Application.Resources>
         <ResourceDictionary>
+            
             <Style x:Key="DataGridHeaderStyleTransactionsOveriview" TargetType="DataGridColumnHeader">
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
-                        <Setter Property="VerticalContentAlignment" Value="Center" />
-                        <Setter Property="Background" Value="DimGray" />
-                        <Setter Property="FontSize" Value="16" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Background" Value="DimGray" />
+                <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontWeight" Value="DemiBold" />
             </Style>
+            
             <Style x:Key="BigButtonStyle" BasedOn="{StaticResource MahApps.Styles.Button}" TargetType="Button">
                 <Setter Property="Background" Value="DimGray"/>
                 <Setter Property="BorderBrush" Value="Black"/>
                 <Setter Property="Foreground" Value="Black"/>
                 <Setter Property="FontFamily" Value="Arial"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#1976D2"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#1565C0"/>
+                        </Trigger>
+                    </Style.Triggers>
             </Style>
+            
             <Style x:Key="MaterialDesignRaisedButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="SteelBlue"/>
                 <Setter Property="Foreground" Value="White"/>
@@ -48,6 +59,7 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            
             <Style x:Key="NeonGlowButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="#1e1e1e"/>
                 <Setter Property="Foreground" Value="White"/>
@@ -107,6 +119,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            
             <Style x:Key="CustomTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                 <Setter Property="BorderThickness" Value="2" />
                 <Setter Property="Height" Value="30" />
@@ -114,6 +127,7 @@
                 <Setter Property="Width" Value="150" />
                 <Setter Property="Foreground" Value="White" />
             </Style>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
