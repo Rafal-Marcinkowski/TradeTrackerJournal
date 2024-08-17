@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
     <ProjectReference Include="..\TradeTrackerJournal_DB\TradeTrackerJournal_DB.sqlproj" />
   </ItemGroup>

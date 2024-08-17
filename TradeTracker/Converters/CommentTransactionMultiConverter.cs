@@ -1,5 +1,5 @@
-﻿using System.Windows.Data;
-using TradeTracker.MVVM.Models;
+﻿using SharedModels.Models;
+using System.Windows.Data;
 
 namespace TradeTracker.Converters;
 

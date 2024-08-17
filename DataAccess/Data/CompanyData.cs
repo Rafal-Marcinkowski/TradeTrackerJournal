@@ -1,16 +1,15 @@
 ﻿using DataAccess.DBAccess;
+using SharedModels.Models;
 
 namespace DataAccess.Data;
 
 public class CompanyData
 {
     private readonly ISQLDataAccess _dBAccess;
-    private readonly ICompany company;
 
-    public CompanyData(ISQLDataAccess dBAccess, ICompany company)
+    public CompanyData(ISQLDataAccess dBAccess)
     {
         _dBAccess = dBAccess;
-        this.company = company;
     }
 
     public async Task<IEnumerable<Company>> GetAllCompaniesAsync()

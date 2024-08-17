@@ -1,9 +1,9 @@
 ﻿using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.IO;
-using Xceed.Wpf.Toolkit;
+using System.Windows;
 
-namespace TradeTracker;
+namespace Infrastructure.FirstCompilation;
 
 public class Initialize
 {

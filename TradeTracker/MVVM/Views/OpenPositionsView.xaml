@@ -7,7 +7,6 @@
                          xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                          xmlns:prism="http://prismlibrary.com/"
-                         xmlns:local="clr-namespace:TradeTracker.MVVM.Models"
                          xmlns:Conv="clr-namespace:TradeTracker.Converters"
                          mc:Ignorable="d"
                          d:DesignHeight="900" d:DesignWidth="1500">

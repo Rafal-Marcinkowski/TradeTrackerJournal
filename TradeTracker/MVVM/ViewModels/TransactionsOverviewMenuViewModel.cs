@@ -1,10 +1,10 @@
-﻿using Prism.Commands;
+﻿using Infrastructure.DataFilters;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
+using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
-using TradeTracker.DataFilters;
-using TradeTracker.MVVM.Models;
 using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;

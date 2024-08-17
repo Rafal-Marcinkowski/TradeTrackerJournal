@@ -1,9 +1,9 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
+using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Input;
-using TradeTracker.MVVM.Models;
 using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;

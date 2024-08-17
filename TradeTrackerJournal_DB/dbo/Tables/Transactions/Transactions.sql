@@ -2,7 +2,7 @@
 (
 	[ID] INT NOT NULL PRIMARY KEY, 
     [CompanyID] INT FOREIGN KEY REFERENCES Companies(ID) NOT NULL, 
-    [CompanyName ] NVARCHAR(30) NOT NULL, 
+    [CompanyName] NVARCHAR(30) NOT NULL, 
     [EntryDate] DATETIME NOT NULL, 
     [EntryPrice] DECIMAL(6, 2) NULL, 
     [EntryMedianVolume] INT NOT NULL, 
