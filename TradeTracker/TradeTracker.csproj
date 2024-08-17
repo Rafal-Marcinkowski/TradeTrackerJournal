@@ -6,11 +6,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>ikona.ico</ApplicationIcon>
+    <ApplicationIcon>TradeTrackerIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="ikona.ico" />
+    <Content Include="TradeTrackerIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>

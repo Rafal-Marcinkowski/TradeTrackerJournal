@@ -1,7 +1,15 @@
-﻿namespace TradeTracker.MVVM.Models;
+﻿using System.Collections.ObjectModel;
+
+namespace TradeTracker.MVVM.Models;
 
 public class Company
 {
+
+    public int ID { get; set; }
+
     public string CompanyName { get; set; }
+
     public int TransactionCount { get; set; }
+
+    public ObservableCollection<Transaction> Transactions { get; set; }
 }

@@ -1,17 +1,32 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
+using System.Windows;
 
 namespace TradeTracker.MVVM.Views;
 
-public partial class ConfirmationDialog
+public partial class ConfirmationDialog : MetroWindow
 {
+    public string DialogText
+    {
+        get { return (string)GetValue(DialogTextProperty); }
+        set { SetValue(DialogTextProperty, value); }
+    }
+
+    public static readonly DependencyProperty DialogTextProperty =
+        DependencyProperty.Register("DialogText", typeof(string), typeof(ConfirmationDialog), new PropertyMetadata(string.Empty));
+
+    public bool Result { get; private set; }
+
     public ConfirmationDialog()
     {
         InitializeComponent();
-        this.Left = App.Current.MainWindow.Left + 625;
-        this.Top = App.Current.MainWindow.Top + 400;
+        Top = App.Current.MainWindow.Top + 350;
+        Left = App.Current.MainWindow.Left + 600;
+        FontSize = 14;
+        FontWeight = FontWeights.DemiBold;
+        HorizontalAlignment = HorizontalAlignment.Center;
+        VerticalAlignment = VerticalAlignment.Center;
+        DataContext = this;
     }
-
-    public bool Result { get; private set; }
 
     private void YesButton_Click(object sender, RoutedEventArgs e)
     {

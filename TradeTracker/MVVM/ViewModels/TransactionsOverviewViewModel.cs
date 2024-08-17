@@ -145,7 +145,10 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<TransactionComment, Transaction>>((parameters) =>
     {
-        var dialog = new ConfirmationDialog();
+        var dialog = new ConfirmationDialog()
+        {
+            DialogText = "Czy na pewno chcesz usunąć komentarz?"
+        };
         dialog.ShowDialog();
 
         if (dialog.Result)
@@ -167,13 +170,13 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         EntryMedianVolume = 500,
         IsClosed = true,
         CloseDate = DateTime.Now,
-        DayOpenPrice = new List<decimal>{ 89, 23, 54},
-        EndOfDayPrice = new List<decimal> { 131, 170, 14 },
-        DayPriceChange = new List<decimal> { 2, -83, 65 },
-        DayVolume = new List<decimal> { 520, 54222, 1342 },
-        DayVolumeChange = new List<decimal> { 4, 7300, -32 },
-        DayMin = new List<decimal> { 98, 101, 132 },
-        DayMax = new List<decimal> { 105, 324, 98}
+        DayOpenPrice = new List<double>{ 89, 23, 54},
+        EndOfDayPrice = new List<double> { 131, 170, 14 },
+        DayPriceChange = new List<double> { 2, -83, 65 },
+        DayVolume = new List<double> { 520, 54222, 1342 },
+        DayVolumeChange = new List<double> { 4, 7300, -32 },
+        DayMin = new List<double> { 98, 101, 132 },
+        DayMax = new List<double> { 105, 324, 98}
     },
          new Transaction
     {
@@ -183,13 +186,13 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         EntryPrice = 79,
         IsClosed= false,
         EntryMedianVolume = 123678,
-        DayOpenPrice = new List<decimal>{ 89, 23, 54},
-        EndOfDayPrice = new List<decimal> { 131, 170, 14 },
-        DayPriceChange = new List<decimal> { -8, 17, -123 },
-        DayVolume = new List<decimal> { 11234, 2132, 765 },
-        DayVolumeChange = new List<decimal> { 1082, 708, 1232 },
-        DayMin = new List<decimal> { 67, 71, 98 },
-        DayMax = new List<decimal> { 105, 121, -131 },
+        DayOpenPrice = new List<double>{ 89, 23, 54},
+        EndOfDayPrice = new List<double> { 131, 170, 14 },
+        DayPriceChange = new List<double> { -8, 17, -123 },
+        DayVolume = new List<double> { 11234, 2132, 765 },
+        DayVolumeChange = new List<double> { 1082, 708, 1232 },
+        DayMin = new List<double> { 67, 71, 98 },
+        DayMax = new List<double> { 105, 121, -131 },
         Comments = new ObservableCollection<TransactionComment>
         {
             new TransactionComment()

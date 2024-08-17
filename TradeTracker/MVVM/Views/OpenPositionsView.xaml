@@ -8,15 +8,19 @@
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                          xmlns:prism="http://prismlibrary.com/"
                          xmlns:local="clr-namespace:TradeTracker.MVVM.Models"
+                         xmlns:Conv="clr-namespace:TradeTracker.Converters"
                          mc:Ignorable="d"
                          d:DesignHeight="900" d:DesignWidth="1500">
+
     <Grid Margin="0,15,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False"  SelectionUnit="CellOrRowHeader"
+        <DataGrid     
+                      ItemsSource="{Binding Transactions}"
+                      Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" SelectionUnit="CellOrRowHeader"
                       CanUserDeleteRows="False" IsReadOnly="True" ColumnHeaderHeight="30" 
                       RowHeight="30" HeadersVisibility="Column" GridLinesVisibility="All" FontSize="14" FontWeight="DemiBold">
 
@@ -46,7 +50,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="DATA" Binding="{Binding Date}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="DATA" Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -100,15 +104,17 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding AvgSellPrice, TargetNullValue=0}" 
+                            <TextBlock Text="{Binding AvgSellPrice, UpdateSourceTrigger=PropertyChanged}" 
                                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
                             <TextBox Width="auto" Height="25" BorderBrush="SteelBlue" Background="Gray" BorderThickness="0"                                           
-                                             Text="{Binding AvgSellPrice, Mode=OneWayToSource, UpdateSourceTrigger=Explicit}"
+                                     Text="{Binding AvgSellPriceText, UpdateSourceTrigger=PropertyChanged}"
                                              VerticalAlignment="Center" Margin="15,0,0,0" HorizontalAlignment="Center" Controls:TextBoxHelper.Watermark="wpisz..."/>
-                            <Button  Width="auto"  Height="25" HorizontalAlignment="Right"  Margin="1,0,0,0" BorderBrush="DimGray" BorderThickness="0" 
-                                             Background="DimGray" Padding="5"
-                                             >
-                                <iconPacks:VaadinIcons Kind="EnterArrow"></iconPacks:VaadinIcons>
+                                <Button  Width="auto"  Height="25" HorizontalAlignment="Right"  Margin="1,0,0,0" BorderBrush="DimGray" BorderThickness="0" 
+                                     Command="{Binding DataContext.SetAvgSellPriceCommand, RelativeSource={RelativeSource AncestorType=mah:MetroContentControl}}"
+                                     CommandParameter="{Binding}"
+                                     Background="DimGray" Padding="5">
+                                    <iconPacks:VaadinIcons Kind="EnterArrow"></iconPacks:VaadinIcons>
+                                   
                             </Button>
                         </StackPanel>
                     </DataTemplate>
@@ -127,34 +133,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
-                <DataGrid.ItemsSource>
-                    <x:Array Type="{x:Type local:OpenPosition}">
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                                        Duration="5" EntryPrice="50"
-                                        PositionSize="500" NumberOfShares="500"
-                                        />
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                Duration="5" EntryPrice="50"
-                PositionSize="500" NumberOfShares="500"
-                />
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                Duration="5" EntryPrice="50"
-                PositionSize="500" NumberOfShares="500"
-               />
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                Duration="5" EntryPrice="50"
-                PositionSize="500" NumberOfShares="500"
-                />
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                Duration="5" EntryPrice="50"
-                PositionSize="500" NumberOfShares="500"
-               />
-                        <local:OpenPosition CompanyName="ABC Corp" Date="2024-08-08"
-                Duration="5" EntryPrice="50"
-                PositionSize="500" NumberOfShares="500"
-                />
-                    </x:Array>
-                </DataGrid.ItemsSource>
+                
             </DataGrid>
     </Grid>
 </mah:MetroContentControl>

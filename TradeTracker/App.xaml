@@ -6,7 +6,44 @@
     xmlns:unity="clr-namespace:Prism.Unity;assembly=Prism.Unity.Wpf">
     <Application.Resources>
         <ResourceDictionary>
-            
+
+            <Style x:Key="DayOpenPriceTextStyle" TargetType="TextBlock">
+                
+                
+                
+            </Style>
+
+            <Style x:Key="EndOfDayPriceTextStyle" TargetType="TextBlock">
+
+
+
+            </Style>
+
+            <Style x:Key="DayPriceChangeTextStyle" TargetType="TextBlock">
+
+
+
+            </Style>
+
+            <Style x:Key="DayVolumeTextStyle" TargetType="TextBlock">
+
+
+
+            </Style>
+
+            <Style x:Key="DayVolumeChangeTextStyle" TargetType="TextBlock">
+
+
+
+            </Style>
+
+            <Style x:Key="DayMinMaxTextStyle" TargetType="TextBlock">
+
+
+
+            </Style>
+
+
             <Style x:Key="DataGridHeaderStyleTransactionsOveriview" TargetType="DataGridColumnHeader">
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
