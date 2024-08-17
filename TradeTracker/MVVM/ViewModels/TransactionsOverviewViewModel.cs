@@ -19,22 +19,25 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
-        if (navigationContext.Parameters.ContainsKey("TransactionId"))
+        //Transactions = navigationContext.Parameters switch
+        //{
+        //    //
+        //}
+        if (navigationContext.Parameters.ContainsKey("OP"))
         {
-            var transactionId = navigationContext.Parameters.GetValue<int>("TransactionId");
+            ///// wypełnianie transakcji z bazy danych
             // Wykonaj operacje z otrzymanym transactionId
         }
     }
 
     public bool IsNavigationTarget(NavigationContext navigationContext)
     {
-        // Zdecyduj, czy ten ViewModel powinien być celem nawigacji, czy powinien zostać utworzony nowy.
         return true;
     }
 
     public void OnNavigatedFrom(NavigationContext navigationContext)
     {
-        // Możesz wykonać jakieś operacje przed opuszczeniem widoku, jeśli to konieczne.
+        throw new NotImplementedException();
     }
 
     public ICommand ToggleCommentsPanelCommand => new DelegateCommand<Transaction>(transaction =>

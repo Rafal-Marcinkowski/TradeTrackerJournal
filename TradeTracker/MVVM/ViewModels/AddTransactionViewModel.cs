@@ -64,4 +64,9 @@ public class AddTransactionViewModel : BindableBase
     {
 
     });
+
+    public ICommand ClearFieldsCommand => new DelegateCommand(() =>
+    {
+
+    });
 }

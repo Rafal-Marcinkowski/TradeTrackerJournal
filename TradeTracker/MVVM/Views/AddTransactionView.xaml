@@ -87,7 +87,9 @@
             <TextBlock Text="Wstępny opis transakcji" Margin="0,0,0,10" Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="16"/>
             <TextBox Width="320" Height="195" TextWrapping="Wrap" Controls:TextBoxHelper.Watermark="Wpisz komentarz..."/>
         </StackPanel>
-        <Button Grid.Column="5" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button}" Margin="0,0,25,0" VerticalAlignment="Center">
+        <Button 
+            Command="{Binding ClearFieldsCommand}"
+            Grid.Column="5" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button}" Margin="0,0,25,0" VerticalAlignment="Center">
             <iconPacks:VaadinIcons Kind="Eraser" Width="50" Height="50"></iconPacks:VaadinIcons>
         </Button>
         <Button Grid.Column="5" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,0" VerticalAlignment="Center" Command="{Binding AddTransactionCommand}">

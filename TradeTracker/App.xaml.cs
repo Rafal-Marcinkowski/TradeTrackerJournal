@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DataAccess.DBAccess;
+using Microsoft.Extensions.Configuration;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
@@ -36,7 +37,10 @@ public partial class App : PrismApplication
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.Register<ISQLDataAccess, SQLDataAccess>();
+
         containerRegistry.Register<MainWindowViewModel>();
+
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
@@ -45,7 +49,7 @@ public partial class App : PrismApplication
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsView>();
-        containerRegistry.RegisterForNavigation<AddTransactionView>();
+        containerRegistry.RegisterForNavigation<AddTransactionView, AddTransactionViewModel>("AddTransactionView");
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewMenuView>();

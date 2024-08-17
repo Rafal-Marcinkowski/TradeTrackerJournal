@@ -32,4 +32,10 @@
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
+    <ProjectReference Include="..\TradeTrackerJournal_DB\TradeTrackerJournal_DB.sqlproj" />
+  </ItemGroup>
+
 </Project>

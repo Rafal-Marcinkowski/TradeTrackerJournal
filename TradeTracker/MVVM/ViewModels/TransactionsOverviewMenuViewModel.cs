@@ -51,9 +51,9 @@ class TransactionsOverviewMenuViewModel : BindableBase
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {
-        //var parameters = new NavigationParameters();
-        ///otwarte pozycje
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
+        var parameters = new NavigationParameters();
+        parameters.Add("OP", "OpenPositions");
+        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
     });
 
     public ICommand TransactionsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
