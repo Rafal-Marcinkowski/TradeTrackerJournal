@@ -36,7 +36,7 @@ public class Transaction : BindableBase
         }
     }
 
-    private string avgSellPriceText;
+    private string avgSellPriceText = string.Empty;
     public string AvgSellPriceText
     {
         get => avgSellPriceText;

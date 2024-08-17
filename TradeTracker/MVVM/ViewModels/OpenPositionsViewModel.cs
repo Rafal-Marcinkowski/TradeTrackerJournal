@@ -23,19 +23,21 @@ public class OpenPositionsViewModel : BindableBase
 
     public ICommand CloseTransactionCommand => new DelegateCommand<Transaction>(transaction =>
     {
-        var dialog = new ConfirmationDialog()
+        if (transaction.AvgSellPrice > 0)
         {
-            DialogText = "Czy na pewno chcesz zamknąć transakcję?\n" +
-            $"{transaction.CompanyName} {transaction.EntryDate}\nŚrednia cena sprzedaży ustawiona na: {transaction.AvgSellPrice}"
-        };
-        dialog.ShowDialog();
+            var dialog = new ConfirmationDialog()
+            {
+                DialogText = "Czy na pewno chcesz zamknąć transakcję?\n" +
+                $"{transaction.CompanyName} {transaction.EntryDate}\nŚrednia cena sprzedaży ustawiona na: {transaction.AvgSellPrice}"
+            };
+            dialog.ShowDialog();
 
-        if (dialog.Result)
-        {
-            Transactions.Remove(transaction);
+            if (dialog.Result)
+            {
+                Transactions.Remove(transaction);
+            }
         }
     });
-
 
     public ObservableCollection<Transaction> Transactions { get; set; } =
     [
