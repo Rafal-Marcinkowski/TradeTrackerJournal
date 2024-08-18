@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Windows;
 
 namespace DataAccess.DBAccess;
 
@@ -16,8 +17,17 @@ public class SQLDataAccess : ISQLDataAccess
 
     public async Task<IEnumerable<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters)
     {
-        using IDbConnection dbConnection = new SqlConnection(configuration.GetConnectionString("TradeTrackerJournal_DBConnectionString"));
-        return await dbConnection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+        try
+        {
+            using IDbConnection dbConnection = new SqlConnection(configuration.GetConnectionString("TradeTrackerJournal_DBConnectionString"));
+            return await dbConnection.QueryAsync<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (Exception ex)
+        {
+            // Log or handle exception
+            MessageBox.Show(ex.Message);
+            throw;
+        }
     }
 
     public async Task SaveDataAsync<T>(string storedProcedure, T parameters)

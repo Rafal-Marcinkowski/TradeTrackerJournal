@@ -1,4 +1,5 @@
-﻿using Infrastructure.DataFilters;
+﻿using DataAccess.Data;
+using Infrastructure.DataFilters;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -12,6 +13,7 @@ namespace TradeTracker.MVVM.ViewModels;
 class TransactionsOverviewMenuViewModel : BindableBase
 {
     private readonly IRegionManager regionManager;
+    private readonly ICompanyData companyData;
 
     private ObservableCollection<Company> filteredCompanies;
 
@@ -42,12 +44,19 @@ class TransactionsOverviewMenuViewModel : BindableBase
         FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
     }
 
-    public TransactionsOverviewMenuViewModel(IRegionManager regionManager)
+    public TransactionsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData)
     {
         this.regionManager = regionManager;
-        companies = Initialize.FillCompanies();
+        this.companyData = companyData;
+        GetAllCompanies();
+    }
+
+    private async Task GetAllCompanies()
+    {
+        companies = (ObservableCollection<Company>)await companyData.GetAllCompaniesAsync();
         FilteredCompanies = new ObservableCollection<Company>(companies);
     }
+
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {

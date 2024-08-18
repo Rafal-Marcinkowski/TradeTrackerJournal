@@ -61,6 +61,7 @@ public class Transaction : BindableBase
     public int PositionSize { get; set; }
     public bool IsClosed { get; set; }
     public int Duration { get; set; }
+    public string InformationLink { get; set; }
 
     public string InitialDescription { get; set; }
     public string ClosingDescription { get; set; }

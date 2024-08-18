@@ -74,14 +74,34 @@
             </StackPanel>
         </Button>
 
-        <TextBox Style="{StaticResource CustomTextBoxStyle}" Grid.Column="1" Grid.Row="1" Controls:TextBoxHelper.Watermark="Godzina otwarcia"/>
-        <TextBox Style="{StaticResource CustomTextBoxStyle}" Grid.Column="2" Grid.Row="1" Controls:TextBoxHelper.Watermark="Średnia cena kupna"/>
-        <TextBox Grid.Column="2" Grid.Row="2" Style="{StaticResource CustomTextBoxStyle}" Controls:TextBoxHelper.Watermark="Wielkość pozycji"/>
-        <TextBox Grid.Column="1" Grid.Row="2" Style="{StaticResource CustomTextBoxStyle}" Controls:TextBoxHelper.Watermark="Ilość akcji"/>
-        <TextBox Grid.Column="3" Grid.Row="2" Style="{StaticResource CustomTextBoxStyle}" Controls:TextBoxHelper.Watermark="Średnia cena sprzedaży"/>
+        <TextBox Style="{StaticResource CustomTextBoxStyle}"
+                 Grid.Column="1"
+                 Grid.Row="1"
+                 Controls:TextBoxHelper.Watermark="Godzina otwarcia"
+                 Text="{Binding EntryDate, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Style="{StaticResource CustomTextBoxStyle}"
+                 Grid.Column="2" Grid.Row="1"
+                 Controls:TextBoxHelper.Watermark="Średnia cena kupna"
+                 Text="{Binding EntryPrice, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="2"
+                 Grid.Row="2"
+                 Style="{StaticResource CustomTextBoxStyle}"
+                 Controls:TextBoxHelper.Watermark="Wielkość pozycji"
+                 Text="{Binding PositionSize, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1"
+                 Grid.Row="2"
+                 Style="{StaticResource CustomTextBoxStyle}"
+                 Controls:TextBoxHelper.Watermark="Ilość akcji"
+                 Text="{Binding NumberOfShares, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="3"
+                 Grid.Row="2"
+                 Style="{StaticResource CustomTextBoxStyle}"
+                 Controls:TextBoxHelper.Watermark="Średnia cena sprzedaży"
+                 Text="{Binding AvgSellPrice, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Width="500" Height="30"
                  Style="{StaticResource CustomTextBoxStyle}"
-                 Margin="5" Controls:TextBoxHelper.Watermark="Link do informacji"/>
+                 Margin="5" Controls:TextBoxHelper.Watermark="Link do informacji"
+                 Text="{Binding InformationLink, UpdateSourceTrigger=PropertyChanged}"/>
 
         <StackPanel Grid.Column="4" Grid.Row="1" Grid.RowSpan="3" Margin="10">
             <TextBlock Text="Wstępny opis transakcji" Margin="0,0,0,10" Foreground="White" HorizontalAlignment="Center" FontWeight="DemiBold" FontSize="16"/>
@@ -92,7 +112,8 @@
             Grid.Column="5" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button}" Margin="0,0,25,0" VerticalAlignment="Center">
             <iconPacks:VaadinIcons Kind="Eraser" Width="50" Height="50"></iconPacks:VaadinIcons>
         </Button>
-        <Button Grid.Column="5" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,0" VerticalAlignment="Center" Command="{Binding AddTransactionCommand}">
+        <Button Grid.Column="5" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,0" VerticalAlignment="Center"
+                Command="{Binding AddTransactionCommand}">
             <iconPacks:Material Kind="ContentSaveEditOutline" Width="50" Height="50"></iconPacks:Material>
         </Button>
     </Grid>

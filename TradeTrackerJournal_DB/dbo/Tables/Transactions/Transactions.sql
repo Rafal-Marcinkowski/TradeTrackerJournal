@@ -11,7 +11,8 @@
     [CloseDate] DATETIME NULL, 
     [AvgSellPrice] DECIMAL(6, 2) NULL, 
     [IsClosed] BIT NOT NULL, 
-    [Duration] INT NOT NULL, 
+    [Duration] INT NULL, 
     [InitialDescription] NVARCHAR(250) NULL, 
-    [ClosingDescription] NVARCHAR(250) NOT NULL
+    [ClosingDescription] NVARCHAR(250) NULL, 
+    [InformationLink] NVARCHAR(150) NULL
 );

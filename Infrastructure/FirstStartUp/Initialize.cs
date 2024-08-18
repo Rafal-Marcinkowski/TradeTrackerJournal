@@ -1,17 +1,22 @@
-﻿using SharedModels.Models;
-using System.Collections.ObjectModel;
+﻿using DataAccess.Data;
+using SharedModels.Models;
 using System.IO;
 using System.Windows;
 
-namespace Infrastructure.FirstCompilation;
+namespace Infrastructure.FirstStartUp;
 
 public class Initialize
 {
-    public static ObservableCollection<Company> FillCompanies()
+    private readonly ICompanyData companyData;
+    public Initialize(ICompanyData companyData)
+    {
+        this.companyData = companyData;
+    }
+
+    public void FillDatabaseWithCompanies()
     {
         try
         {
-            companies = new ObservableCollection<Company>();
             translations = new List<Translation>();
 
             string filePath = Path.Combine(
@@ -51,17 +56,15 @@ public class Initialize
             {
                 Company company = new();
                 company.CompanyName = item.Value;
-                companies.Add(company);
+                companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount);
             }
         }
         catch (Exception ex)
         {
             MessageBox.Show("Nie udało się zainicjować translacji bo: " + ex.Message);
         }
-        return companies;
     }
 
-    private static ObservableCollection<Company> companies;
     private static List<Translation> translations;
 
     public class Translation

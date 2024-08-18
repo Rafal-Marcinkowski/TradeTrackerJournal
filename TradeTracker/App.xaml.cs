@@ -1,4 +1,5 @@
-﻿using DataAccess.DBAccess;
+﻿using DataAccess.Data;
+using DataAccess.DBAccess;
 using Microsoft.Extensions.Configuration;
 using Prism.Ioc;
 using Prism.Unity;
@@ -11,7 +12,6 @@ namespace TradeTracker;
 
 public partial class App : PrismApplication
 {
-    public static IConfiguration Configuration { get; private set; }
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -24,10 +24,13 @@ public partial class App : PrismApplication
 
         Log.Information("Application Starting");
 
-        Configuration = new ConfigurationBuilder()
-            .SetBasePath("D:\\Visual Studio 2022\\Visual Studio Projects\\TradeTrackerJournal\\TradeTracker")
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .Build();
+        //FirstStartUp();
+    }
+
+    private void FirstStartUp()
+    {
+        Infrastructure.FirstStartUp.Initialize init = new(new CompanyData(new SQLDataAccess(Container.Resolve<IConfiguration>())));
+        init.FillDatabaseWithCompanies();
     }
 
     protected override Window CreateShell()
@@ -37,10 +40,14 @@ public partial class App : PrismApplication
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .Build());
+        containerRegistry.Register<ITransactionData, TransactionData>();
+        containerRegistry.Register<ICompanyData, CompanyData>();
         containerRegistry.Register<ISQLDataAccess, SQLDataAccess>();
 
         containerRegistry.Register<MainWindowViewModel>();
-
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
@@ -49,7 +56,7 @@ public partial class App : PrismApplication
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsView>();
-        containerRegistry.RegisterForNavigation<AddTransactionView, AddTransactionViewModel>("AddTransactionView");
+        containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewMenuView>();

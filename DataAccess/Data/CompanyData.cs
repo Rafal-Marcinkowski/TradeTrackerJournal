@@ -3,38 +3,38 @@ using SharedModels.Models;
 
 namespace DataAccess.Data;
 
-public class CompanyData
+public class CompanyData : ICompanyData
 {
-    private readonly ISQLDataAccess _dBAccess;
+    private readonly ISQLDataAccess dBAccess;
 
     public CompanyData(ISQLDataAccess dBAccess)
     {
-        _dBAccess = dBAccess;
+        this.dBAccess = dBAccess;
     }
 
     public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
     {
-        return await _dBAccess.LoadDataAsync<Company, dynamic>("spCompanies_GetAll", new { });
+        return await dBAccess.LoadDataAsync<Company, dynamic>("GetAllCompanies", new { });
     }
 
     public async Task<Company> GetCompanyAsync(int id)
     {
-        var companies = await _dBAccess.LoadDataAsync<Company, dynamic>("spCompanies_Get", new { ID = id });
+        var companies = await dBAccess.LoadDataAsync<Company, dynamic>("GetCompany", new { ID = id });
         return companies.FirstOrDefault();
     }
 
-    public async Task InsertCompanyAsync(string companyName, short? ranking)
+    public async Task InsertCompanyAsync(string companyName, int transactionCount)
     {
-        await _dBAccess.SaveDataAsync("spCompanies_Insert", new { CompanyName = companyName, Ranking = ranking });
+        await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount });
     }
 
-    public async Task UpdateCompanyAsync(int id, string companyName, short ranking)
+    public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount)
     {
-        await _dBAccess.SaveDataAsync("spCompanies_Update", new { ID = id, CompanyName = companyName, Ranking = ranking });
+        await dBAccess.SaveDataAsync("UpdateCompany", new { ID = id, CompanyName = companyName, TransactionCount = transactionCount });
     }
 
     public async Task DeleteCompanyAsync(int id)
     {
-        await _dBAccess.SaveDataAsync("spCompanies_Delete", new { ID = id });
+        await dBAccess.SaveDataAsync("DeleteCompany", new { ID = id });
     }
 }

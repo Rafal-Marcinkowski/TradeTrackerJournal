@@ -11,7 +11,8 @@
     @IsClosed BIT,
     @Duration INT,
     @InitialDescription NVARCHAR(250) = NULL,
-    @ClosingDescription NVARCHAR(250)
+    @ClosingDescription NVARCHAR(250),
+    @InformationLink NVARCHAR(150) = NULL
 AS
 BEGIN
     INSERT INTO [dbo].[Transactions] (
@@ -27,7 +28,8 @@ BEGIN
         IsClosed, 
         Duration, 
         InitialDescription, 
-        ClosingDescription)
+        ClosingDescription,
+        InformationLink)
     VALUES (
         @CompanyID, 
         @CompanyName, 
@@ -41,7 +43,8 @@ BEGIN
         @IsClosed, 
         @Duration, 
         @InitialDescription, 
-        @ClosingDescription);
+        @ClosingDescription,
+        @InformationLink);
     
     SELECT SCOPE_IDENTITY() AS NewID;
 END;

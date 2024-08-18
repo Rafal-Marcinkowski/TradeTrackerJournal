@@ -4,6 +4,11 @@ namespace SharedModels.Models;
 
 public class Company
 {
+    public Company()
+    {
+        TransactionCount = 0;
+        Transactions = new ObservableCollection<Transaction>();
+    }
 
     public int ID { get; set; }
 
