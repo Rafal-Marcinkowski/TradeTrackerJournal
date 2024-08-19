@@ -29,6 +29,8 @@
                   SelectionUnit="CellOrRowHeader"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                   CanUserResizeColumns="False">
 
             <DataGrid.RowStyle>

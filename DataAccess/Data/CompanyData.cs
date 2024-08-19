@@ -37,4 +37,10 @@ public class CompanyData : ICompanyData
     {
         await dBAccess.SaveDataAsync("DeleteCompany", new { ID = id });
     }
+
+    public async Task<int> GetCompanyID(string companyName)
+    {
+        var companies = await GetAllCompaniesAsync();
+        return companies.FirstOrDefault(q => q.CompanyName == companyName).ID;
+    }
 }

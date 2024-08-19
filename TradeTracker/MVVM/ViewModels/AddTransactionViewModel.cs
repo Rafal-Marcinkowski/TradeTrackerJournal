@@ -1,4 +1,5 @@
 ﻿using DataAccess.Data;
+using Infrastructure;
 using Infrastructure.DataFilters;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -8,6 +9,8 @@ using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
+using TradeTracker.MVVM.Views;
+using ValidationComponent.Transactions;
 
 namespace TradeTracker.MVVM.ViewModels;
 
@@ -48,49 +51,49 @@ public class AddTransactionViewModel : BindableBase
         }
     }
 
-    private string entryDate;
+    private string entryDate = string.Empty;
     public string EntryDate
     {
         get => entryDate;
         set => SetProperty(ref entryDate, value);
     }
 
-    private string entryPrice;
+    private string entryPrice = string.Empty;
     public string EntryPrice
     {
         get => entryPrice;
         set => SetProperty(ref entryPrice, value);
     }
 
-    private string positionSize;
+    private string positionSize = string.Empty;
     public string PositionSize
     {
         get => positionSize;
         set => SetProperty(ref positionSize, value);
     }
 
-    private string numberOfShares;
+    private string numberOfShares = string.Empty;
     public string NumberOfShares
     {
         get => numberOfShares;
         set => SetProperty(ref numberOfShares, value);
     }
 
-    private string avgSellPrice;
+    private string avgSellPrice = string.Empty;
     public string AvgSellPrice
     {
         get => avgSellPrice;
         set => SetProperty(ref avgSellPrice, value);
     }
 
-    private string initialDescription;
+    private string initialDescription = string.Empty;
     public string InitialDescription
     {
         get => initialDescription;
         set => SetProperty(ref initialDescription, value);
     }
 
-    private string informationLink;
+    private string informationLink = string.Empty;
     public string InformationLink
     {
         get => informationLink;
@@ -101,6 +104,11 @@ public class AddTransactionViewModel : BindableBase
     private void FilterCompanies()
     {
         FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
+    }
+
+    private void OrderFilteredCompanies()
+    {
+        FilteredCompanies = ObservableCollectionFilter.OrderByDescendingTransactionCount(FilteredCompanies);
     }
 
     public AddTransactionViewModel(IRegionManager regionManager, ITransactionData transactionData, ICompanyData companyData)
@@ -116,7 +124,7 @@ public class AddTransactionViewModel : BindableBase
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = new ObservableCollection<Company>(companyList);
+            companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
             FilteredCompanies = new ObservableCollection<Company>(companies);
         }
         catch (Exception ex)
@@ -128,40 +136,101 @@ public class AddTransactionViewModel : BindableBase
 
     public ICommand ConfirmCompanySelectionCommand => new DelegateCommand<Company>((selectedCompany) =>
     {
-        SelectedCompanyName = selectedCompany.CompanyName;
+        if (selectedCompany is not null)
+        {
+            SelectedCompanyName = selectedCompany.CompanyName;
+        }
     });
 
-    public ICommand AddTransactionCommand => new DelegateCommand(() =>
+    public ICommand AddTransactionCommand => new DelegateCommand(async () =>
     {
-        Transaction transaction = new();
-        DateTime currentDate = DateTime.Now.Date;
-
-        if (TimeSpan.TryParse(EntryDate, out TimeSpan timeComponent))
+        if (!String.IsNullOrEmpty(SelectedCompanyName))
         {
-            DateTime combinedDateTime = currentDate + timeComponent;
-            transaction.EntryDate = combinedDateTime;
-            if (double.TryParse(EntryPrice, out double value))
+            try
             {
-                transaction.EntryPrice = value;
-            }
-            transaction.PositionSize = int.Parse(positionSize);
-            transaction.InitialDescription = InitialDescription;
-            transaction.InformationLink = InformationLink;
-            transaction.CompanyID = 1;
-        }
-        try
-        {
+                Transaction transaction = new Transaction
+                {
+                    CompanyName = SelectedCompanyName,
+                    EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
+                    .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
+                    EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                    .ToArray(), out var entryPrice) ? entryPrice : 0,
+                    NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
+                    PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                    .ToArray(), out decimal positionSize) ? positionSize : 0,
+                    InformationLink = InformationLink,
+                    AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                    .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
+                    EntryMedianVolume = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
+                    InitialDescription = InitialDescription,
+                };
 
-            transactionData.InsertTransactionAsync(transaction);
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message);
+
+                var validator = new AddTransactionValidator();
+                var results = validator.Validate(transaction);
+
+                if (!results.IsValid)
+                {
+                    var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+                    MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                try
+                {
+                    if (transaction.AvgSellPrice != null)
+                    {
+                        transaction.CloseDate = DateTime.Now;
+                        transaction.IsClosed = true;
+                        transaction.ClosingDescription = "Transakcja zamknięta przy dodaniu.";
+                    }
+                    ///sprawdzic czy podobna transakcja istnieje
+                    transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+                    var dialog = new ConfirmationDialog()
+                    {
+                        DialogText = $"Czy dodać transakcję? \n{transaction.CompanyName}\n{transaction.EntryDate}\nCena kupna: {transaction.EntryPrice}\n" +
+                        $"Ilość akcji: {transaction.NumberOfShares}\nWielkość pozycji: {transaction.PositionSize}"
+                    };
+                    dialog.ShowDialog();
+
+                    if (dialog.Result)
+                    {
+                        await transactionData.InsertTransactionAsync(transaction);
+                        var company = await companyData.GetCompanyAsync(transaction.CompanyID);
+                        company.TransactionCount++;
+                        await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
+                        var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+                        if (updatedCompany != null)
+                        {
+                            updatedCompany.TransactionCount = company.TransactionCount;
+                        }
+
+                        ClearFieldsCommand.Execute(null);
+                        OrderFilteredCompanies();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Coś poszło nie tak");
+            }
         }
     });
 
     public ICommand ClearFieldsCommand => new DelegateCommand(() =>
     {
-
+        EntryDate = string.Empty;
+        EntryPrice = string.Empty;
+        PositionSize = string.Empty;
+        NumberOfShares = string.Empty;
+        InformationLink = string.Empty;
+        InitialDescription = string.Empty;
+        SearchBoxText = string.Empty;
+        SelectedCompanyName = string.Empty;
+        AvgSellPrice = string.Empty;
     });
 }

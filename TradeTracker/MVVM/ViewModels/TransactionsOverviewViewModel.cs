@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using DataAccess.Data;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using SharedModels.Models;
@@ -10,24 +11,36 @@ namespace TradeTracker.MVVM.ViewModels;
 
 class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
-    public TransactionsOverviewViewModel()
+    private readonly ITransactionData transactionData;
+    public TransactionsOverviewViewModel(ITransactionData transactionData)
     {
         isCommentBeingEdited = false;
         isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
+        this.transactionData = transactionData;
+        transactions = new ObservableCollection<Transaction>();
+    }
+
+    private ObservableCollection<Transaction> transactions;
+    public ObservableCollection<Transaction> Transactions
+    {
+        get => transactions;
+        set => SetProperty(ref transactions, value);
     }
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
-        //Transactions = navigationContext.Parameters switch
-        //{
-        //    //
-        //}
-        if (navigationContext.Parameters.ContainsKey("OP"))
+        if (navigationContext.Parameters.ContainsKey("selectedCompany"))
         {
-            ///// wypełnianie transakcji z bazy danych
-            // Wykonaj operacje z otrzymanym transactionId
+            int companyId = (int)navigationContext.Parameters["selectedCompany"];
+            Task.Run(() => GetTransactions(companyId));
         }
+    }
+
+    private async Task GetTransactions(int selectedCompanyId)
+    {
+        var transactions = await transactionData.GetAllTransactionsForCompany(selectedCompanyId);
+        Transactions = new ObservableCollection<Transaction>(transactions);
     }
 
     public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -109,8 +122,6 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
-
-
     public ICommand DiscardCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
     {
         if (comment.IsEditing)
@@ -160,57 +171,5 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
             parameters.Item2.Comments.Remove(parameters.Item1);
         }
     });
-
-    public ObservableCollection<Transaction> Transactions { get; set; } = new ObservableCollection<Transaction>
-    {
-
-        new Transaction
-    {
-        CompanyName = "Columbus",
-        InitialDescription = "Komentarz otwierający Columbus",
-        ClosingDescription = "halohalo",
-        EntryDate = DateTime.Now,
-        EntryPrice = 100,
-        EntryMedianVolume = 500,
-        IsClosed = true,
-        CloseDate = DateTime.Now,
-        DayOpenPrice = new List<double>{ 89, 23, 54},
-        EndOfDayPrice = new List<double> { 131, 170, 14 },
-        DayPriceChange = new List<double> { 2, -83, 65 },
-        DayVolume = new List<double> { 520, 54222, 1342 },
-        DayVolumeChange = new List<double> { 4, 7300, -32 },
-        DayMin = new List<double> { 98, 101, 132 },
-        DayMax = new List<double> { 105, 324, 98}
-    },
-         new Transaction
-    {
-        CompanyName = "Polwax",
-        InitialDescription = "Komentarz otwierający Polwax",
-        EntryDate = DateTime.Now,
-        EntryPrice = 79,
-        IsClosed= false,
-        EntryMedianVolume = 123678,
-        DayOpenPrice = new List<double>{ 89, 23, 54},
-        EndOfDayPrice = new List<double> { 131, 170, 14 },
-        DayPriceChange = new List<double> { -8, 17, -123 },
-        DayVolume = new List<double> { 11234, 2132, 765 },
-        DayVolumeChange = new List<double> { 1082, 708, 1232 },
-        DayMin = new List<double> { 67, 71, 98 },
-        DayMax = new List<double> { 105, 121, -131 },
-        Comments = new ObservableCollection<TransactionComment>
-        {
-            new TransactionComment()
-        {
-            EntryDate = DateTime.Now,
-            CommentText = "pierwszy komentarz, jakiś tam"
-        }  ,
-        new TransactionComment()
-        {
-            EntryDate= DateTime.Now,
-            CommentText  = "drugi komentatrez dla wyswietlen"
-        }
-        }
-    }
-    };
 }
 

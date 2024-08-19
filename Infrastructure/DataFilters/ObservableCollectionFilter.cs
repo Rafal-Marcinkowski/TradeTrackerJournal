@@ -10,5 +10,11 @@ public class ObservableCollectionFilter
         var results = collection.Where(item => item.CompanyName.Contains(filterText, StringComparison.OrdinalIgnoreCase));
         return new ObservableCollection<Company>(results);
     }
+
+    public static ObservableCollection<Company> OrderByDescendingTransactionCount(ObservableCollection<Company> collection)
+    {
+        var results = collection.OrderByDescending(item => item.TransactionCount);
+        return new ObservableCollection<Company>(results);
+    }
 }
 

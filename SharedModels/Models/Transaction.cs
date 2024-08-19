@@ -10,30 +10,31 @@ public class Transaction : BindableBase
         Comments = new ObservableCollection<TransactionComment>();
         isNewCommentBeingAdded = false;
         IsClosed = false;
+        DayOpenPrice = new List<decimal>();
+        EndOfDayPrice = new List<decimal>();
+        DayPriceChange = new List<decimal>();
+        DayVolume = new List<decimal>();
+        DayVolumeChange = new List<decimal>();
+        DayMin = new List<decimal>();
+        DayMax = new List<decimal>();
+        AvgPriceOfTheDay = new List<decimal>();
     }
 
     public int ID { get; set; }
-
     public int CompanyID { get; set; }
 
     private bool isDetailsVisible;
     public bool IsDetailsVisible
     {
         get => isDetailsVisible;
-        set
-        {
-            SetProperty(ref isDetailsVisible, value);
-        }
+        set => SetProperty(ref isDetailsVisible, value);
     }
 
     private bool isNewCommentBeingAdded;
     public bool IsNewCommentBeingAdded
     {
         get => isNewCommentBeingAdded;
-        set
-        {
-            SetProperty(ref isNewCommentBeingAdded, value);
-        }
+        set => SetProperty(ref isNewCommentBeingAdded, value);
     }
 
     private string avgSellPriceText = string.Empty;
@@ -43,38 +44,36 @@ public class Transaction : BindableBase
         set => SetProperty(ref avgSellPriceText, value);
     }
 
-    private double avgsellPrice;
-    public double AvgSellPrice
+    private decimal? avgSellPrice;
+    public decimal? AvgSellPrice
     {
-        get => avgsellPrice;
-        set => SetProperty(ref avgsellPrice, value);
+        get => avgSellPrice;
+        set => SetProperty(ref avgSellPrice, value);
     }
 
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }
-    public DateTime CloseDate { get; set; }
-    public double EntryPrice { get; set; }
-
+    public DateTime? CloseDate { get; set; }
+    public decimal EntryPrice { get; set; }
 
     public int EntryMedianVolume { get; set; }
     public int NumberOfShares { get; set; }
-    public int PositionSize { get; set; }
-    public bool IsClosed { get; set; }
+    public decimal PositionSize { get; set; }
     public int Duration { get; set; }
-    public string InformationLink { get; set; }
+    public bool IsClosed { get; set; }
+    public string? InformationLink { get; set; }
 
-    public string InitialDescription { get; set; }
-    public string ClosingDescription { get; set; }
+    public string? InitialDescription { get; set; }
+    public string? ClosingDescription { get; set; }
 
-    public List<double> DayOpenPrice { get; set; }
-    public List<double> EndOfDayPrice { get; set; }
-    public List<double> DayPriceChange { get; set; }
-    public List<double> DayVolume { get; set; }
-    public List<double> DayVolumeChange { get; set; }
-    public List<double> DayMin { get; set; }
-    public List<double> DayMax { get; set; }
-    public List<double>? AvgPriceOfTheDay { get; set; }
+    public List<decimal> DayOpenPrice { get; set; }
+    public List<decimal> EndOfDayPrice { get; set; }
+    public List<decimal> DayPriceChange { get; set; }
+    public List<decimal> DayVolume { get; set; }
+    public List<decimal> DayVolumeChange { get; set; }
+    public List<decimal> DayMin { get; set; }
+    public List<decimal> DayMax { get; set; }
+    public List<decimal>? AvgPriceOfTheDay { get; set; }
 
     public ObservableCollection<TransactionComment> Comments { get; set; }
 }
-

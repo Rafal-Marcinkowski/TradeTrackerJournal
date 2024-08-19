@@ -2,5 +2,5 @@
 (
 	[ID] INT NOT NULL PRIMARY KEY IDENTITY, 
     [CompanyName] NVARCHAR(30) NOT NULL, 
-    [TransactionCount] INT NULL
+    [TransactionCount] INT NOT NULL
 )

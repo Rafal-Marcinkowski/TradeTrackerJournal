@@ -1,5 +1,6 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
+using Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Prism.Ioc;
 using Prism.Unity;
@@ -24,6 +25,7 @@ public partial class App : PrismApplication
 
         Log.Information("Application Starting");
 
+        TurnoverMedianTable.UpdateMedianTable();
         //FirstStartUp();
     }
 

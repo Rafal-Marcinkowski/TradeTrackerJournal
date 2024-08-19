@@ -23,6 +23,13 @@ public class TransactionData : ITransactionData
         return transactions.FirstOrDefault();
     }
 
+    public async Task<IEnumerable<Transaction>> GetAllTransactionsForCompany(int companyId)
+    {
+        var parameters = new { CompanyID = companyId };
+        var transactions = await dBAccess.LoadDataAsync<Transaction, dynamic>("GetAllTransactionsForCompany", parameters);
+        return transactions;
+    }
+
     public async Task InsertTransactionAsync(Transaction transaction)
     {
         var parameters = new
@@ -37,7 +44,6 @@ public class TransactionData : ITransactionData
             transaction.CloseDate,
             transaction.AvgSellPrice,
             transaction.IsClosed,
-            transaction.Duration,
             transaction.InitialDescription,
             transaction.ClosingDescription,
             transaction.InformationLink
@@ -46,44 +52,29 @@ public class TransactionData : ITransactionData
         await dBAccess.SaveDataAsync("InsertTransaction", parameters);
     }
 
-    public async Task UpdateTransactionAsync(
-      int id,
-      int companyID,
-      string companyName,
-      DateTime entryDate,
-      decimal? entryPrice,
-      int entryMedianVolume,
-      int numberOfShares,
-      int positionSize,
-      DateTime? closeDate,
-      decimal? avgSellPrice,
-      bool isClosed,
-      int duration,
-      string initialDescription,
-      string closingDescription,
-      string informationLink)
+    public async Task UpdateTransactionAsync(Transaction transaction)
     {
         var parameters = new
         {
-            ID = id,
-            CompanyID = companyID,
-            CompanyName = companyName,
-            EntryDate = entryDate,
-            EntryPrice = entryPrice,
-            EntryMedianVolume = entryMedianVolume,
-            NumberOfShares = numberOfShares,
-            PositionSize = positionSize,
-            CloseDate = closeDate,
-            AvgSellPrice = avgSellPrice,
-            IsClosed = isClosed,
-            Duration = duration,
-            InitialDescription = initialDescription,
-            ClosingDescription = closingDescription,
-            InformationLink = informationLink
+            transaction.ID,
+            transaction.CompanyID,
+            transaction.CompanyName,
+            transaction.EntryDate,
+            transaction.EntryPrice,
+            transaction.EntryMedianVolume,
+            transaction.NumberOfShares,
+            transaction.PositionSize,
+            transaction.CloseDate,
+            transaction.AvgSellPrice,
+            transaction.IsClosed,
+            transaction.InitialDescription,
+            transaction.ClosingDescription,
+            transaction.InformationLink
         };
 
         await dBAccess.SaveDataAsync("UpdateTransaction", parameters);
     }
+
 
     public async Task DeleteTransactionAsync(int id)
     {

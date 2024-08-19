@@ -53,7 +53,8 @@ class TransactionsOverviewMenuViewModel : BindableBase
 
     private async Task GetAllCompanies()
     {
-        companies = (ObservableCollection<Company>)await companyData.GetAllCompaniesAsync();
+        var companyList = await companyData.GetAllCompaniesAsync();
+        companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
         FilteredCompanies = new ObservableCollection<Company>(companies);
     }
 
@@ -67,9 +68,14 @@ class TransactionsOverviewMenuViewModel : BindableBase
 
     public ICommand TransactionsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
     {
-        //var parameters = new NavigationParameters();
-        //// dla danej spolki
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
+        if (selectedCompany != null)
+        {
+            var parameters = new NavigationParameters
+        {
+            { "selectedCompany", selectedCompany.ID }
+        };
+            regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
+        }
     });
 
     public ICommand LastXTransactionsOverviewCommand => new DelegateCommand<string>((nrOfLastTransactionsToShow) =>

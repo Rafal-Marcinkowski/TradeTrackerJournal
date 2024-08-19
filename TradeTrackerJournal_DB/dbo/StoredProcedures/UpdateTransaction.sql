@@ -10,7 +10,6 @@
     @CloseDate DATETIME = NULL,
     @AvgSellPrice DECIMAL(6, 2) = NULL,
     @IsClosed BIT,
-    @Duration INT,
     @InitialDescription NVARCHAR(250) = NULL,
     @ClosingDescription NVARCHAR(250),
     @InformationLink NVARCHAR(150) = NULL
@@ -28,7 +27,6 @@ BEGIN
         CloseDate = @CloseDate, 
         AvgSellPrice = @AvgSellPrice, 
         IsClosed = @IsClosed, 
-        Duration = @Duration, 
         InitialDescription = @InitialDescription, 
         ClosingDescription = @ClosingDescription,
         InformationLink = @InformationLink
