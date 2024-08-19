@@ -6,8 +6,11 @@ public class TurnoverMedianTable
 {
     public static async Task UpdateMedianTable()
     {
-        File.Copy("C:\\Users\\rafal\\Desktop\\Pogromcy\\NotoriaSerwis_2\\TurnoverMedianTable",
-             "C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable", true);
+        if (File.Exists("\"C:\\\\Users\\\\rafal\\\\Desktop\\\\Pogromcy\\\\NotoriaSerwis_2\\\\TurnoverMedianTable\""))
+        {
+            File.Copy("C:\\Users\\rafal\\Desktop\\Pogromcy\\NotoriaSerwis_2\\TurnoverMedianTable",
+                 "C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable", true);
+        }
         await InitializeTurnoverMedian();
     }
 

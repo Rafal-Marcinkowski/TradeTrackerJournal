@@ -17,11 +17,15 @@ public class MainWindowViewModel : BindableBase
 
     public ICommand NavigateToEventsCommand => new DelegateCommand(() =>
     {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(EventsView));
     });
 
     public ICommand NavigateToTransactionsCommand => new DelegateCommand(() =>
     {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(TransactionsJournalMenuView));
     });
 }

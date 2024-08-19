@@ -43,11 +43,11 @@ public partial class App : PrismApplication
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .Build());
-        containerRegistry.Register<ITransactionData, TransactionData>();
-        containerRegistry.Register<ICompanyData, CompanyData>();
-        containerRegistry.Register<ISQLDataAccess, SQLDataAccess>();
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .Build());
+        containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
+        containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
+        containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
 
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();

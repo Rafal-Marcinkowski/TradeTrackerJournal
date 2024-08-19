@@ -100,7 +100,6 @@ public class AddTransactionViewModel : BindableBase
         set => SetProperty(ref informationLink, value);
     }
 
-
     private void FilterCompanies()
     {
         FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
@@ -146,77 +145,69 @@ public class AddTransactionViewModel : BindableBase
     {
         if (!String.IsNullOrEmpty(SelectedCompanyName))
         {
+            Transaction transaction = new()
+            {
+                CompanyName = SelectedCompanyName,
+                EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
+                  .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
+                EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out var entryPrice) ? entryPrice : 0,
+                NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
+                PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out decimal positionSize) ? positionSize : 0,
+                InformationLink = InformationLink,
+                AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
+                EntryMedianVolume = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
+                InitialDescription = InitialDescription,
+            };
+
+            var validator = new AddTransactionValidator();
+            var results = validator.Validate(transaction);
+
+            if (!results.IsValid)
+            {
+                var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+                MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             try
             {
-                Transaction transaction = new Transaction
+                if (transaction.AvgSellPrice != null)
                 {
-                    CompanyName = SelectedCompanyName,
-                    EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
-                    .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
-                    EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                    .ToArray(), out var entryPrice) ? entryPrice : 0,
-                    NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
-                    PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                    .ToArray(), out decimal positionSize) ? positionSize : 0,
-                    InformationLink = InformationLink,
-                    AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                    .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-                    EntryMedianVolume = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
-                    InitialDescription = InitialDescription,
+                    transaction.CloseDate = DateTime.Now;
+                    transaction.IsClosed = true;
+                    transaction.ClosingDescription = "Transakcja zamknięta przy dodaniu.";
+                }
+                ///sprawdzic czy podobna transakcja istnieje
+                transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+                var dialog = new ConfirmationDialog()
+                {
+                    DialogText = $"Czy dodać transakcję? \n{transaction.CompanyName}\n{transaction.EntryDate}\nCena kupna: {transaction.EntryPrice}\n" +
+                    $"Ilość akcji: {transaction.NumberOfShares}\nWielkość pozycji: {transaction.PositionSize}"
                 };
+                dialog.ShowDialog();
 
-
-                var validator = new AddTransactionValidator();
-                var results = validator.Validate(transaction);
-
-                if (!results.IsValid)
+                if (dialog.Result)
                 {
-                    var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
-                    MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
-
-                try
-                {
-                    if (transaction.AvgSellPrice != null)
+                    await transactionData.InsertTransactionAsync(transaction);
+                    var company = await companyData.GetCompanyAsync(transaction.CompanyID);
+                    company.TransactionCount++;
+                    await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
+                    var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+                    if (updatedCompany != null)
                     {
-                        transaction.CloseDate = DateTime.Now;
-                        transaction.IsClosed = true;
-                        transaction.ClosingDescription = "Transakcja zamknięta przy dodaniu.";
+                        updatedCompany.TransactionCount = company.TransactionCount;
                     }
-                    ///sprawdzic czy podobna transakcja istnieje
-                    transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
-                    var dialog = new ConfirmationDialog()
-                    {
-                        DialogText = $"Czy dodać transakcję? \n{transaction.CompanyName}\n{transaction.EntryDate}\nCena kupna: {transaction.EntryPrice}\n" +
-                        $"Ilość akcji: {transaction.NumberOfShares}\nWielkość pozycji: {transaction.PositionSize}"
-                    };
-                    dialog.ShowDialog();
 
-                    if (dialog.Result)
-                    {
-                        await transactionData.InsertTransactionAsync(transaction);
-                        var company = await companyData.GetCompanyAsync(transaction.CompanyID);
-                        company.TransactionCount++;
-                        await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
-                        var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
-                        if (updatedCompany != null)
-                        {
-                            updatedCompany.TransactionCount = company.TransactionCount;
-                        }
-
-                        ClearFieldsCommand.Execute(null);
-                        OrderFilteredCompanies();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                    ClearFieldsCommand.Execute(null);
+                    OrderFilteredCompanies();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("Coś poszło nie tak");
+                MessageBox.Show(ex.Message);
             }
         }
     });

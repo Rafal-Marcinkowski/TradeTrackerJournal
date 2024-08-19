@@ -33,13 +33,39 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         if (navigationContext.Parameters.ContainsKey("selectedCompany"))
         {
             int companyId = (int)navigationContext.Parameters["selectedCompany"];
-            Task.Run(() => GetTransactions(companyId));
+            Task.Run(() => GetTransactionsForCompany(companyId));
+        }
+
+        if (navigationContext.Parameters.ContainsKey("op"))
+        {
+            Task.Run(() => GetAllOpenTransactions());
+        }
+
+        if (navigationContext.Parameters.ContainsKey("lastx"))
+        {
+            int nrOfTransactionsToShow = (int)navigationContext.Parameters["lastx"];
+            Task.Run(() => GetLastXTransactions(nrOfTransactionsToShow));
         }
     }
 
-    private async Task GetTransactions(int selectedCompanyId)
+    private async Task GetLastXTransactions(int nrOfTransactionsToShow)
+    {
+        var transactions = await transactionData.GetAllTransactionsAsync();
+        transactions = transactions.OrderByDescending(q => q.EntryDate).Take(nrOfTransactionsToShow);
+        Transactions = new ObservableCollection<Transaction>(transactions);
+    }
+
+    private async Task GetAllOpenTransactions()
+    {
+        var transactions = await transactionData.GetAllTransactionsAsync();
+        transactions = transactions.OrderByDescending(q => q.EntryDate).Where(q => q.IsClosed == false);
+        Transactions = new ObservableCollection<Transaction>(transactions);
+    }
+
+    private async Task GetTransactionsForCompany(int selectedCompanyId)
     {
         var transactions = await transactionData.GetAllTransactionsForCompany(selectedCompanyId);
+        transactions = transactions.OrderByDescending(q => q.EntryDate);
         Transactions = new ObservableCollection<Transaction>(transactions);
     }
 

@@ -62,7 +62,9 @@ class TransactionsOverviewMenuViewModel : BindableBase
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {
         var parameters = new NavigationParameters();
-        parameters.Add("OP", "OpenPositions");
+        parameters.Add("op", "op");
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
     });
 
@@ -74,6 +76,8 @@ class TransactionsOverviewMenuViewModel : BindableBase
         {
             { "selectedCompany", selectedCompany.ID }
         };
+            var region = regionManager.Regions["MainRegion"];
+            region.RemoveAll();
             regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
         }
     });
@@ -84,7 +88,12 @@ class TransactionsOverviewMenuViewModel : BindableBase
         {
             if (transactionsToShow > 0)
             {
-                var parameters = new NavigationParameters();
+                var parameters = new NavigationParameters()
+                {
+                    {"lastx", transactionsToShow },
+                };
+                var region = regionManager.Regions["MainRegion"];
+                region.RemoveAll();
                 regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
             }
         }

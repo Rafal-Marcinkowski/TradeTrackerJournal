@@ -64,7 +64,9 @@ public class OpenPositionsViewModel : BindableBase
                     transaction.ClosingDescription = closingComment;
                 }
                 transaction.IsClosed = true;
-                transaction.CloseDate = DateTime.Now;
+                transaction.CloseDate = DateTime.Now.Date
+                             .AddHours(DateTime.Now.Hour)
+                             .AddMinutes(DateTime.Now.Minute);
                 await transactionData.UpdateTransactionAsync(transaction);
                 Transactions.Remove(transaction);
             }

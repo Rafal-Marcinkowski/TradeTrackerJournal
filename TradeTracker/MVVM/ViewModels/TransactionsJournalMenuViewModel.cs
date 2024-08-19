@@ -17,16 +17,22 @@ public class TransactionsJournalMenuViewModel : BindableBase
 
     public ICommand NavigateToAddTransactionCommand => new DelegateCommand(() =>
     {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(AddTransactionView));
     });
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(OpenPositionsView));
     });
 
     public ICommand NavigateToTransactionsOverviewMenuCommand => new DelegateCommand(() =>
     {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewMenuView));
     });
 }
