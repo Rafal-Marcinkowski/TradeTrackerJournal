@@ -7,17 +7,11 @@ public class Transaction : BindableBase
 {
     public Transaction()
     {
-        Comments = new ObservableCollection<TransactionComment>();
+        Comments = [];
         isNewCommentBeingAdded = false;
         IsClosed = false;
-        DayOpenPrice = new List<decimal>();
-        EndOfDayPrice = new List<decimal>();
-        DayPriceChange = new List<decimal>();
-        DayVolume = new List<decimal>();
-        DayVolumeChange = new List<decimal>();
-        DayMin = new List<decimal>();
-        DayMax = new List<decimal>();
-        AvgPriceOfTheDay = new List<decimal>();
+        AvgPriceOfTheDay = [];
+        DailyDataCollection = [];
     }
 
     public int ID { get; set; }
@@ -66,14 +60,8 @@ public class Transaction : BindableBase
     public string? InitialDescription { get; set; }
     public string? ClosingDescription { get; set; }
 
-    public List<decimal> DayOpenPrice { get; set; }
-    public List<decimal> EndOfDayPrice { get; set; }
-    public List<decimal> DayPriceChange { get; set; }
-    public List<decimal> DayVolume { get; set; }
-    public List<decimal> DayVolumeChange { get; set; }
-    public List<decimal> DayMin { get; set; }
-    public List<decimal> DayMax { get; set; }
     public List<decimal>? AvgPriceOfTheDay { get; set; }
+    public List<DailyData> DailyDataCollection { get; set; }
 
     public ObservableCollection<TransactionComment> Comments { get; set; }
 }

@@ -1,0 +1,6 @@
+﻿CREATE PROCEDURE GetDailyData
+    @ID INT
+AS
+BEGIN
+    SELECT * FROM DailyData WHERE ID = @ID;
+END

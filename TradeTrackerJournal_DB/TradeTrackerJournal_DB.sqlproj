@@ -63,13 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Companies.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayMaxes.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayMins.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayOpenPrices.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayPriceChanges.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayVolumeChanges.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionDayVolumes.sql" />
-    <Build Include="dbo\Tables\Transactions\TransactionEndOfDayPrices.sql" />
     <Build Include="dbo\Tables\Transactions\Transactions.sql" />
     <Build Include="dbo\Tables\TransactionComments.sql" />
     <Build Include="dbo\StoredProcedures\GetTransactionComment.sql" />
@@ -89,13 +82,13 @@
     <Build Include="dbo\StoredProcedures\DeleteTransaction.sql" />
     <Build Include="dbo\StoredProcedures\GetAllTransactionsForCompany.sql" />
     <Build Include="dbo\StoredProcedures\GetAllCommentsForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayMaxesForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayMinsForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayOpenPricesForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayPriceChangesForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayVolumeChangesForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllDayVolumesForTransaction.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllEndOfDayPricesForTransaction.sql" />
+    <Build Include="dbo\StoredProcedures\GetAllDailyData.sql" />
+    <Build Include="dbo\StoredProcedures\GetDailyData.sql" />
+    <Build Include="dbo\StoredProcedures\GetDailyDataForTransaction.sql" />
+    <Build Include="dbo\StoredProcedures\InsertDailyData.sql" />
+    <Build Include="dbo\StoredProcedures\UpdateDailyData.sql" />
+    <Build Include="dbo\StoredProcedures\DeleteDailyData.sql" />
+    <Build Include="dbo\Tables\DailyDatas.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TradeTrackerJournal_DB.refactorlog" />

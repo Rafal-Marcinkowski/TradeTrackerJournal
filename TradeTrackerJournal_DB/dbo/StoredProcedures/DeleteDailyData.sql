@@ -1,0 +1,6 @@
+﻿CREATE PROCEDURE DeleteDailyData
+    @ID INT
+AS
+BEGIN
+    DELETE FROM DailyData WHERE ID = @ID;
+END

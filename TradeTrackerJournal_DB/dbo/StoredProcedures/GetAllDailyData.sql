@@ -1,0 +1,5 @@
+﻿CREATE PROCEDURE GetAllDailyData
+AS
+BEGIN
+    SELECT * FROM DailyData;
+END

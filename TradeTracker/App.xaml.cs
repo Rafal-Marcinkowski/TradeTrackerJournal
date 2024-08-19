@@ -48,6 +48,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
         containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
+        containerRegistry.RegisterSingleton<IDailyDataProvider, DailyDataProvider>();
 
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();

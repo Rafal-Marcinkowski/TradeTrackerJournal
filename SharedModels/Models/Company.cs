@@ -8,7 +8,7 @@ public class Company : BindableBase
     public Company()
     {
         transactionCount = 0;
-        Transactions = new ObservableCollection<Transaction>();
+        Transactions = [];
     }
 
     public int ID { get; set; }

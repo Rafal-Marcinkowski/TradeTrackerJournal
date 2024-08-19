@@ -5,6 +5,7 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                          xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
                          xmlns:local1="clr-namespace:TradeTracker"
+                         xmlns:local2="clr-namespace:SharedModels.Models;assembly=SharedModels"
                          xmlns:Conv="clr-namespace:TradeTracker.Converters"
                          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -297,7 +298,37 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="D1" 
+                <DataGridTemplateColumn Header=""
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding DailyDataCollection}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" />
+                                            <TextBlock Text="{Binding OpenPrice}" />
+                                            <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ClosePrice}" />
+                                                <TextBlock Text="{Binding PriceChange}" Margin="10,0,0,0"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Volume}" />
+                                                <TextBlock Text="{Binding VolumeChange}" Margin="10,0,0,0"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding MinPrice}" />
+                                                <TextBlock Text="{Binding MaxPrice}" Margin="10,0,0,0"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!--<DataGridTemplateColumn Header="D1" 
                                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -344,7 +375,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D2 -->
+                --><!-- Kolumna D2 --><!--
                 <DataGridTemplateColumn Header="D2" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -385,7 +416,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D3 -->
+                --><!-- Kolumna D3 --><!--
                 <DataGridTemplateColumn Header="D3" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -426,7 +457,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D4 -->
+                --><!-- Kolumna D4 --><!--
                 <DataGridTemplateColumn Header="D4" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -467,7 +498,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D5 -->
+                --><!-- Kolumna D5 --><!--
                 <DataGridTemplateColumn Header="D5" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -508,7 +539,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D6 -->
+                --><!-- Kolumna D6 --><!--
                 <DataGridTemplateColumn Header="D6" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -549,7 +580,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D7 -->
+                --><!-- Kolumna D7 --><!--
                 <DataGridTemplateColumn Header="D7" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -590,7 +621,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D8 -->
+                --><!-- Kolumna D8 --><!--
                 <DataGridTemplateColumn Header="D8" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -631,7 +662,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D9 -->
+                --><!-- Kolumna D9 --><!--
                 <DataGridTemplateColumn Header="D9" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -672,7 +703,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D10 -->
+                --><!-- Kolumna D10 --><!--
                 <DataGridTemplateColumn Header="D10" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -713,7 +744,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D11 -->
+                --><!-- Kolumna D11 --><!--
                 <DataGridTemplateColumn Header="D11" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -754,7 +785,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D12 -->
+                --><!-- Kolumna D12 --><!--
                 <DataGridTemplateColumn Header="D12" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -795,7 +826,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D13 -->
+                --><!-- Kolumna D13 --><!--
                 <DataGridTemplateColumn Header="D13" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -836,7 +867,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D14 -->
+                --><!-- Kolumna D14 --><!--
                 <DataGridTemplateColumn Header="D14" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -877,7 +908,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D15 -->
+                --><!-- Kolumna D15 --><!--
                 <DataGridTemplateColumn Header="D15" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -918,7 +949,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D16 -->
+                --><!-- Kolumna D16 --><!--
                 <DataGridTemplateColumn Header="D16" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -959,7 +990,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D17 -->
+                --><!-- Kolumna D17 --><!--
                 <DataGridTemplateColumn Header="D17" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1000,7 +1031,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D18 -->
+                --><!-- Kolumna D18 --><!--
                 <DataGridTemplateColumn Header="D18" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1041,7 +1072,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D19 -->
+                --><!-- Kolumna D19 --><!--
                 <DataGridTemplateColumn Header="D19" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1082,7 +1113,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D20 -->
+                --><!-- Kolumna D20 --><!--
                 <DataGridTemplateColumn Header="D20" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1123,7 +1154,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D21 -->
+                --><!-- Kolumna D21 --><!--
                 <DataGridTemplateColumn Header="D21" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1164,7 +1195,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D22 -->
+                --><!-- Kolumna D22 --><!--
                 <DataGridTemplateColumn Header="D22" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1205,7 +1236,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D23 -->
+                --><!-- Kolumna D23 --><!--
                 <DataGridTemplateColumn Header="D23" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1246,7 +1277,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D24 -->
+                --><!-- Kolumna D24 --><!--
                 <DataGridTemplateColumn Header="D24" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1287,7 +1318,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D25 -->
+                --><!-- Kolumna D25 --><!--
                 <DataGridTemplateColumn Header="D25" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1328,7 +1359,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D26 -->
+                --><!-- Kolumna D26 --><!--
                 <DataGridTemplateColumn Header="D26" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1369,7 +1400,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D27 -->
+                --><!-- Kolumna D27 --><!--
                 <DataGridTemplateColumn Header="D27" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1410,7 +1441,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D28 -->
+                --><!-- Kolumna D28 --><!--
                 <DataGridTemplateColumn Header="D28" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1451,7 +1482,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D29 -->
+                --><!-- Kolumna D29 --><!--
                 <DataGridTemplateColumn Header="D29" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1492,7 +1523,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <!-- Kolumna D30 -->
+                --><!-- Kolumna D30 --><!--
                 <DataGridTemplateColumn Header="D30" 
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
@@ -1531,7 +1562,7 @@
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                </DataGridTemplateColumn>-->
 
 
             </DataGrid.Columns>
