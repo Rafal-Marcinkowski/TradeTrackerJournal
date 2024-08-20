@@ -233,7 +233,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="{Binding EntryMedianVolume, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>

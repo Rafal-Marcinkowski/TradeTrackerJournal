@@ -51,7 +51,7 @@ public class Transaction : BindableBase
     public DateTime? CloseDate { get; set; }
     public decimal EntryPrice { get; set; }
 
-    public int EntryMedianVolume { get; set; }
+    public int EntryMedianTurnover { get; set; }
     public int NumberOfShares { get; set; }
     public decimal PositionSize { get; set; }
     public int Duration { get; set; }

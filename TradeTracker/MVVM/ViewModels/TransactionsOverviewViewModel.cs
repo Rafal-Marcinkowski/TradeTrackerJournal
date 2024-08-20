@@ -1,5 +1,7 @@
 ﻿using DataAccess.Data;
+using Infrastructure.Events;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using SharedModels.Models;
@@ -13,14 +15,21 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
-    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider)
+    private readonly IEventAggregator eventAggregator;
+
+    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator)
     {
         this.dailyDataProvider = dailyDataProvider;
+        this.eventAggregator = eventAggregator;
         isCommentBeingEdited = false;
         isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
         this.transactionData = transactionData;
         transactions = new ObservableCollection<Transaction>();
+        this.eventAggregator.GetEvent<DailyDataAddedEvent>().Subscribe(async dailyData =>
+        {
+            await OnDailyDataAdded(dailyData);
+        });
     }
 
     private ObservableCollection<Transaction> transactions;
@@ -28,6 +37,28 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         get => transactions;
         set => SetProperty(ref transactions, value);
+    }
+
+    private async Task OnDailyDataAdded(DailyData dailyData)
+    {
+        await App.Current.Dispatcher.InvokeAsync(async () =>
+        {
+            var transaction = Transactions.FirstOrDefault(q => q.ID == dailyData.TransactionID);
+
+            if (transaction != null)
+            {
+                transaction.DailyDataCollection.Add(dailyData);
+            }
+        });
+    }
+
+    private async Task GetDailyData(ObservableCollection<Transaction> transactions)
+    {
+        foreach (var transaction in transactions)
+        {
+            var dailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+            transaction.DailyDataCollection = new ObservableCollection<DailyData>(dailyData);
+        }
     }
 
     public void OnNavigatedTo(NavigationContext navigationContext)
@@ -41,15 +72,6 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
                 "lastx" => Task.Run(() => GetLastXTransactions((int)navigationContext.Parameters[key])),
                 _ => Task.CompletedTask
             };
-        }
-    }
-
-    private async Task GetDailyData(ObservableCollection<Transaction> transactions)
-    {
-        foreach (var transaction in transactions)
-        {
-            var dailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
-            transaction.DailyDataCollection = new ObservableCollection<DailyData>(dailyData);
         }
     }
 

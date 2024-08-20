@@ -1,7 +1,9 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
 using Infrastructure;
+using Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
+using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
@@ -19,11 +21,7 @@ public partial class App : PrismApplication
     {
         base.OnStartup(e);
 
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.File("logs/TradeTrackerLog.txt", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
-
+        LogManager.InitializeLogger();
         Log.Information("Application Starting");
 
         Task.Run(() =>
@@ -36,7 +34,7 @@ public partial class App : PrismApplication
         Task.Run(async () =>
         {
             await Task.Delay(10000);
-            DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>());
+            DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });
         //FirstStartUp();
@@ -58,6 +56,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());
+
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
         containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
@@ -76,6 +75,12 @@ public partial class App : PrismApplication
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewMenuView>();
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        base.OnExit(e);
+        Log.CloseAndFlush();
     }
 }
 

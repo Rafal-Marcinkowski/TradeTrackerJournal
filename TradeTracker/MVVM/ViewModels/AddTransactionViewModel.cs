@@ -158,7 +158,7 @@ public class AddTransactionViewModel : BindableBase
                 InformationLink = InformationLink,
                 AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-                EntryMedianVolume = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
+                EntryMedianTurnover = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
                 InitialDescription = InitialDescription,
             };
 

@@ -5,7 +5,7 @@
     [CompanyName] NVARCHAR(30) NOT NULL, 
     [EntryDate] DATETIME NOT NULL, 
     [EntryPrice] DECIMAL(8, 2) NOT NULL, 
-    [EntryMedianVolume] INT NOT NULL, 
+    [EntryMedianTurnover] INT NOT NULL, 
     [NumberOfShares] INT NOT NULL, 
     [PositionSize] DECIMAL(8, 2) NOT NULL, 
     [CloseDate] DATETIME NULL, 

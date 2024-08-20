@@ -17,8 +17,8 @@ public class GetDailyData
         dailyData.Volume = (decimal)data["Volume"];
         dailyData.Turnover = (decimal)data["Turnover"];
         dailyData.TransactionCount = (int)data["Transactions"];
-        dailyData.TurnoverChange = await CalculateDailyDataProperties.CalculateTurnoverChange(transaction.EntryMedianVolume, dailyData.Turnover);
-        dailyData.PriceChange = await CalculateDailyDataProperties.CalculateTurnoverChange(transaction.EntryPrice, dailyData.ClosePrice);
+        dailyData.TurnoverChange = await CalculateDailyDataProperties.CalculateTurnoverChange(transaction.EntryMedianTurnover, dailyData.Turnover);
+        dailyData.PriceChange = await CalculateDailyDataProperties.CalculatePriceChange(transaction.EntryPrice, dailyData.ClosePrice);
         return dailyData;
     }
 }
