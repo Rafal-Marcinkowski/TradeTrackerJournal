@@ -180,7 +180,7 @@ public class AddTransactionViewModel : BindableBase
                     transaction.IsClosed = true;
                     transaction.ClosingDescription = "Transakcja zamknięta przy dodaniu.";
                 }
-                ///sprawdzic czy podobna transakcja istnieje
+                ///sprawdzic czy podobna transakcja istnieje?
                 transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
                 var dialog = new ConfirmationDialog()
                 {

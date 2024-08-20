@@ -1,6 +1,7 @@
 ﻿using SharedModels.Models;
 
 namespace DataAccess.Data;
+
 public interface ICompanyData
 {
     Task DeleteCompanyAsync(int id);

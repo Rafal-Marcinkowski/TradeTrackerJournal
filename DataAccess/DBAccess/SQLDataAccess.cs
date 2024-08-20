@@ -24,7 +24,6 @@ public class SQLDataAccess : ISQLDataAccess
         }
         catch (Exception ex)
         {
-            // Log or handle exception
             MessageBox.Show(ex.Message);
             throw;
         }

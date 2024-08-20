@@ -42,5 +42,4 @@
 
         <ContentControl prism:RegionManager.RegionName="MainRegion" Grid.Row="1" />
     </Grid>
-    
 </mah:MetroWindow>
