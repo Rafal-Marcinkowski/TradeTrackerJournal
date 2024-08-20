@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
+using System.IO;
 using System.Windows;
 using TradeTracker.MVVM.ViewModels;
 using TradeTracker.MVVM.Views;
@@ -25,7 +26,19 @@ public partial class App : PrismApplication
 
         Log.Information("Application Starting");
 
+        Task.Run(() =>
+        {
+            var text = Infrastructure.DownloadHtmlData.DownloadPageSource.DownloadHtmlAsync("MENTZEN").Result;
+            File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\ZawartoscStrony", text);
+        });
+
         TurnoverMedianTable.UpdateMedianTable();
+        Task.Run(async () =>
+        {
+            await Task.Delay(10000);
+            DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>());
+            tradeTracker.StartTracker();
+        });
         //FirstStartUp();
     }
 

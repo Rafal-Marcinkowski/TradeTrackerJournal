@@ -37,10 +37,12 @@ public class DailyDataProvider : IDailyDataProvider
             dailyData.OpenPrice,
             dailyData.ClosePrice,
             dailyData.Volume,
+            dailyData.Turnover,
             dailyData.MinPrice,
             dailyData.MaxPrice,
             dailyData.PriceChange,
-            dailyData.VolumeChange
+            dailyData.TurnoverChange,
+            dailyData.TransactionCount
         });
     }
 
@@ -54,10 +56,12 @@ public class DailyDataProvider : IDailyDataProvider
             dailyData.OpenPrice,
             dailyData.ClosePrice,
             dailyData.Volume,
+            dailyData.Turnover,
             dailyData.MinPrice,
             dailyData.MaxPrice,
             dailyData.PriceChange,
-            dailyData.VolumeChange
+            dailyData.TurnoverChange,
+            dailyData.TransactionCount
         });
     }
 
