@@ -19,6 +19,7 @@
         <Conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter"/>
         <Conv:CommentTransactionMultiConverter x:Key="CommentTransactionMultiConverter"/>
+        <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter"/>
     </mah:MetroContentControl.Resources>
 
     <Grid Margin="0,15,0,0">
@@ -233,8 +234,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="{Binding EntryMedianVolume}" FontWeight="DemiBold"/>
-                                    <TextBlock Text=" mln" FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryMedianVolume, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
                                 </StackPanel>
                             </StackPanel>
                         </DataTemplate>
@@ -245,42 +245,67 @@
                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Button Command="{Binding ToggleTransactionTracker}" 
+                                        Grid.Row="1" Grid.Column="1"
+Width="50" 
+Height="30" 
+Margin="1" 
+Background="DimGray" 
+BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Ustaw śledzenie transakcji"/>
+                                    </Button.ToolTip>
+                                    <iconPacks:GameIcons Kind="VelociraptorTracks"/>
+                                </Button>
                                 <Button Command="{Binding ShowChartCommand}" 
-                        Width="50" 
-                        Height="30" 
-                        Margin="1" 
-                        Background="DimGray" 
-                        BorderBrush="DimGray">
+                                        Grid.Row="0" Grid.Column="0"
+Width="50" 
+Height="30" 
+Margin="1" 
+Background="DimGray" 
+BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Pokaż wykres"/>
                                     </Button.ToolTip>
                                     <iconPacks:Fontisto Kind="LineChart"/>
                                 </Button>
                                 <Button Command="{Binding ShowInfoCommand}" 
-                        Width="50" 
-                        Height="30" 
-                        Margin="1" 
-                        Background="DimGray" 
-                        BorderBrush="DimGray">
+                                        Grid.Row="1" Grid.Column="0"
+Width="50" 
+Height="30" 
+Margin="1" 
+Background="DimGray" 
+BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Link do informacji, na którą była reakcja"/>
                                     </Button.ToolTip>
                                     <iconPacks:Material Kind="InformationSlabSymbol"/>
                                 </Button>
                                 <Button Command="{Binding DataContext.ToggleCommentsPanelCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
-                        CommandParameter="{Binding}"
-                        Width="50"
-                        Height="30"
-                        Margin="1"
-                        Background="DimGray"
-                        BorderBrush="DimGray">
+                                            Grid.Row="2" Grid.Column="0"
+CommandParameter="{Binding}"
+Width="50"
+Height="30"
+Margin="1"
+Background="DimGray"
+BorderBrush="DimGray">
                                     <Button.ToolTip>
                                         <ToolTip Content="Pokaż/Ukryj sekcję komentarzy"/>
                                     </Button.ToolTip>
                                     <iconPacks:Material Kind="CommentOutline"/>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
+                            
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -289,6 +314,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
+                                <TextBlock Text="Dzień: " FontWeight="DemiBold"/>
                                 <TextBlock Text="Otwarcie: " FontWeight="DemiBold"/>
                                 <TextBlock Text="Kurs zamknięcia: " FontWeight="DemiBold"/>
                                 <TextBlock Text="Obrót: " FontWeight="DemiBold"/>
@@ -299,34 +325,69 @@
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header=""
-                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                            HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <ItemsControl ItemsSource="{Binding DailyDataCollection}">
+                            <ItemsControl ItemsSource="{Binding DailyDataCollection}" Margin="0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}" />
-                                            <TextBlock Text="{Binding OpenPrice}" />
-                                            <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding ClosePrice}" />
-                                                <TextBlock Text="{Binding PriceChange}" Margin="10,0,0,0"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding Volume}" />
-                                                <TextBlock Text="{Binding VolumeChange}" Margin="10,0,0,0"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding MinPrice}" />
-                                                <TextBlock Text="{Binding MaxPrice}" Margin="10,0,0,0"/>
-                                            </StackPanel>
-                                        </StackPanel>
+                                        <Border BorderBrush="DimGray" BorderThickness="2" Margin="5,0,5,0">
+                                            <Grid Margin="5,0,5,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                           Grid.Row="0" Grid.ColumnSpan="2"
+                                           HorizontalAlignment="Center"
+                                           FontWeight="DemiBold"/>
+
+                                                <TextBlock Text="{Binding OpenPrice}" 
+                                           Grid.Row="1" Grid.ColumnSpan="2"
+                                           HorizontalAlignment="Center"/>
+
+                                                    <TextBlock Text="{Binding ClosePrice}" 
+                                                               Grid.Row="2" Grid.Column="0"
+                                               HorizontalAlignment="Left"/>
+                                                    <TextBlock Text="{Binding PriceChange}" Margin="10,0,0,0"
+                                                                Grid.Row="2" Grid.Column="1"
+                                               HorizontalAlignment="Right"/>
+
+                                                    <TextBlock Text="{Binding Volume, Converter={StaticResource VolumeToMillionConverter}}"
+                                                               Grid.Row="3" Grid.Column="0"
+                                               HorizontalAlignment="Left"/>
+                                                    <TextBlock Text="{Binding VolumeChange}" Margin="10,0,0,0"
+                                                               Grid.Row="3" Grid.Column="1"
+                                               HorizontalAlignment="Right"/>
+
+                                                    <TextBlock Text="{Binding MinPrice}" 
+                                                               Grid.Row="4" Grid.Column="0"
+                                               HorizontalAlignment="Left"/>
+                                                    <TextBlock Text="{Binding MaxPrice}" Margin="10,0,0,0"
+                                                               Grid.Row="4" Grid.Column="1"
+                                               HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+
 
                 <!--<DataGridTemplateColumn Header="D1" 
                                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">

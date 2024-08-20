@@ -101,8 +101,8 @@ class TransactionsOverviewMenuViewModel : BindableBase
 
     public ICommand TransactionsForCalendarDateCommand => new DelegateCommand<DateTime?>((calendarDate) =>
     {
-        //var parameters = new NavigationParameters();
-        //// ostatnie X transakcji
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
     });
 }

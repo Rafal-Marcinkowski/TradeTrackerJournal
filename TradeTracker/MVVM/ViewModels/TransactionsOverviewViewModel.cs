@@ -12,8 +12,10 @@ namespace TradeTracker.MVVM.ViewModels;
 class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly ITransactionData transactionData;
-    public TransactionsOverviewViewModel(ITransactionData transactionData)
+    private readonly IDailyDataProvider dailyDataProvider;
+    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider)
     {
+        this.dailyDataProvider = dailyDataProvider;
         isCommentBeingEdited = false;
         isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
@@ -30,21 +32,24 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     public void OnNavigatedTo(NavigationContext navigationContext)
     {
-        if (navigationContext.Parameters.ContainsKey("selectedCompany"))
+        foreach (var key in navigationContext.Parameters.Keys)
         {
-            int companyId = (int)navigationContext.Parameters["selectedCompany"];
-            Task.Run(() => GetTransactionsForCompany(companyId));
+            _ = key switch
+            {
+                "selectedCompany" => Task.Run(() => GetTransactionsForCompany((int)navigationContext.Parameters[key])),
+                "op" => Task.Run(() => GetAllOpenTransactions()),
+                "lastx" => Task.Run(() => GetLastXTransactions((int)navigationContext.Parameters[key])),
+                _ => Task.CompletedTask
+            };
         }
+    }
 
-        if (navigationContext.Parameters.ContainsKey("op"))
+    private async Task GetDailyData(ObservableCollection<Transaction> transactions)
+    {
+        foreach (var transaction in transactions)
         {
-            Task.Run(() => GetAllOpenTransactions());
-        }
-
-        if (navigationContext.Parameters.ContainsKey("lastx"))
-        {
-            int nrOfTransactionsToShow = (int)navigationContext.Parameters["lastx"];
-            Task.Run(() => GetLastXTransactions(nrOfTransactionsToShow));
+            var dailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+            transaction.DailyDataCollection = new ObservableCollection<DailyData>(dailyData);
         }
     }
 
@@ -52,13 +57,17 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         var transactions = await transactionData.GetAllTransactionsAsync();
         transactions = transactions.OrderByDescending(q => q.EntryDate).Take(nrOfTransactionsToShow);
-        Transactions = new ObservableCollection<Transaction>(transactions);
+        var transactionsList = new ObservableCollection<Transaction>(transactions);
+        await GetDailyData(transactionsList);
+        Transactions = transactionsList;
+        // InsertDailyData();
     }
 
     private async Task GetAllOpenTransactions()
     {
         var transactions = await transactionData.GetAllTransactionsAsync();
         transactions = transactions.OrderByDescending(q => q.EntryDate).Where(q => q.IsClosed == false);
+        await GetDailyData(new ObservableCollection<Transaction>(transactions));
         Transactions = new ObservableCollection<Transaction>(transactions);
     }
 
@@ -66,6 +75,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         var transactions = await transactionData.GetAllTransactionsForCompany(selectedCompanyId);
         transactions = transactions.OrderByDescending(q => q.EntryDate);
+        await GetDailyData(new ObservableCollection<Transaction>(transactions));
         Transactions = new ObservableCollection<Transaction>(transactions);
     }
 
@@ -78,7 +88,6 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
 
     }
-
 
     public ICommand ToggleCommentsPanelCommand => new DelegateCommand<Transaction>(transaction =>
     {
@@ -199,3 +208,33 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     });
 }
 
+//private void InsertDailyData()
+//{
+//    DailyData data1 = new()
+//    {
+//        TransactionID = 6,
+//        Date = new DateTime(2024, 8, 1),
+//        OpenPrice = 17,
+//        ClosePrice = 100,
+//        PriceChange = 5.00m,
+//        Volume = 11,
+//        VolumeChange = 15.00m,
+//        MinPrice = 111,
+//        MaxPrice = 121
+//    };
+//    dailyDataProvider.InsertDailyDataAsync(data1);
+//    //DailyData data2 = new()
+//    //{
+//    //    TransactionID = 1,
+//    //    Date = new DateTime(2024, 8, 1),
+//    //    OpenPrice = 88,
+//    //    ClosePrice = 70,
+//    //    PriceChange = 5.00m,
+//    //    Volume = 1723,
+//    //    VolumeChange = 15.00m,
+//    //    MinPrice = 11,
+//    //    MaxPrice = 156
+//    //};
+
+//    //dailyDataProvider.InsertDailyDataAsync(data2);
+//}
