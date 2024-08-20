@@ -12,7 +12,8 @@
     @IsClosed BIT,
     @InitialDescription NVARCHAR(250) = NULL,
     @ClosingDescription NVARCHAR(250),
-    @InformationLink NVARCHAR(150) = NULL
+    @InformationLink NVARCHAR(150) = NULL,
+    @IsTracking BIT
 AS
 BEGIN
     UPDATE [dbo].[Transactions]
@@ -29,6 +30,7 @@ BEGIN
         IsClosed = @IsClosed, 
         InitialDescription = @InitialDescription, 
         ClosingDescription = @ClosingDescription,
-        InformationLink = @InformationLink
+        InformationLink = @InformationLink,
+        IsTracking = @IsTracking
     WHERE ID = @ID;
 END;

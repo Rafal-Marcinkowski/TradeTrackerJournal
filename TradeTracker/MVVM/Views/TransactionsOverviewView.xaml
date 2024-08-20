@@ -254,7 +254,8 @@
                                     <RowDefinition></RowDefinition>
                                     <RowDefinition></RowDefinition>
                                 </Grid.RowDefinitions>
-                                <Button Command="{Binding ToggleTransactionTracker}" 
+                                <Button Command="{Binding DataContext.ToggleTransactionTracker, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                        CommandParameter="{Binding}"
                                         Grid.Row="1" Grid.Column="1"
                                         Width="50" 
                                         Height="30" 
@@ -262,7 +263,10 @@
                                         Background="DimGray" 
                                         BorderBrush="DimGray">
                                     <Button.ToolTip>
-                                        <ToolTip Content="Ustaw śledzenie transakcji"/>
+                                            <TextBlock>
+                                                <Run Text="Status śledzenia: " FontWeight="DemiBold"/>
+                                                <Run Text="{Binding IsTracking}"/>
+                                        </TextBlock>
                                     </Button.ToolTip>
                                     <iconPacks:GameIcons Kind="VelociraptorTracks"/>
                                 </Button>

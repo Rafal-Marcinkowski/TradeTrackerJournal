@@ -143,6 +143,38 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     private string editedCommentOldText;
 
+    public ICommand ToggleTransactionTracker => new DelegateCommand<Transaction>(async (transaction) =>
+    {
+        if (transaction.IsTracking)
+        {
+            var dialog = new ConfirmationDialog()
+            {
+                DialogText = "Czy na pewno wyłączyć śledzenie?"
+            };
+            dialog.ShowDialog();
+
+            if (dialog.Result)
+            {
+                transaction.IsTracking = false;
+                await transactionData.UpdateTransactionAsync(transaction);
+            }
+        }
+        else
+        {
+            var dialog = new ConfirmationDialog()
+            {
+                DialogText = "Czy na pewno włączyć śledzenie?"
+            };
+            dialog.ShowDialog();
+
+            if (dialog.Result)
+            {
+                transaction.IsTracking = true;
+                await transactionData.UpdateTransactionAsync(transaction);
+            }
+        }
+    });
+
     public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>((transaction) =>
     {
         transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;

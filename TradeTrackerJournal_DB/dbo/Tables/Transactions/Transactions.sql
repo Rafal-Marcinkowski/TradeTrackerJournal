@@ -13,5 +13,6 @@
     [IsClosed] BIT NOT NULL, 
     [InitialDescription] NVARCHAR(250) NULL, 
     [ClosingDescription] NVARCHAR(250) NULL, 
-    [InformationLink] NVARCHAR(150) NULL
+    [InformationLink] NVARCHAR(150) NULL, 
+    [IsTracking] BIT NOT NULL
 );

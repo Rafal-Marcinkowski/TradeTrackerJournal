@@ -12,6 +12,7 @@ public class Transaction : BindableBase
         IsClosed = false;
         AvgPriceOfTheDay = [];
         DailyDataCollection = [];
+        IsTracking = true;
     }
 
     public int ID { get; set; }
@@ -55,6 +56,7 @@ public class Transaction : BindableBase
     public decimal PositionSize { get; set; }
     public int Duration { get; set; }
     public bool IsClosed { get; set; }
+    public bool IsTracking { get; set; }
     public string? InformationLink { get; set; }
 
     public string? InitialDescription { get; set; }
