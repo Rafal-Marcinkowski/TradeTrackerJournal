@@ -112,7 +112,7 @@ public class DailyTradeTracker
         var records = await GetDataRecords.PrepareDataRecords(transaction, false);
 
         var recordsBeforeTransaction = records
-           .Where(r => r.Date <= transaction.EntryDate.Date)
+           .Where(r => r.Date < transaction.EntryDate.Date)
            .OrderByDescending(r => r.Date)
            .Take(20)
            .ToList();
@@ -126,13 +126,9 @@ public class DailyTradeTracker
         int remainingBefore = 20 - recordsBeforeTransaction.Count;
         if (remainingBefore > 0)
         {
-            var additionalRecords = await GetDataRecords.GetAdditionalRecords(transaction, remainingBefore, beforeTransaction: true);
+            var additionalRecords = await GetDataRecords.GetAdditionalRecords(transaction.CompanyName, remainingBefore, beforeTransaction: true, transaction.EntryDate);
             recordsBeforeTransaction.InsertRange(0, additionalRecords);
         }
-
-        decimal archivedEntryTurnoverMedian = CalculateArchivedTurnoverMedian.Calculate(recordsBeforeTransaction);
-        transaction.EntryMedianTurnover = (int)archivedEntryTurnoverMedian;
-        await transactionData.UpdateTransactionAsync(transaction);
 
         await InsertData(transaction, recordsAfterTransaction);
     }

@@ -1,5 +1,5 @@
 ﻿using DataAccess.Data;
-using Infrastructure;
+using Infrastructure.Calculations;
 using Infrastructure.DataFilters;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -200,7 +200,6 @@ public class AddTransactionViewModel : BindableBase
                 InformationLink = InformationLink,
                 AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-                EntryMedianTurnover = int.Parse(await TurnoverMedianTable.GetTurnoverMedianForCompany(SelectedCompanyName)),
                 InitialDescription = InitialDescription,
             };
 
@@ -214,6 +213,7 @@ public class AddTransactionViewModel : BindableBase
                 return;
             }
 
+            transaction.EntryMedianTurnover = (int)await CalculateArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
             try
             {
                 if (transaction.AvgSellPrice != null)

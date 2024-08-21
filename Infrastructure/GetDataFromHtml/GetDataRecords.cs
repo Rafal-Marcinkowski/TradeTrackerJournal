@@ -38,20 +38,20 @@ public class GetDataRecords
         return finalDataRecords;
     }
 
-    public async static Task<List<DataRecord>> GetAdditionalRecords(Transaction transaction, int neededRecords, bool beforeTransaction)
+    public async static Task<List<DataRecord>> GetAdditionalRecords(string companyCode, int neededRecords, bool beforeTransaction, DateTime entryDate)
     {
         List<DataRecord> additionalRecords = [];
         int counter = 2;
 
         do
         {
-            string html = await DownloadPageSource.DownloadHtmlAsync(transaction.CompanyName, true, counter);
-            var newRecords = await GetRelevantNodes.PrepareRecords(transaction.CompanyName);
+            string html = await DownloadPageSource.DownloadHtmlAsync(companyCode, true, counter);
+            var newRecords = await GetRelevantNodes.PrepareRecords(companyCode);
 
             if (beforeTransaction)
             {
                 var filteredRecords = newRecords
-                    .Where(r => r.Date < transaction.EntryDate.Date)
+                    .Where(r => r.Date < entryDate.Date)
                     .OrderByDescending(r => r.Date)
                     .Take(neededRecords)
                     .ToList();
@@ -64,5 +64,33 @@ public class GetDataRecords
         } while (neededRecords > 0);
 
         return additionalRecords;
+    }
+
+    public async static Task<IEnumerable<DataRecord>> GetRecordsForAverageTurnoverCalculation(string companyCode, DateTime entryDate)
+    {
+        string html = string.Empty;
+
+        List<DataRecord> finalDataRecords = [];
+        List<DataRecord> dataRecords = [];
+
+        html = await DownloadPageSource.DownloadHtmlAsync(companyCode);
+        if (String.IsNullOrEmpty(html))
+        {
+            return finalDataRecords;
+        }
+        await Task.Delay(5000);
+        dataRecords = await GetRelevantNodes.PrepareRecords(html);
+        finalDataRecords = dataRecords.Where(q => q.Date.Date < entryDate.Date).ToList();
+
+        if (finalDataRecords.Count < 20)
+        {
+            int remainingBefore = 20 - finalDataRecords.Count;
+            if (remainingBefore > 0)
+            {
+                dataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate);
+                finalDataRecords.InsertRange(0, dataRecords);
+            }
+        }
+        return finalDataRecords;
     }
 }

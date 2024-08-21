@@ -8,7 +8,7 @@ public class GetDailyData
     {
         DailyData dailyData = new();
         dailyData.Turnover = record.Turnover;
-        dailyData.MaxPrice = record.Close;
+        dailyData.MaxPrice = record.Max;
         dailyData.MinPrice = record.Min;
         dailyData.OpenPrice = record.Open;
         dailyData.ClosePrice = record.Close;
