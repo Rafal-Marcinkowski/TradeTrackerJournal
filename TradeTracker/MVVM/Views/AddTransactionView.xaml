@@ -90,11 +90,13 @@
 
         <TextBox Style="{StaticResource CustomTextBoxStyle}"
                  Grid.Column="1"
+                 Width="250"
+                 Grid.ColumnSpan="2"
                  Grid.Row="1"
-                 Controls:TextBoxHelper.Watermark="Godzina otwarcia"
+                 Controls:TextBoxHelper.Watermark="Data wejścia: DD/MM/RRRR: HH:MM"
                  Text="{Binding EntryDate, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox Style="{StaticResource CustomTextBoxStyle}"
-                 Grid.Column="2" Grid.Row="1"
+                 Grid.Column="3" Grid.Row="1"
                  Controls:TextBoxHelper.Watermark="Średnia cena kupna"
                  Text="{Binding EntryPrice, UpdateSourceTrigger=PropertyChanged}"/>
         <TextBox Grid.Column="2"

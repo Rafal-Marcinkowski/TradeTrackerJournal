@@ -1,54 +1,37 @@
 ﻿using HtmlAgilityPack;
-using Infrastructure.DownloadHtmlData;
+using SharedModels.Models;
 using System.Globalization;
 
 namespace Infrastructure.GetDataFromHtml;
 
 public class GetRelevantNodes
 {
-    public async static Task<Dictionary<string, object>> PrepareData(string companyCode)
+    public async static Task<List<DataRecord>> PrepareRecords(string html)
     {
-        string html = await DownloadPageSource.DownloadHtmlAsync(companyCode);
-
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
 
-        var dateNode = doc.DocumentNode.SelectSingleNode("//time[@class='q_ch_date']");
-        var date = DateTime.Parse(dateNode.GetAttributeValue("datetime", string.Empty), null, DateTimeStyles.RoundtripKind);
+        var rows = doc.DocumentNode.SelectNodes("//table[@class='qTableFull']/tr");
 
-        var priceNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_close']/span");
-        var price = Convert.ToDecimal(priceNode.InnerText, CultureInfo.InvariantCulture);
+        var records = new List<DataRecord>();
 
-        var openNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_open']/span");
-        var openPrice = Convert.ToDecimal(openNode.InnerText, CultureInfo.InvariantCulture);
+        foreach (var row in rows.Skip(1))
+        {
+            var cells = row.SelectNodes("td").Select(td => td.InnerText.Trim()).ToList();
 
-        var minNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_min']/span");
-        var minPrice = Convert.ToDecimal(minNode.InnerText, CultureInfo.InvariantCulture);
+            var record = new DataRecord
+            {
+                Date = DateTime.Parse(cells[0]).Date,
+                Open = Math.Round(decimal.Parse(cells[1].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                Max = Math.Round(decimal.Parse(cells[2].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                Min = Math.Round(decimal.Parse(cells[3].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                Close = Math.Round(decimal.Parse(cells[4].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                Volume = Math.Round(decimal.Parse(cells[5].Replace(" ", ""), CultureInfo.InvariantCulture), 2),
+                Turnover = Math.Round(decimal.Parse(cells[6].Replace(" ", ""), CultureInfo.InvariantCulture), 2)
+            };
 
-        var maxNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_max']/span");
-        var maxPrice = Convert.ToDecimal(maxNode.InnerText, CultureInfo.InvariantCulture);
-
-        var volumeNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_vol']/span");
-        var volume = Convert.ToDecimal(volumeNode.InnerText.Replace(" ", ""), CultureInfo.InvariantCulture);
-
-        var turnoverNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_mc']/span");
-        var turnover = Convert.ToDecimal(turnoverNode.InnerText.Replace(" ", ""), CultureInfo.InvariantCulture);
-
-        var transactionsNode = doc.DocumentNode.SelectSingleNode("//td[@id='pr_t_trnr']/span");
-        var transactions = Convert.ToInt32(transactionsNode.InnerText, CultureInfo.InvariantCulture);
-
-        var dataDictionary = new Dictionary<string, object>
-    {
-        { "Date", date },
-        { "Price", price },
-        { "OpenPrice", openPrice },
-        { "MinPrice", minPrice },
-        { "MaxPrice", maxPrice },
-        { "Volume", volume },
-        { "Turnover", turnover },
-        { "Transactions", transactions }
-    };
-
-        return dataDictionary;
+            records.Add(record);
+        }
+        return records;
     }
 }

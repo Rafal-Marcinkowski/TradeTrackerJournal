@@ -1,6 +1,6 @@
 ﻿CREATE TABLE DailyData (
     ID INT PRIMARY KEY IDENTITY,      
-    TransactionID INT NOT NULL,            
+    TransactionID INT FOREIGN KEY REFERENCES Transactions(ID) NOT NULL,            
     Date DATETIME NOT NULL,                
     OpenPrice DECIMAL(8, 2) NOT NULL,      
     ClosePrice DECIMAL(8, 2) NOT NULL,     

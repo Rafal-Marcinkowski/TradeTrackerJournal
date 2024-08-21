@@ -7,6 +7,7 @@ using Prism.Regions;
 using Serilog;
 using SharedModels.Models;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;
@@ -141,6 +142,46 @@ public class AddTransactionViewModel : BindableBase
         }
     });
 
+    private DateTime ParseEntryDate(string input)
+    {
+        var normalizedInput = input.Replace(" ", "").Replace(",", "").Replace(".", "").Replace(";", "").Trim();
+
+        if (normalizedInput.Length == 12)
+        {
+            string datePart = normalizedInput.Substring(0, 8);
+            string timePart = normalizedInput.Substring(8, 4);
+
+            string formattedDateTime = $"{datePart.Substring(0, 2)}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)} {timePart.Substring(0, 2)}:{timePart.Substring(2, 2)}";
+
+            if (DateTime.TryParseExact(formattedDateTime, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fullDate))
+            {
+                return fullDate;
+            }
+        }
+        else if (normalizedInput.Length == 8)
+        {
+            string datePart = normalizedInput.Substring(0, 8);
+
+            string formattedDate = $"{datePart.Substring(0, 2)}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)}";
+
+            if (DateTime.TryParseExact(formattedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOnly))
+            {
+                return dateOnly;
+            }
+        }
+        else if (normalizedInput.Length == 4 || normalizedInput.Length == 3)
+        {
+            string timePart = normalizedInput.Length == 4 ? normalizedInput : $"0{normalizedInput.Substring(0, 1)}{normalizedInput.Substring(1, 2)}"; // Dodaj zero przed minutą, jeśli jest podana jako jedna cyfra
+
+            if (TimeSpan.TryParseExact(timePart, "hhmm", CultureInfo.InvariantCulture, out var timeOnly))
+            {
+                return DateTime.Now.Date.Add(timeOnly);
+            }
+        }
+
+        return new DateTime(1900, 1, 1, 0, 0, 0);
+    }
+
     public ICommand AddTransactionCommand => new DelegateCommand(async () =>
     {
         if (!String.IsNullOrEmpty(SelectedCompanyName))
@@ -148,8 +189,9 @@ public class AddTransactionViewModel : BindableBase
             Transaction transaction = new()
             {
                 CompanyName = SelectedCompanyName,
-                EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
-                  .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
+                EntryDate = ParseEntryDate(EntryDate),
+                //EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
+                //  .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
                 EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var entryPrice) ? entryPrice : 0,
                 NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,

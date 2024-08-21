@@ -26,14 +26,14 @@ public partial class App : PrismApplication
 
         Task.Run(() =>
         {
-            var text = Infrastructure.DownloadHtmlData.DownloadPageSource.DownloadHtmlAsync("MENTZEN").Result;
+            var text = Infrastructure.DownloadHtmlData.DownloadPageSource.DownloadHtmlAsync("BSH").Result;
             File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\ZawartoscStrony", text);
         });
 
         TurnoverMedianTable.UpdateMedianTable();
         Task.Run(async () =>
         {
-            await Task.Delay(10000);
+            await Task.Delay(5000);
             DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });

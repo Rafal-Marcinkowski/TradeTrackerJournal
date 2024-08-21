@@ -11,7 +11,7 @@ public class AddTransactionValidator : AbstractValidator<Transaction>
             .NotEmpty().WithMessage("Wybierz spółkę");
 
         RuleFor(x => x.EntryDate)
-            .Must(BeAValidTime).WithMessage("Godzina wejścia musi być pomiędzy 9:00 a 17:05")
+            .Must(BeAValidTime).WithMessage("Podaj poprawną datę wejścia")
             .When(x => !string.IsNullOrEmpty(x.EntryDate.ToString()));
 
         RuleFor(x => x.EntryPrice)

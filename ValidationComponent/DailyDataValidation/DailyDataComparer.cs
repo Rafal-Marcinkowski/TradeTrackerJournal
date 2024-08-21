@@ -9,7 +9,7 @@ public class DailyDataComparer : IEqualityComparer<DailyData>
     {
         if (x == null || y == null) return false;
 
-        return x.Date == y.Date
+        return x.Date.Date == y.Date.Date
             && x.OpenPrice == y.OpenPrice
             && x.ClosePrice == y.ClosePrice
             && x.MinPrice == y.MinPrice
