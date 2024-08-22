@@ -13,6 +13,7 @@ public class Transaction : BindableBase
         AvgPriceOfTheDay = [];
         DailyDataCollection = [];
         IsTracking = true;
+        EntryMedianTurnover = 0;
     }
 
     public int ID { get; set; }
@@ -46,12 +47,18 @@ public class Transaction : BindableBase
         set => SetProperty(ref avgSellPrice, value);
     }
 
+    private int entryMedianTurnover;
+    public int EntryMedianTurnover
+    {
+        get => entryMedianTurnover;
+        set => SetProperty(ref entryMedianTurnover, value);
+    }
+
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }
     public DateTime? CloseDate { get; set; }
     public decimal EntryPrice { get; set; }
 
-    public int EntryMedianTurnover { get; set; }
     public int NumberOfShares { get; set; }
     public decimal PositionSize { get; set; }
     public int Duration { get; set; }

@@ -1,5 +1,4 @@
 ﻿using DataAccess.Data;
-using Infrastructure.Calculations;
 using Infrastructure.DataFilters;
 using Infrastructure.Events;
 using Prism.Commands;
@@ -219,12 +218,12 @@ public class AddTransactionViewModel : BindableBase
                 return;
             }
 
-            transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
+            //transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
             try
             {
                 if (transaction.AvgSellPrice != null)
                 {
-                    transaction.CloseDate = DateTime.Now;
+                    transaction.CloseDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute);
                     transaction.IsClosed = true;
                 }
                 ///sprawdzic czy podobna transakcja istnieje?

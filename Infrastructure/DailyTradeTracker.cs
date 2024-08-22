@@ -16,7 +16,7 @@ public class DailyTradeTracker
     private readonly IEventAggregator eventAggregator;
     private List<Transaction> failedTransactions;
 
-    private SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+    private SemaphoreSlim semaphore = new(1, 1);
     public static bool isTrackerWorking = false;
 
     public DailyTradeTracker(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator)
@@ -67,7 +67,7 @@ public class DailyTradeTracker
             transactions = (List<Transaction>)await transactionData.GetAllTransactionsAsync();
         }
 
-        if (transactions.Any())
+        if (transactions.Count != 0)
         {
             transactions = transactions.Where(q => q.IsTracking).ToList();
             await TrackTransactions(transactions);
@@ -82,6 +82,16 @@ public class DailyTradeTracker
         {
             foreach (var transaction in transactions)
             {
+                if (transaction.EntryMedianTurnover == 0)
+                {
+                    transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
+                    if (transaction.EntryMedianTurnover == 0)
+                    {
+                        continue;
+                    }
+                    await transactionData.UpdateTransactionAsync(transaction);
+                    eventAggregator.GetEvent<TransactionUpdatedEvent>().Publish(transaction);
+                }
                 bool isHistoricalTransaction = await AssessTransaction(transaction.EntryDate.Date);
                 if (isHistoricalTransaction)
                 {
@@ -144,7 +154,7 @@ public class DailyTradeTracker
                .OrderBy(r => r.Date)
                .ToList();
 
-            if (newRecords.Any())
+            if (newRecords.Count != 0)
             {
                 foreach (var record in newRecords)
                 {
@@ -175,6 +185,11 @@ public class DailyTradeTracker
             var dailyDataCollection = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
 
             var records = await GetDataRecords.PrepareDataRecords(transaction, false);
+            if (!records.Any())
+            {
+                Log.Error<Transaction>($"Problemy przy śledzeniu: {transaction.ID}, {transaction.CompanyName}", transaction);
+                return;
+            }
 
             var recordsBeforeTransaction = records
                .Where(r => r.Date < transaction.EntryDate.Date)

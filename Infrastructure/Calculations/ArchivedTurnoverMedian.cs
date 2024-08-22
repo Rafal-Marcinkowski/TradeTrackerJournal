@@ -30,7 +30,7 @@ public class ArchivedTurnoverMedian
 
     public static async Task<decimal> GetTurnoverAsync(string companyCode, DateTime entryDate)
     {
-        var records = await GetDataRecords.GetRecordsForMedianTurnoverCalculation(companyCode, entryDate);
+        var records = await GetDataRecords.GetRecordsForMedianTurnoverCalculation(companyCode, entryDate.Date);
         return Calculate(records.ToList());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Infrastructure.DownloadHtmlData;
+using Serilog;
 using SharedModels.Models;
 
 namespace Infrastructure.GetDataFromHtml;
@@ -18,11 +19,10 @@ public class GetDataRecords
         {
             html = counter == 1 ? await DownloadPageSource.DownloadHtmlAsync(transaction.CompanyName)
                 : await DownloadPageSource.DownloadHtmlAsync(transaction.CompanyName, true, counter);
-            if (String.IsNullOrEmpty(html))
+            if (String.IsNullOrEmpty(html) || html == "BiznesRadarServerError")
             {
                 return finalDataRecords;
             }
-            await Task.Delay(2500);
             dataRecords = await GetRelevantNodes.PrepareRecords(html);
             finalDataRecords.AddRange(dataRecords);
             if (isRecent)
@@ -46,8 +46,11 @@ public class GetDataRecords
         do
         {
             string html = await DownloadPageSource.DownloadHtmlAsync(companyCode, true, counter);
-            var newRecords = await GetRelevantNodes.PrepareRecords(companyCode);
-
+            if (String.IsNullOrEmpty(html) || html == "BiznesRadarServerError")
+            {
+                Log.Error<string>($"Problemy przy pobieraniu rekordów {html}", html);
+            }
+            var newRecords = await GetRelevantNodes.PrepareRecords(html);
             if (beforeTransaction)
             {
                 var filteredRecords = newRecords
@@ -74,9 +77,9 @@ public class GetDataRecords
         List<DataRecord> dataRecords = [];
 
         html = await DownloadPageSource.DownloadHtmlAsync(companyCode);
-        if (String.IsNullOrEmpty(html))
+        if (String.IsNullOrEmpty(html) || html == "BiznesRadarServerError")
         {
-            return finalDataRecords;
+            Log.Error<string>($"Problemy przy pobieraniu rekordów {html}", html);
         }
         dataRecords = await GetRelevantNodes.PrepareRecords(html);
         finalDataRecords = dataRecords.Where(q => q.Date.Date < entryDate.Date).ToList();
@@ -86,8 +89,7 @@ public class GetDataRecords
             int remainingBefore = 20 - finalDataRecords.Count;
             if (remainingBefore > 0)
             {
-                await Task.Delay(1000);
-                dataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate);
+                dataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate.Date);
                 finalDataRecords.InsertRange(0, dataRecords);
             }
         }

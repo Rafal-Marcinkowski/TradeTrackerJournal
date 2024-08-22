@@ -33,7 +33,7 @@ public partial class App : PrismApplication
         TurnoverMedianTable.UpdateMedianTable();
         Task.Run(async () =>
         {
-            await Task.Delay(2000);
+            await Task.Delay(5000);
             DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });

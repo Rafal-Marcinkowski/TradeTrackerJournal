@@ -32,6 +32,23 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         {
             await OnDailyDataAdded(dailyData);
         });
+        this.eventAggregator.GetEvent<TransactionUpdatedEvent>().Subscribe(async transaction =>
+        {
+            await OnTransactionUpdated(transaction);
+        });
+    }
+
+    private async Task OnTransactionUpdated(Transaction transaction)
+    {
+        await App.Current.Dispatcher.InvokeAsync(async () =>
+        {
+            var transactionToUpdate = Transactions.FirstOrDefault(q => q.ID == transaction.ID);
+
+            if (transactionToUpdate != null)
+            {
+                transactionToUpdate.EntryMedianTurnover = transaction.EntryMedianTurnover;
+            }
+        });
     }
 
     private ObservableCollection<Transaction> transactions;

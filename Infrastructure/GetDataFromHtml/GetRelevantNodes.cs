@@ -15,7 +15,7 @@ public class GetRelevantNodes
 
         var records = new List<DataRecord>();
 
-        if (records.Count > 0)
+        if (rows is not null)
         {
             foreach (var row in rows.Skip(1))
             {
@@ -34,7 +34,7 @@ public class GetRelevantNodes
 
                 records.Add(record);
             }
-        }//////////////o jak nie ma takich danych na biznesradarze
+        }
         return records;
     }
 }
