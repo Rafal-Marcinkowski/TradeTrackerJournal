@@ -54,7 +54,7 @@ public class DailyTradeTracker
 
     public async Task StartTracker(Transaction transaction = null)
     {
-        Log.Information("Rozpoczynam śledzenie transakcji.");
+        Log.Information("Rozpoczynam śledzenie.");
         isTrackerWorking = true;
         List<Transaction> transactions = [];
 
@@ -77,30 +77,13 @@ public class DailyTradeTracker
 
     private async Task TrackTransactions(IEnumerable<Transaction> transactions)
     {
-        Log.Information("Śledzenie wszystkich transkacji po kolei.");
         try
         {
             foreach (var transaction in transactions)
             {
-                if (transaction.EntryMedianTurnover == 0)
-                {
-                    transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
-                    if (transaction.EntryMedianTurnover == 0)
-                    {
-                        continue;
-                    }
-                    await transactionData.UpdateTransactionAsync(transaction);
-                    eventAggregator.GetEvent<TransactionUpdatedEvent>().Publish(transaction);
-                }
-                bool isHistoricalTransaction = await AssessTransaction(transaction.EntryDate.Date);
-                if (isHistoricalTransaction)
-                {
-                    await TrackArchivedTransaction(transaction);
-                }
-                else
-                {
-                    await TrackRecentTransaction(transaction);
-                }
+                Log.Information($"Śledzenie transkacji ID: {transaction.ID}, {transaction.CompanyName}");
+
+                await Track(transaction);
 
                 await CheckTrackingProgress(transaction);
             }
@@ -111,23 +94,72 @@ public class DailyTradeTracker
         }
     }
 
-    private async Task CheckTrackingProgress(Transaction transaction)
+    private async Task Track(Transaction transaction)
     {
-        try
+        var allRecords = await GetDataRecords.GetAllNecessaryRecords(transaction);
+
+        if (transaction.EntryMedianTurnover == 0)
         {
-            var dailyDataCollection = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
-            if (dailyDataCollection.Any())
+            var medianRecords = allRecords
+                .Where(q => q.Date < transaction.EntryDate.Date)
+                .OrderByDescending(q => q.Date)
+                .Take(20).ToList();
+            transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.Calculate(medianRecords);
+            await transactionData.UpdateTransactionAsync(transaction);
+            eventAggregator.GetEvent<TransactionUpdatedEvent>().Publish(transaction);
+        }
+
+        var trackingRecords = allRecords
+                .Where(q => q.Date >= transaction.EntryDate.Date)
+                .OrderBy(q => q.Date)
+                .Take(30).ToList();
+
+        if (trackingRecords.Count != 0)
+        {
+            await UpdateDailyDataEntries(trackingRecords, transaction);
+        }
+    }
+
+    private async Task UpdateDailyDataEntries(IEnumerable<DataRecord> trackingRecords, Transaction transaction)
+    {
+        List<DailyData> newDataList = [];
+        foreach (var record in trackingRecords)
+        {
+            DailyData dailyData = await PrepareDailyData.GetAsync(record);
+            newDataList.Add(dailyData);
+        }
+        var currentDailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+        var oldestCurrentRecord = currentDailyData.OrderBy(d => d.Date).FirstOrDefault();
+
+        var recordsToAdd = newDataList
+            .Where(d => oldestCurrentRecord == null || d.Date > oldestCurrentRecord.Date)
+            .OrderBy(d => d.Date)
+            .Take(30)
+            .ToList();
+
+        if (recordsToAdd.Count != 0)
+        {
+            foreach (var item in recordsToAdd)
             {
-                if (dailyDataCollection.Count() >= 30)
-                {
-                    transaction.IsTracking = false;
-                    await transactionData.UpdateTransactionAsync(transaction);
-                }
+                item.TransactionID = transaction.ID;
+                item.PriceChange = await DailyDataProperties.CalculatePriceChange(transaction.EntryPrice, item.ClosePrice);
+                item.TurnoverChange = await DailyDataProperties.CalculateTurnoverChange(transaction.EntryMedianTurnover, item.Turnover);
+                await dailyDataProvider.InsertDailyDataAsync(item);
+                eventAggregator.GetEvent<DailyDataAddedEvent>().Publish(item);
             }
         }
-        catch (Exception ex)
+    }
+
+    private async Task CheckTrackingProgress(Transaction transaction)
+    {
+        var dailyDataCollection = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+        if (dailyDataCollection.Any())
         {
-            throw;
+            if (dailyDataCollection.Count() >= 30)
+            {
+                transaction.IsTracking = false;
+                await transactionData.UpdateTransactionAsync(transaction);
+            }
         }
     }
 

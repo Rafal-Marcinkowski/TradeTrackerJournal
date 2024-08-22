@@ -6,14 +6,16 @@ public class PrepareDailyData
 {
     public async static Task<DailyData> GetAsync(DataRecord record)
     {
-        DailyData dailyData = new();
-        dailyData.Turnover = record.Turnover;
-        dailyData.MaxPrice = record.Max;
-        dailyData.MinPrice = record.Min;
-        dailyData.OpenPrice = record.Open;
-        dailyData.ClosePrice = record.Close;
-        dailyData.Date = record.Date;
-        dailyData.Volume = record.Volume;
+        DailyData dailyData = new()
+        {
+            Turnover = record.Turnover,
+            MaxPrice = record.Max,
+            MinPrice = record.Min,
+            OpenPrice = record.Open,
+            ClosePrice = record.Close,
+            Date = record.Date,
+            Volume = record.Volume
+        };
         return dailyData;
     }
 }

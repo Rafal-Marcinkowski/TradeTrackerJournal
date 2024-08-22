@@ -5,9 +5,9 @@ namespace Infrastructure.Calculations;
 
 public class ArchivedTurnoverMedian
 {
-    public static decimal Calculate(List<DataRecord> records)
+    public static async Task<decimal> Calculate(IEnumerable<DataRecord> records)
     {
-        if (records.Count == 0)
+        if (records.Count() == 0)
             return 0;
 
         var turnoverValues = records
@@ -31,6 +31,6 @@ public class ArchivedTurnoverMedian
     public static async Task<decimal> GetTurnoverAsync(string companyCode, DateTime entryDate)
     {
         var records = await GetDataRecords.GetRecordsForMedianTurnoverCalculation(companyCode, entryDate.Date);
-        return Calculate(records.ToList());
+        return await Calculate(records.ToList());
     }
 }

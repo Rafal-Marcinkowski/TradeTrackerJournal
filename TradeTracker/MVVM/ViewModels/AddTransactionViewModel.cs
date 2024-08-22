@@ -249,6 +249,8 @@ public class AddTransactionViewModel : BindableBase
 
                     ClearFieldsCommand.Execute(null);
                     OrderFilteredCompanies();
+
+                    ///tutaj ID tranzakcji i bedzie dzialac
                     eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
                 }
             }

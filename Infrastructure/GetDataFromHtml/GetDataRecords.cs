@@ -73,26 +73,60 @@ public class GetDataRecords
     {
         string html = string.Empty;
 
-        List<DataRecord> finalDataRecords = [];
-        List<DataRecord> dataRecords = [];
+        List<DataRecord> medianDataRecords = [];
+        List<DataRecord> currentDataRecords = [];
+        List<DataRecord> allNecessaryDataRecords = [];
 
         html = await DownloadPageSource.DownloadHtmlAsync(companyCode);
         if (String.IsNullOrEmpty(html) || html == "BiznesRadarServerError")
         {
             Log.Error<string>($"Problemy przy pobieraniu rekordów {html}", html);
         }
-        dataRecords = await GetRelevantNodes.PrepareRecords(html);
-        finalDataRecords = dataRecords.Where(q => q.Date.Date < entryDate.Date).ToList();
+        currentDataRecords = await GetRelevantNodes.PrepareRecords(html);
+        allNecessaryDataRecords.AddRange(currentDataRecords);
+        medianDataRecords = currentDataRecords.Where(q => q.Date.Date < entryDate.Date).ToList();
 
-        if (finalDataRecords.Count < 20)
+        if (medianDataRecords.Count < 20)
         {
-            int remainingBefore = 20 - finalDataRecords.Count;
+            int remainingBefore = 20 - medianDataRecords.Count;
             if (remainingBefore > 0)
             {
-                dataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate.Date);
-                finalDataRecords.InsertRange(0, dataRecords);
+                currentDataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate.Date);
+                medianDataRecords.InsertRange(0, currentDataRecords);
             }
         }
-        return finalDataRecords;
+        allNecessaryDataRecords.AddRange(medianDataRecords);
+        return medianDataRecords;
+    }
+
+    public async static Task<IEnumerable<DataRecord>> GetAllNecessaryRecords(Transaction transaction)
+    {
+        List<DataRecord> currentDataRecords = [];
+        List<DataRecord> allNecessaryDataRecords = [];
+        string html = string.Empty;
+        int counter = 1;
+        bool predicate;
+
+        do
+        {
+            html = counter == 1
+                ? await DownloadPageSource.DownloadHtmlAsync(transaction.CompanyName)
+                : await DownloadPageSource.DownloadHtmlAsync(transaction.CompanyName, true, counter);
+
+            currentDataRecords = await GetRelevantNodes.PrepareRecords(html);
+            allNecessaryDataRecords.AddRange(currentDataRecords);
+            if (transaction.EntryMedianTurnover == 0)
+            {
+                predicate = allNecessaryDataRecords.Where(q => q.Date < transaction.EntryDate).Count() <= 20;
+            }
+            else
+            {
+                predicate = !allNecessaryDataRecords.Any(q => q.Date.Date == transaction.EntryDate.Date);
+            }
+
+            counter++;
+        } while (predicate);
+        return allNecessaryDataRecords;
     }
 }
+
