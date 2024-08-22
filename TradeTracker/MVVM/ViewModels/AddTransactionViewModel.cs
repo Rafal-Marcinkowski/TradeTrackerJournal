@@ -1,7 +1,9 @@
 ﻿using DataAccess.Data;
 using Infrastructure.Calculations;
 using Infrastructure.DataFilters;
+using Infrastructure.Events;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Serilog;
@@ -20,6 +22,7 @@ public class AddTransactionViewModel : BindableBase
     private readonly IRegionManager regionManager;
     private readonly ITransactionData transactionData;
     private readonly ICompanyData companyData;
+    private readonly IEventAggregator eventAggregator;
 
     private ObservableCollection<Company> filteredCompanies;
 
@@ -111,8 +114,9 @@ public class AddTransactionViewModel : BindableBase
         FilteredCompanies = ObservableCollectionFilter.OrderByDescendingTransactionCount(FilteredCompanies);
     }
 
-    public AddTransactionViewModel(IRegionManager regionManager, ITransactionData transactionData, ICompanyData companyData)
+    public AddTransactionViewModel(IRegionManager regionManager, ITransactionData transactionData, ICompanyData companyData, IEventAggregator eventAggregator)
     {
+        this.eventAggregator = eventAggregator;
         this.regionManager = regionManager;
         this.transactionData = transactionData;
         this.companyData = companyData;
@@ -190,8 +194,6 @@ public class AddTransactionViewModel : BindableBase
             {
                 CompanyName = SelectedCompanyName,
                 EntryDate = ParseEntryDate(EntryDate),
-                //EntryDate = DateTime.Now.Date.Add(TimeSpan.TryParse(EntryDate.Replace(",", ":").Replace(".", ":")
-                //  .Replace(";", ":"), out var timeComponent) ? timeComponent : TimeSpan.Zero),
                 EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var entryPrice) ? entryPrice : 0,
                 NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
@@ -209,18 +211,21 @@ public class AddTransactionViewModel : BindableBase
             if (!results.IsValid)
             {
                 var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
-                MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
+                var dialog = new ErrorDialog()
+                {
+                    DialogText = validationErrors
+                };
+                dialog.ShowDialog();
                 return;
             }
 
-            transaction.EntryMedianTurnover = (int)await CalculateArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
+            transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
             try
             {
                 if (transaction.AvgSellPrice != null)
                 {
                     transaction.CloseDate = DateTime.Now;
                     transaction.IsClosed = true;
-                    transaction.ClosingDescription = "Transakcja zamknięta przy dodaniu.";
                 }
                 ///sprawdzic czy podobna transakcja istnieje?
                 transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
@@ -245,11 +250,12 @@ public class AddTransactionViewModel : BindableBase
 
                     ClearFieldsCommand.Execute(null);
                     OrderFilteredCompanies();
+                    eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Log.Error(ex.Message);
             }
         }
     });

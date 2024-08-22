@@ -22,7 +22,7 @@ public class GetDataRecords
             {
                 return finalDataRecords;
             }
-            await Task.Delay(5000);
+            await Task.Delay(2500);
             dataRecords = await GetRelevantNodes.PrepareRecords(html);
             finalDataRecords.AddRange(dataRecords);
             if (isRecent)
@@ -66,7 +66,7 @@ public class GetDataRecords
         return additionalRecords;
     }
 
-    public async static Task<IEnumerable<DataRecord>> GetRecordsForAverageTurnoverCalculation(string companyCode, DateTime entryDate)
+    public async static Task<IEnumerable<DataRecord>> GetRecordsForMedianTurnoverCalculation(string companyCode, DateTime entryDate)
     {
         string html = string.Empty;
 
@@ -78,7 +78,6 @@ public class GetDataRecords
         {
             return finalDataRecords;
         }
-        await Task.Delay(5000);
         dataRecords = await GetRelevantNodes.PrepareRecords(html);
         finalDataRecords = dataRecords.Where(q => q.Date.Date < entryDate.Date).ToList();
 
@@ -87,6 +86,7 @@ public class GetDataRecords
             int remainingBefore = 20 - finalDataRecords.Count;
             if (remainingBefore > 0)
             {
+                await Task.Delay(1000);
                 dataRecords = await GetAdditionalRecords(companyCode, remainingBefore, true, entryDate);
                 finalDataRecords.InsertRange(0, dataRecords);
             }

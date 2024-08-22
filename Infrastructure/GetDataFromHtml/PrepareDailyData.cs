@@ -2,7 +2,7 @@
 
 namespace Infrastructure.GetDataFromHtml;
 
-public class GetDailyData
+public class PrepareDailyData
 {
     public async static Task<DailyData> GetAsync(DataRecord record)
     {

@@ -15,23 +15,26 @@ public class GetRelevantNodes
 
         var records = new List<DataRecord>();
 
-        foreach (var row in rows.Skip(1))
+        if (records.Count > 0)
         {
-            var cells = row.SelectNodes("td").Select(td => td.InnerText.Trim()).ToList();
-
-            var record = new DataRecord
+            foreach (var row in rows.Skip(1))
             {
-                Date = DateTime.Parse(cells[0]).Date,
-                Open = Math.Round(decimal.Parse(cells[1].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
-                Max = Math.Round(decimal.Parse(cells[2].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
-                Min = Math.Round(decimal.Parse(cells[3].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
-                Close = Math.Round(decimal.Parse(cells[4].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
-                Volume = Math.Round(decimal.Parse(cells[5].Replace(" ", ""), CultureInfo.InvariantCulture), 2),
-                Turnover = Math.Round(decimal.Parse(cells[6].Replace(" ", ""), CultureInfo.InvariantCulture), 2)
-            };
+                var cells = row.SelectNodes("td").Select(td => td.InnerText.Trim()).ToList();
 
-            records.Add(record);
-        }
+                var record = new DataRecord
+                {
+                    Date = DateTime.Parse(cells[0]).Date,
+                    Open = Math.Round(decimal.Parse(cells[1].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                    Max = Math.Round(decimal.Parse(cells[2].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                    Min = Math.Round(decimal.Parse(cells[3].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                    Close = Math.Round(decimal.Parse(cells[4].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
+                    Volume = Math.Round(decimal.Parse(cells[5].Replace(" ", ""), CultureInfo.InvariantCulture), 2),
+                    Turnover = Math.Round(decimal.Parse(cells[6].Replace(" ", ""), CultureInfo.InvariantCulture), 2)
+                };
+
+                records.Add(record);
+            }
+        }//////////////o jak nie ma takich danych na biznesradarze
         return records;
     }
 }

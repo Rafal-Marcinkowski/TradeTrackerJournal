@@ -77,7 +77,6 @@ public class TransactionData : ITransactionData
         await dBAccess.SaveDataAsync("UpdateTransaction", parameters);
     }
 
-
     public async Task DeleteTransactionAsync(int id)
     {
         await dBAccess.SaveDataAsync("DeleteTransaction", new { ID = id });

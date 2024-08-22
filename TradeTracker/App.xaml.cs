@@ -33,11 +33,11 @@ public partial class App : PrismApplication
         TurnoverMedianTable.UpdateMedianTable();
         Task.Run(async () =>
         {
-            await Task.Delay(5000);
+            await Task.Delay(2000);
             DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });
-        //FirstStartUp();
+        // FirstStartUp();
     }
 
     private void FirstStartUp()
@@ -58,6 +58,7 @@ public partial class App : PrismApplication
         .Build());
 
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
+        containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
         containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
         containerRegistry.RegisterSingleton<IDailyDataProvider, DailyDataProvider>();

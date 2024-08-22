@@ -16,9 +16,11 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
+    private readonly ITransactionCommentData transactionCommentData;
 
-    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator)
+    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, ITransactionCommentData transactionCommentData)
     {
+        this.transactionCommentData = transactionCommentData;
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
         isCommentBeingEdited = false;
@@ -81,8 +83,17 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         transactions = transactions.OrderByDescending(q => q.EntryDate).Take(nrOfTransactionsToShow);
         var transactionsList = new ObservableCollection<Transaction>(transactions);
         await GetDailyData(transactionsList);
+        await GetAllComments(transactionsList);
         Transactions = transactionsList;
-        // InsertDailyData();
+    }
+
+    private async Task GetAllComments(ObservableCollection<Transaction> transactions)
+    {
+        foreach (var transaction in transactions)
+        {
+            var comments = await transactionCommentData.GetAllCommentsForTransactionAsync(transaction.ID);
+            transaction.Comments = (new ObservableCollection<TransactionComment>(comments));
+        }
     }
 
     private async Task GetAllOpenTransactions()
@@ -90,6 +101,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         var transactions = await transactionData.GetAllTransactionsAsync();
         transactions = transactions.OrderByDescending(q => q.EntryDate).Where(q => q.IsClosed == false);
         await GetDailyData(new ObservableCollection<Transaction>(transactions));
+        await GetAllComments(new ObservableCollection<Transaction>(transactions));
         Transactions = new ObservableCollection<Transaction>(transactions);
     }
 
@@ -98,6 +110,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         var transactions = await transactionData.GetAllTransactionsForCompany(selectedCompanyId);
         transactions = transactions.OrderByDescending(q => q.EntryDate);
         await GetDailyData(new ObservableCollection<Transaction>(transactions));
+        await GetAllComments(new ObservableCollection<Transaction>(transactions));
         Transactions = new ObservableCollection<Transaction>(transactions);
     }
 
@@ -197,17 +210,19 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
-    public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>((transaction) =>
+    public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>(async (transaction) =>
     {
         transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
+
         NewCommentText = string.Empty;
     });
 
-    public ICommand ConfirmCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
+    public ICommand ConfirmCommentChangesCommand => new DelegateCommand<TransactionComment>(async (comment) =>
     {
         if (comment.IsEditing)
         {
             comment.IsEditing = false;
+            await transactionCommentData.UpdateCommentAsync(comment);
         }
     });
 
@@ -229,16 +244,20 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
-    public ICommand ConfirmNewCommentCommand => new DelegateCommand<Transaction>((transaction) =>
+    public ICommand ConfirmNewCommentCommand => new DelegateCommand<Transaction>(async (transaction) =>
     {
         if (!String.IsNullOrEmpty(NewCommentText))
         {
-            TransactionComment transactionComment = new();
-            transactionComment.EntryDate = DateTime.Now;
-            transactionComment.CommentText = NewCommentText;
+            TransactionComment transactionComment = new()
+            {
+                TransactionID = transaction.ID,
+                EntryDate = DateTime.Now,
+                CommentText = NewCommentText
+            };
             transaction.Comments.Add(transactionComment);
-            NewCommentText = string.Empty;
+            await transactionCommentData.InsertCommentAsync(transactionComment);
             transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
+            NewCommentText = string.Empty;
         }
     });
 
@@ -247,7 +266,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     });
 
-    public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<TransactionComment, Transaction>>((parameters) =>
+    public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<TransactionComment, Transaction>>(async (parameters) =>
     {
         var dialog = new ConfirmationDialog()
         {
@@ -257,38 +276,9 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
         if (dialog.Result)
         {
+            parameters.Item1.ID = await transactionCommentData.GetCommentID(parameters.Item1.CommentText);
             parameters.Item2.Comments.Remove(parameters.Item1);
+            await transactionCommentData.DeleteCommentAsync(parameters.Item1.ID);
         }
     });
 }
-
-//private void InsertDailyData()
-//{
-//    DailyData data1 = new()
-//    {
-//        TransactionID = 6,
-//        Date = new DateTime(2024, 8, 1),
-//        OpenPrice = 17,
-//        ClosePrice = 100,
-//        PriceChange = 5.00m,
-//        Volume = 11,
-//        VolumeChange = 15.00m,
-//        MinPrice = 111,
-//        MaxPrice = 121
-//    };
-//    dailyDataProvider.InsertDailyDataAsync(data1);
-//    //DailyData data2 = new()
-//    //{
-//    //    TransactionID = 1,
-//    //    Date = new DateTime(2024, 8, 1),
-//    //    OpenPrice = 88,
-//    //    ClosePrice = 70,
-//    //    PriceChange = 5.00m,
-//    //    Volume = 1723,
-//    //    VolumeChange = 15.00m,
-//    //    MinPrice = 11,
-//    //    MaxPrice = 156
-//    //};
-
-//    //dailyDataProvider.InsertDailyDataAsync(data2);
-//}
