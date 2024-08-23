@@ -37,7 +37,7 @@ public partial class App : PrismApplication
             DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });
-        // FirstStartUp();
+        FirstStartUp();
     }
 
     private void FirstStartUp()

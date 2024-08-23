@@ -7,7 +7,7 @@ public class DownloadPageSource
 {
     public async static Task<string> DownloadHtmlAsync(string companyCode, bool isArchivedPage = false, int archivedPageNumber = 0)
     {
-        await Task.Delay(2000);
+        await Task.Delay(5000);
         string url = $"https://www.biznesradar.pl/notowania-historyczne/{companyCode}";
         if (isArchivedPage)
         {
@@ -39,7 +39,7 @@ public class DownloadPageSource
                     {
                         url = $"{requestUri},{archivedPageNumber}";
                     }
-                    await Task.Delay(1000);
+                    await Task.Delay(2000);
                     continue;
                 }
 

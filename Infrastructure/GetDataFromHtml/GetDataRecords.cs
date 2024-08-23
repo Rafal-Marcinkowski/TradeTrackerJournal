@@ -115,13 +115,18 @@ public class GetDataRecords
 
             currentDataRecords = await GetRelevantNodes.PrepareRecords(html);
             allNecessaryDataRecords.AddRange(currentDataRecords);
+
+            if (allNecessaryDataRecords.First().Date <= transaction.EntryDate.Date)
+            {
+                return allNecessaryDataRecords;
+            }
             if (transaction.EntryMedianTurnover == 0)
             {
                 predicate = allNecessaryDataRecords.Where(q => q.Date < transaction.EntryDate).Count() <= 20;
             }
             else
             {
-                predicate = !allNecessaryDataRecords.Any(q => q.Date.Date == transaction.EntryDate.Date);
+                predicate = !allNecessaryDataRecords.Any(q => q.Date.Date <= transaction.EntryDate.Date);
             }
 
             counter++;

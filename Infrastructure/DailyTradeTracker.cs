@@ -15,7 +15,6 @@ public class DailyTradeTracker
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
     private List<Transaction> failedTransactions;
-
     private SemaphoreSlim semaphore = new(1, 1);
     public static bool isTrackerWorking = false;
 
