@@ -7,7 +7,6 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
-using System.IO;
 using System.Windows;
 using TradeTracker.MVVM.ViewModels;
 using TradeTracker.MVVM.Views;
@@ -24,12 +23,6 @@ public partial class App : PrismApplication
         LogManager.InitializeLogger();
         Log.Information("Application Starting");
 
-        Task.Run(() =>
-        {
-            var text = Infrastructure.DownloadHtmlData.DownloadPageSource.DownloadHtmlAsync("BSH").Result;
-            File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\ZawartoscStrony", text);
-        });
-
         TurnoverMedianTable.UpdateMedianTable();
         Task.Run(async () =>
         {
@@ -37,7 +30,7 @@ public partial class App : PrismApplication
             DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
             tradeTracker.StartTracker();
         });
-        FirstStartUp();
+        //FirstStartUp();
     }
 
     private void FirstStartUp()

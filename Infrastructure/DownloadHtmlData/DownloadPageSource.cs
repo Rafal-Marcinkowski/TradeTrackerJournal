@@ -5,52 +5,53 @@ namespace Infrastructure.DownloadHtmlData;
 
 public class DownloadPageSource
 {
-    public async static Task<string> DownloadHtmlAsync(string companyCode, bool isArchivedPage = false, int archivedPageNumber = 0)
+    private static readonly HttpClient client = new HttpClient(new HttpClientHandler
     {
-        await Task.Delay(5000);
+        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+    });
+
+    public async static Task<(string html, string misdirectedUrl)> DownloadHtmlAsync(string companyCode, bool isArchivedPage = false, int archivedPageNumber = 0)
+    {
         string url = $"https://www.biznesradar.pl/notowania-historyczne/{companyCode}";
-        if (isArchivedPage)
+        url = isArchivedPage ? $"{companyCode},{archivedPageNumber}" : url;
+
+        if (archivedPageNumber >= 3)
         {
-            url = $"https://www.biznesradar.pl/notowania-historyczne/{companyCode},{archivedPageNumber}";
+            url = url.Remove(url.IndexOf(',') + 1) + archivedPageNumber;
         }
 
-        HttpClientHandler handler = new HttpClientHandler
-        {
-            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-        };
-
-        using HttpClient client = new HttpClient(handler);
+        Log.Information($"Pobieranie danych z URL: {url}");
         try
         {
             while (true)
             {
-                using HttpResponseMessage response = await client.GetAsync(url);
+                HttpResponseMessage response = await client.GetAsync(url);
                 if (!response.IsSuccessStatusCode)
                 {
-                    Log.Error<HttpResponseMessage>($"Problemy z BiznesRadar: {response.Content}", response);
-                    return "BiznesRadarServerError";
+                    string reason = response.ReasonPhrase;
+                    Log.Error<HttpResponseMessage>($"Problemy z BiznesRadar: {response.StatusCode} {reason}", response);
+                    return ("BiznesRadarServerError", url);
                 }
 
                 string requestUri = response.RequestMessage.RequestUri.ToString();
                 if (requestUri != url)
                 {
                     url = requestUri;
-                    if (isArchivedPage)
-                    {
-                        url = $"{requestUri},{archivedPageNumber}";
-                    }
-                    await Task.Delay(2000);
                     continue;
                 }
-
-                using HttpContent content = response.Content;
-                return await content.ReadAsStringAsync();
+                Log.Information($"Zwracany url {url}");
+                return (await response.Content.ReadAsStringAsync(), url);
             }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Log.Error<Exception>($"Problemy z połączeniem: {httpEx.Message}", httpEx);
+            return ("BiznesRadarServerError", url);
         }
         catch (Exception ex)
         {
             Log.Error<Exception>($"Problemy z BiznesRadarem: {ex.Message}", ex);
-            return "BiznesRadarServerError";
+            return ("BiznesRadarServerError", url);
         }
     }
 }

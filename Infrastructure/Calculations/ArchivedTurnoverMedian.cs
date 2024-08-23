@@ -1,5 +1,4 @@
-﻿using Infrastructure.GetDataFromHtml;
-using SharedModels.Models;
+﻿using SharedModels.Models;
 
 namespace Infrastructure.Calculations;
 
@@ -26,11 +25,5 @@ public class ArchivedTurnoverMedian
             decimal middle2 = turnoverValues[count / 2];
             return (middle1 + middle2) / 2;
         }
-    }
-
-    public static async Task<decimal> GetTurnoverAsync(string companyCode, DateTime entryDate)
-    {
-        var records = await GetDataRecords.GetRecordsForMedianTurnoverCalculation(companyCode, entryDate.Date);
-        return await Calculate(records.ToList());
     }
 }
