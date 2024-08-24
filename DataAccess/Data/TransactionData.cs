@@ -77,6 +77,13 @@ public class TransactionData : ITransactionData
         await dBAccess.SaveDataAsync("UpdateTransaction", parameters);
     }
 
+    public async Task<int> GetID(Transaction transaction)
+    {
+        var transactions = await GetAllTransactionsForCompany(transaction.CompanyID);
+        return transactions.FirstOrDefault(q => q.CompanyID == transaction.CompanyID && q.EntryDate == transaction.EntryDate
+                                                 && q.EntryPrice == transaction.EntryPrice && q.PositionSize == transaction.PositionSize && q.NumberOfShares == transaction.NumberOfShares).ID;
+    }
+
     public async Task DeleteTransactionAsync(int id)
     {
         await dBAccess.SaveDataAsync("DeleteTransaction", new { ID = id });

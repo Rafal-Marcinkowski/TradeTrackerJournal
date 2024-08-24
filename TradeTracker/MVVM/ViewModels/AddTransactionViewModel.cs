@@ -4,7 +4,6 @@ using Infrastructure.Events;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
-using Prism.Regions;
 using Serilog;
 using SharedModels.Models;
 using System.Collections.ObjectModel;
@@ -18,7 +17,6 @@ namespace TradeTracker.MVVM.ViewModels;
 
 public class AddTransactionViewModel : BindableBase
 {
-    private readonly IRegionManager regionManager;
     private readonly ITransactionData transactionData;
     private readonly ICompanyData companyData;
     private readonly IEventAggregator eventAggregator;
@@ -113,10 +111,9 @@ public class AddTransactionViewModel : BindableBase
         FilteredCompanies = ObservableCollectionFilter.OrderByDescendingTransactionCount(FilteredCompanies);
     }
 
-    public AddTransactionViewModel(IRegionManager regionManager, ITransactionData transactionData, ICompanyData companyData, IEventAggregator eventAggregator)
+    public AddTransactionViewModel(ITransactionData transactionData, ICompanyData companyData, IEventAggregator eventAggregator)
     {
         this.eventAggregator = eventAggregator;
-        this.regionManager = regionManager;
         this.transactionData = transactionData;
         this.companyData = companyData;
         GetAllCompanies();
@@ -151,10 +148,10 @@ public class AddTransactionViewModel : BindableBase
 
         if (normalizedInput.Length == 12)
         {
-            string datePart = normalizedInput.Substring(0, 8);
+            string datePart = normalizedInput[..8];
             string timePart = normalizedInput.Substring(8, 4);
 
-            string formattedDateTime = $"{datePart.Substring(0, 2)}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)} {timePart.Substring(0, 2)}:{timePart.Substring(2, 2)}";
+            string formattedDateTime = $"{datePart[..2]}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)} {timePart[..2]}:{timePart.Substring(2, 2)}";
 
             if (DateTime.TryParseExact(formattedDateTime, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fullDate))
             {
@@ -165,7 +162,7 @@ public class AddTransactionViewModel : BindableBase
         {
             string datePart = normalizedInput.Substring(0, 8);
 
-            string formattedDate = $"{datePart.Substring(0, 2)}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)}";
+            string formattedDate = $"{datePart[..2]}/{datePart.Substring(2, 2)}/{datePart.Substring(4, 4)}";
 
             if (DateTime.TryParseExact(formattedDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOnly))
             {
@@ -174,7 +171,7 @@ public class AddTransactionViewModel : BindableBase
         }
         else if (normalizedInput.Length == 4 || normalizedInput.Length == 3)
         {
-            string timePart = normalizedInput.Length == 4 ? normalizedInput : $"0{normalizedInput.Substring(0, 1)}{normalizedInput.Substring(1, 2)}"; // Dodaj zero przed minutą, jeśli jest podana jako jedna cyfra
+            string timePart = normalizedInput.Length == 4 ? normalizedInput : $"0{normalizedInput[..1]}{normalizedInput.Substring(1, 2)}";
 
             if (TimeSpan.TryParseExact(timePart, "hhmm", CultureInfo.InvariantCulture, out var timeOnly))
             {
@@ -218,7 +215,6 @@ public class AddTransactionViewModel : BindableBase
                 return;
             }
 
-            //transaction.EntryMedianTurnover = (int)await ArchivedTurnoverMedian.GetTurnoverAsync(transaction.CompanyName, transaction.EntryDate);
             try
             {
                 if (transaction.AvgSellPrice != null)
@@ -249,8 +245,8 @@ public class AddTransactionViewModel : BindableBase
 
                     ClearFieldsCommand.Execute(null);
                     OrderFilteredCompanies();
-
-                    ///tutaj ID tranzakcji i bedzie dzialac
+                    transaction.ID = await transactionData.GetID(transaction);
+                    await transactionData.UpdateTransactionAsync(transaction);
                     eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
                 }
             }

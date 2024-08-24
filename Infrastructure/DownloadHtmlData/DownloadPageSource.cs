@@ -39,7 +39,7 @@ public class DownloadPageSource
                     url = requestUri;
                     continue;
                 }
-                Log.Information($"Zwracany url {url}");
+                //Log.Information($"Zwracany url {url}");
                 return (await response.Content.ReadAsStringAsync(), url);
             }
         }

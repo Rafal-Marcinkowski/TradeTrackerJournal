@@ -1,4 +1,5 @@
 ﻿using Infrastructure.DownloadHtmlData;
+using Serilog;
 using SharedModels.Models;
 
 namespace Infrastructure.GetDataFromHtml;
@@ -22,6 +23,12 @@ public class GetDataRecords
             : await DownloadPageSource.DownloadHtmlAsync(misdirectedUrl, true, counter);
 
             currentDataRecords = await GetRelevantNodes.PrepareRecords(html);
+            if (currentDataRecords.Count == 0)
+            {
+                Log.Information("Osiągnięto koniec dostępnych danych. Błędne dane transakcji lub błąd serwera.");
+                allNecessaryDataRecords.Clear();
+                break;
+            }
             allNecessaryDataRecords.AddRange(currentDataRecords);
 
             if (allNecessaryDataRecords.First().Date <= transaction.EntryDate.Date)

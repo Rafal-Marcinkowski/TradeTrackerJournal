@@ -3,7 +3,6 @@ using DataAccess.DBAccess;
 using Infrastructure;
 using Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
-using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
@@ -21,14 +20,15 @@ public partial class App : PrismApplication
         base.OnStartup(e);
 
         LogManager.InitializeLogger();
-        Log.Information("Application Starting");
+        Log.Information("Początek aplikacji.");
 
         TurnoverMedianTable.UpdateMedianTable();
+
         Task.Run(async () =>
         {
             await Task.Delay(5000);
-            DailyTradeTracker tradeTracker = new(Container.Resolve<ITransactionData>(), Container.Resolve<IDailyDataProvider>(), Container.Resolve<IEventAggregator>());
-            tradeTracker.StartTracker();
+            DailyTradeTracker dailyTradeTracker = Container.Resolve<DailyTradeTracker>();
+            dailyTradeTracker.StartTracker();
         });
         //FirstStartUp();
     }
@@ -50,6 +50,7 @@ public partial class App : PrismApplication
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());
 
+        containerRegistry.Register<DailyTradeTracker>();
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
@@ -73,6 +74,7 @@ public partial class App : PrismApplication
 
     protected override void OnExit(ExitEventArgs e)
     {
+        Log.Information("Koniec aplikacji. \n");
         base.OnExit(e);
         Log.CloseAndFlush();
     }

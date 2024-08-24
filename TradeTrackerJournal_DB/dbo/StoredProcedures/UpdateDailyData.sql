@@ -2,14 +2,14 @@
     @ID INT,
     @TransactionID INT,
     @Date DATETIME,
-    @OpenPrice DECIMAL(8,2),
-    @ClosePrice DECIMAL(8,2),
-    @Volume DECIMAL(8,2),
-    @Turnover DECIMAL(8,2),
-    @MinPrice DECIMAL(8,2),
-    @MaxPrice DECIMAL(8,2),
-    @PriceChange DECIMAL(8,2),
-    @TurnoverChange DECIMAL(8,2),
+    @OpenPrice DECIMAL(12,2),
+    @ClosePrice DECIMAL(12,2),
+    @Volume DECIMAL(12,2),
+    @Turnover DECIMAL(12,2),
+    @MinPrice DECIMAL(12,2),
+    @MaxPrice DECIMAL(12,2),
+    @PriceChange DECIMAL(12,2),
+    @TurnoverChange DECIMAL(12,2),
     @TransactionCount INT
 AS
 BEGIN
