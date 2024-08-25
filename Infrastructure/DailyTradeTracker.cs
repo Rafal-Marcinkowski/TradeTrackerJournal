@@ -141,8 +141,6 @@ public class DailyTradeTracker
         var currentDailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
         var oldestCurrentRecord = currentDailyData.OrderBy(d => d.Date).FirstOrDefault();
 
-        Log.Information($"Liczba rekordów przed rekordtoadd: {trackingRecords.Count()}");
-
         var recordsToAdd = newDataList
             .Where(d => oldestCurrentRecord == null || d.Date > oldestCurrentRecord.Date)
             .OrderBy(d => d.Date)

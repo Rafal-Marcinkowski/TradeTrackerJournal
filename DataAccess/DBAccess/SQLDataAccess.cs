@@ -1,13 +1,15 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System.Data;
 using System.Data.SqlClient;
 
 namespace DataAccess.DBAccess;
 
-public class SQLDataAccess(IConfiguration configuration) : ISQLDataAccess
+public class SQLDataAccess(IConfiguration configuration, ILogger logger) : ISQLDataAccess
 {
     private readonly IConfiguration configuration = configuration;
+    private readonly ILogger logger = logger;
 
     public async Task<IEnumerable<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters)
     {
@@ -17,7 +19,14 @@ public class SQLDataAccess(IConfiguration configuration) : ISQLDataAccess
 
     public async Task SaveDataAsync<T>(string storedProcedure, T parameters)
     {
-        using IDbConnection dbConnection = new SqlConnection(configuration.GetConnectionString("TradeTrackerJournal_DBConnectionString"));
-        await dbConnection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+        try
+        {
+            using IDbConnection dbConnection = new SqlConnection(configuration.GetConnectionString("TradeTrackerJournal_DBConnectionString"));
+            await dbConnection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
+        }
+        catch (Exception ex)
+        {
+            logger.Error<Exception>($"Błąd przy zapisywaniu danych do bazy danych: ", ex);
+        }
     }
 }

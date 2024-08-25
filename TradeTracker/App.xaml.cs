@@ -50,7 +50,7 @@ public partial class App : PrismApplication
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());
 
-        containerRegistry.Register<DailyTradeTracker>();
+        containerRegistry.RegisterSingleton<DailyTradeTracker>();
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
