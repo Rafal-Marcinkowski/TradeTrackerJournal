@@ -8,9 +8,6 @@ namespace DataAccess.DBAccess;
 
 public class SQLDataAccess(IConfiguration configuration, ILogger logger) : ISQLDataAccess
 {
-    private readonly IConfiguration configuration = configuration;
-    private readonly ILogger logger = logger;
-
     public async Task<IEnumerable<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters)
     {
         using IDbConnection dbConnection = new SqlConnection(configuration.GetConnectionString("TradeTrackerJournal_DBConnectionString"));

@@ -20,7 +20,6 @@ public class AddTransactionViewModel : BindableBase
     private readonly ITransactionData transactionData;
     private readonly ICompanyData companyData;
     private readonly IEventAggregator eventAggregator;
-
     private ObservableCollection<Company> filteredCompanies;
 
     private ObservableCollection<Company> companies;

@@ -139,7 +139,7 @@ public class DailyTradeTracker
             newDataList.Add(dailyData);
         }
         var currentDailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
-        var oldestCurrentRecord = currentDailyData.OrderBy(d => d.Date).FirstOrDefault();
+        var oldestCurrentRecord = currentDailyData.OrderByDescending(d => d.Date).FirstOrDefault();
 
         var recordsToAdd = newDataList
             .Where(d => oldestCurrentRecord == null || d.Date > oldestCurrentRecord.Date)

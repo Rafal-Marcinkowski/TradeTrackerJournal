@@ -14,7 +14,6 @@ namespace TradeTracker;
 
 public partial class App : PrismApplication
 {
-
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
@@ -35,7 +34,7 @@ public partial class App : PrismApplication
 
     private void FirstStartUp()
     {
-        Infrastructure.FirstStartUp.Initialize init = new(new CompanyData(new SQLDataAccess(Container.Resolve<IConfiguration>())));
+        Infrastructure.FirstStartUp.Initialize init = new(new CompanyData(new SQLDataAccess(Container.Resolve<IConfiguration>(), Container.Resolve<ILogger>())));
         init.FillDatabaseWithCompanies();
     }
 
@@ -51,6 +50,7 @@ public partial class App : PrismApplication
         .Build());
 
         containerRegistry.RegisterSingleton<DailyTradeTracker>();
+        containerRegistry.RegisterInstance<ILogger>(LogManager.GetLogger());
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
@@ -75,8 +75,8 @@ public partial class App : PrismApplication
     protected override void OnExit(ExitEventArgs e)
     {
         Log.Information("Koniec aplikacji. \n");
-        base.OnExit(e);
         Log.CloseAndFlush();
+        base.OnExit(e);
     }
 }
 
