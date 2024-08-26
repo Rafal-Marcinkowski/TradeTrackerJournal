@@ -20,10 +20,13 @@
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter"/>
         <Conv:CommentTransactionMultiConverter x:Key="CommentTransactionMultiConverter"/>
         <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter"/>
+        <Conv:VisibilityConverter x:Key="VisibilityConverter"/>
+        <Conv:DateAndPriceConverter x:Key="DateAndPriceConverter"/>
     </mah:MetroContentControl.Resources>
 
     <Grid Margin="0,15,0,0">
-        <DataGrid ItemsSource="{Binding Transactions}"                  
+        <DataGrid ItemsSource="{Binding Transactions}"   
+                  x:Name="MainGrid"
                   ColumnHeaderHeight="40" 
                   CanUserAddRows="False"
                   RowHeight="100"          
@@ -219,7 +222,24 @@
                                     <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
                                         <iconPacks:PackIconModern.ToolTip>
                                             <ToolTip>
-                                                <TextBlock Text="{Binding CloseDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
+                                                <StackPanel>
+                                                    <TextBlock>
+                                                        <TextBlock.Text>
+                                                            <MultiBinding Converter="{StaticResource DateAndPriceConverter}">
+                                                                <Binding Path="CloseDate"/>
+                                                                <Binding Path="AvgSellPrice"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Text>
+                                                        <TextBlock.Visibility>
+                                                            <MultiBinding Converter="{StaticResource VisibilityConverter}">
+                                                                <Binding Path="CloseDate"/>
+                                                                <Binding Path="AvgSellPrice"/>
+                                                            </MultiBinding>
+                                                        </TextBlock.Visibility>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding PositionSize, StringFormat='Wielkość pozycji: {0}'}"  />
+                                                    <TextBlock Text="{Binding NumberOfShares, StringFormat='Ilość akcji: {0}'}"  />
+                                                </StackPanel>
                                             </ToolTip>
                                         </iconPacks:PackIconModern.ToolTip>
                                     </iconPacks:PackIconModern>
@@ -355,9 +375,9 @@
                                                 </Grid.ColumnDefinitions>
 
                                                 <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
-                                           Grid.Row="0" Grid.ColumnSpan="2"
-                                           HorizontalAlignment="Center"
-                                           FontWeight="DemiBold"/>
+                                                           Grid.Row="0" Grid.ColumnSpan="2"
+                                                           HorizontalAlignment="Center"
+                                                           FontWeight="DemiBold"/>
 
                                                 <TextBlock Text="{Binding OpenPrice}" 
                                            Grid.Row="1" Grid.ColumnSpan="2"

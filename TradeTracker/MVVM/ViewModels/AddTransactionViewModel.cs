@@ -220,14 +220,32 @@ public class AddTransactionViewModel : BindableBase
                 {
                     transaction.CloseDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute);
                     transaction.IsClosed = true;
+                    transaction.ClosingDescription = "Zamknięta przy dodaniu.";
                 }
-                ///sprawdzic czy podobna transakcja istnieje?
                 transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+
+                if (await new CheckTransaction(transactionData).IsExisting(transaction))
+                {
+                    var errorDialog = new ErrorDialog()
+                    {
+                        DialogText = $"Transakcja już istnieje w bazie danych!"
+                    };
+
+                    errorDialog.ShowDialog();
+                    return;
+                };
+
                 var dialog = new ConfirmationDialog()
                 {
-                    DialogText = $"Czy dodać transakcję? \n{transaction.CompanyName}\n{transaction.EntryDate}\nCena kupna: {transaction.EntryPrice}\n" +
-                    $"Ilość akcji: {transaction.NumberOfShares}\nWielkość pozycji: {transaction.PositionSize}"
+                    DialogText = $"Czy dodać transakcję? \n" +
+                  $"{transaction.CompanyName}\n" +
+                  $"{transaction.EntryDate}\n" +
+                  $"Cena kupna: {transaction.EntryPrice.ToString().Replace(',', '.')}\n" +
+                  $"Ilość akcji: {transaction.NumberOfShares}\n" +
+                  $"Wielkość pozycji: {transaction.PositionSize}\n" +
+                  $"{(transaction.AvgSellPrice != null ? $"Cena sprzedaży: {transaction.AvgSellPrice.ToString().Replace(',', '.')}" : string.Empty)}"
                 };
+
                 dialog.ShowDialog();
 
                 if (dialog.Result)

@@ -152,8 +152,6 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         IsCommentBeingEdited = false;
         NewCommentText = string.Empty;
     });
-
-
     private bool isNewCommentBeingAdded;
     public bool IsNewCommentBeingAdded
     {
