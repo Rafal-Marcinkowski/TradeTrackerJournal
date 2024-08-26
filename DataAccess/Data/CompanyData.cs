@@ -3,15 +3,8 @@ using SharedModels.Models;
 
 namespace DataAccess.Data;
 
-public class CompanyData : ICompanyData
+public class CompanyData(ISQLDataAccess dBAccess) : ICompanyData
 {
-    private readonly ISQLDataAccess dBAccess;
-
-    public CompanyData(ISQLDataAccess dBAccess)
-    {
-        this.dBAccess = dBAccess;
-    }
-
     public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
     {
         return await dBAccess.LoadDataAsync<Company, dynamic>("GetAllCompanies", new { });

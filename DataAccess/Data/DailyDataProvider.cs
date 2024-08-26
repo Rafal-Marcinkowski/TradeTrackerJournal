@@ -3,15 +3,8 @@ using SharedModels.Models;
 
 namespace DataAccess.Data;
 
-public class DailyDataProvider : IDailyDataProvider
+public class DailyDataProvider(ISQLDataAccess dBAccess) : IDailyDataProvider
 {
-    private readonly ISQLDataAccess dBAccess;
-
-    public DailyDataProvider(ISQLDataAccess dBAccess)
-    {
-        this.dBAccess = dBAccess;
-    }
-
     public async Task<IEnumerable<DailyData>> GetAllDailyDataAsync()
     {
         return await dBAccess.LoadDataAsync<DailyData, dynamic>("GetAllDailyData", new { });

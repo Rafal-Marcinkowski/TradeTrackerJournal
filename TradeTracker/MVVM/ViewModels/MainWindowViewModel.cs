@@ -6,15 +6,8 @@ using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-public class MainWindowViewModel : BindableBase
+public class MainWindowViewModel(IRegionManager regionManager) : BindableBase
 {
-    private readonly IRegionManager regionManager;
-
-    public MainWindowViewModel(IRegionManager regionManager)
-    {
-        this.regionManager = regionManager;
-    }
-
     public ICommand NavigateToEventsCommand => new DelegateCommand(() =>
     {
         var region = regionManager.Regions["MainRegion"];

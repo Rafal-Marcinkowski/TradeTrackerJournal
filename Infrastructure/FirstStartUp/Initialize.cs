@@ -5,14 +5,8 @@ using System.Windows;
 
 namespace Infrastructure.FirstStartUp;
 
-public class Initialize
+public class Initialize(ICompanyData companyData)
 {
-    private readonly ICompanyData companyData;
-    public Initialize(ICompanyData companyData)
-    {
-        this.companyData = companyData;
-    }
-
     public void FillDatabaseWithCompanies()
     {
         try

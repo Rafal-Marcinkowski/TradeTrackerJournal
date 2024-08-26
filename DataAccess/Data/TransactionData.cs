@@ -3,15 +3,8 @@ using SharedModels.Models;
 
 namespace DataAccess.Data;
 
-public class TransactionData : ITransactionData
+public class TransactionData(ISQLDataAccess dBAccess) : ITransactionData
 {
-    private readonly ISQLDataAccess dBAccess;
-
-    public TransactionData(ISQLDataAccess dBAccess)
-    {
-        this.dBAccess = dBAccess;
-    }
-
     public async Task<IEnumerable<Transaction>> GetAllTransactionsAsync()
     {
         return await dBAccess.LoadDataAsync<Transaction, dynamic>("GetAllTransactions", new { });

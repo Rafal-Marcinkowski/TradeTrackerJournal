@@ -3,15 +3,8 @@ using SharedModels.Models;
 
 namespace DataAccess.Data;
 
-public class TransactionCommentData : ITransactionCommentData
+public class TransactionCommentData(ISQLDataAccess dBAccess) : ITransactionCommentData
 {
-    private readonly ISQLDataAccess dBAccess;
-
-    public TransactionCommentData(ISQLDataAccess dBAccess)
-    {
-        this.dBAccess = dBAccess;
-    }
-
     public async Task<IEnumerable<TransactionComment>> GetAllCommentsAsync()
     {
         return await dBAccess.LoadDataAsync<TransactionComment, dynamic>("GetAllTransactionComments", new { });
