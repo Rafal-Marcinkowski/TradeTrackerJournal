@@ -282,7 +282,8 @@
                                     </Button.ToolTip>
                                     <iconPacks:Fontisto Kind="LineChart"/>
                                 </Button>
-                                <Button Command="{Binding ShowInfoCommand}" 
+                                <Button Command="{Binding DataContext.ShowInfoCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
+                                        CommandParameter="{Binding}"
                                         Grid.Row="1" Grid.Column="0"
                                         Width="50" 
                                         Height="30" 

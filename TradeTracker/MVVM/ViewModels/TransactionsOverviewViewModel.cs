@@ -6,6 +6,7 @@ using Prism.Mvvm;
 using Prism.Regions;
 using SharedModels.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;
 
@@ -28,10 +29,12 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
         this.transactionData = transactionData;
         transactions = new ObservableCollection<Transaction>();
+
         this.eventAggregator.GetEvent<DailyDataAddedEvent>().Subscribe(async dailyData =>
         {
             await OnDailyDataAdded(dailyData);
         });
+
         this.eventAggregator.GetEvent<TransactionUpdatedEvent>().Subscribe(async transaction =>
         {
             await OnTransactionUpdated(transaction);
@@ -227,11 +230,25 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
+
+
     public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>(async (transaction) =>
     {
         transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
 
         NewCommentText = string.Empty;
+    });
+
+    public ICommand ShowInfoCommand => new DelegateCommand<Transaction>(async (transaction) =>
+    {
+        if (!String.IsNullOrEmpty(transaction.InformationLink))
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = transaction.InformationLink,
+                UseShellExecute = true
+            });
+        }
     });
 
     public ICommand ConfirmCommentChangesCommand => new DelegateCommand<TransactionComment>(async (comment) =>

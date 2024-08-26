@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE InsertCompany
-    @CompanyName NVARCHAR(30),
+    @CompanyName NVARCHAR(35),
     @TransactionCount INT = NULL
 AS
 BEGIN

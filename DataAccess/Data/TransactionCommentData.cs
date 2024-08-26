@@ -45,7 +45,7 @@ public class TransactionCommentData : ITransactionCommentData
     {
         var parameters = new
         {
-            comment.TransactionID,
+            comment.ID,
             comment.EntryDate,
             comment.CommentText
         };

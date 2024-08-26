@@ -1,6 +1,6 @@
 ﻿CREATE PROCEDURE InsertTransaction
     @CompanyID INT,
-    @CompanyName NVARCHAR(30),
+    @CompanyName NVARCHAR(35),
     @EntryDate DATETIME,
     @EntryPrice DECIMAL(12, 2) = NULL,
     @EntryMedianTurnover INT,
@@ -11,7 +11,7 @@
     @IsClosed BIT,
     @InitialDescription NVARCHAR(250) = NULL,
     @ClosingDescription NVARCHAR(250),
-    @InformationLink NVARCHAR(150) = NULL,
+    @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT
 AS
 BEGIN
