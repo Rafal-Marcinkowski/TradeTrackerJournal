@@ -21,14 +21,14 @@
             Command="{Binding NavigateToOpenPositionsCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="30,0,0,0"/>
+                <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="50" Height="50" Margin="30,0,0,0"/>
             </StackPanel>
         </Button>
         <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
          Command="{Binding NavigateToTransactionsOverviewMenuCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Przegląd transakcji" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconModern Kind="BookHardcoverOpen" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>
+                <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>
             </StackPanel>
         </Button>
     </StackPanel>

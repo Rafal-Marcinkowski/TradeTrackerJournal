@@ -30,9 +30,11 @@
                          Margin="0,10,0,0"
                          Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged}"
                          BorderThickness="2" Width="200" Height="30" 
+                         BorderBrush="DimGray"
                          Controls:TextBoxHelper.Watermark="Szukaj spółki..." />
                     <ListBox BorderThickness="2" Width="200" Height="150" Margin="0,5,0,0"
                              x:Name="companyListBox"
+                             BorderBrush="DimGray"
                              ItemsSource="{Binding FilteredCompanies}"
                              SelectedItem="{Binding SelectedCompany}"
                              IsHitTestVisible="True">
@@ -66,10 +68,14 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Ostatnie X transakcji" VerticalAlignment="Center" FontSize="16"/>
                     <TextBox 
-                        x:Name="numberOfTransactionsTextBoxText"
-                         Style="{StaticResource MahApps.Styles.TextBox.Search}"
-                         Margin="10,0,0,0"
-                         BorderThickness="2" Width="50" Height="30" 
+                         x:Name="numberOfTransactionsTextBoxText"
+                         Margin="5,0,0,0"
+                         TextAlignment="Center"
+                         FontWeight="DemiBold"
+                         BorderThickness="1" Width="50" Height="30"
+                         BorderBrush="DimGray"
+                         FontSize="16"
+                         Text="5"
                          Controls:TextBoxHelper.Watermark="X"/>
                     <iconPacks:PackIconLucide Kind="SquareStack" Width="30" Height="30" Margin="10,0,0,0"/>
                 </StackPanel>
@@ -79,7 +85,7 @@
         Command="{Binding NavigateToOpenPositionsCommand}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
-                    <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="30,0,0,0"/>
+                    <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="50" Height="35" Margin="15,0,0,0"/>
                 </StackPanel>
             </Button>
 
