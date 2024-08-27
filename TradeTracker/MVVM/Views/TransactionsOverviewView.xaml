@@ -21,6 +21,7 @@
         <Conv:CommentTransactionMultiConverter x:Key="CommentTransactionMultiConverter"/>
         <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter"/>
         <Conv:VisibilityConverter x:Key="VisibilityConverter"/>
+        <Conv:DatesEqualToVisibilityConverter x:Key="DatesEqualToVisibilityConverter"/>
         <Conv:DateAndPriceConverter x:Key="DateAndPriceConverter"/>
     </mah:MetroContentControl.Resources>
 
@@ -373,11 +374,30 @@
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
+                                                
+                                                <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
-                                                           Grid.Row="0" Grid.ColumnSpan="2"
+                                                    <iconPacks:PackIconModern Kind="BookPerspective"  Grid.Column="0" Margin="0,5,0,0">
+                                                        <iconPacks:PackIconModern.Visibility>
+                                                        <MultiBinding Converter="{StaticResource DatesEqualToVisibilityConverter}">
+                                                            <Binding Path="Date"/>
+                                                            <Binding Path="TransactionCloseDate"/>
+                                                            <Binding Path="TransactionClosingDescription"/>
+                                                        </MultiBinding>
+                                                    </iconPacks:PackIconModern.Visibility>
+                                                    </iconPacks:PackIconModern>
+                                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                           Grid.Column="1"
+                                                           Grid.ColumnSpan="2"
                                                            HorizontalAlignment="Center"
-                                                           FontWeight="DemiBold"/>
+                                                           VerticalAlignment="Center"
+                                                           FontWeight="DemiBold" />
+                                                </Grid>
 
                                                 <TextBlock Text="{Binding OpenPrice}" 
                                            Grid.Row="1" Grid.ColumnSpan="2"

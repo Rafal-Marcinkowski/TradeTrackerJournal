@@ -185,32 +185,10 @@ public class AddTransactionViewModel : BindableBase
     {
         if (!String.IsNullOrEmpty(SelectedCompanyName))
         {
-            Transaction transaction = new()
-            {
-                CompanyName = SelectedCompanyName,
-                EntryDate = ParseEntryDate(EntryDate),
-                EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out var entryPrice) ? entryPrice : 0,
-                NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
-                PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out decimal positionSize) ? positionSize : 0,
-                InformationLink = InformationLink,
-                AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-                InitialDescription = InitialDescription,
-            };
+            Transaction transaction = await FillNewTransactionProperties();
 
-            var validator = new AddTransactionValidator();
-            var results = validator.Validate(transaction);
-
-            if (!results.IsValid)
+            if (!await ValidateNewTransactionProperties(transaction))
             {
-                var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
-                var dialog = new ErrorDialog()
-                {
-                    DialogText = validationErrors
-                };
-                dialog.ShowDialog();
                 return;
             }
 
@@ -218,61 +196,136 @@ public class AddTransactionViewModel : BindableBase
             {
                 if (transaction.AvgSellPrice != null)
                 {
-                    transaction.CloseDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute);
-                    transaction.IsClosed = true;
-                    transaction.ClosingDescription = "Zamknięta przy dodaniu.";
+                    await SetClosingProperties(transaction);
                 }
+
                 transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
 
-                if (await new CheckTransaction(transactionData).IsExisting(transaction))
+                if (!await CheckTransactionValidity(transaction))
                 {
-                    var errorDialog = new ErrorDialog()
-                    {
-                        DialogText = $"Transakcja już istnieje w bazie danych!"
-                    };
-
-                    errorDialog.ShowDialog();
                     return;
-                };
+                }
 
-                var dialog = new ConfirmationDialog()
-                {
-                    DialogText = $"Czy dodać transakcję? \n" +
+                await ConfirmTransaction(transaction);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+            }
+        }
+    });
+
+    private async Task ConfirmTransaction(Transaction transaction)
+    {
+        var dialog = new ConfirmationDialog()
+        {
+            DialogText = $"Czy dodać transakcję? \n" +
                   $"{transaction.CompanyName}\n" +
                   $"{transaction.EntryDate}\n" +
                   $"Cena kupna: {transaction.EntryPrice.ToString().Replace(',', '.')}\n" +
                   $"Ilość akcji: {transaction.NumberOfShares}\n" +
                   $"Wielkość pozycji: {transaction.PositionSize}\n" +
                   $"{(transaction.AvgSellPrice != null ? $"Cena sprzedaży: {transaction.AvgSellPrice.ToString().Replace(',', '.')}" : string.Empty)}"
-                };
+        };
 
-                dialog.ShowDialog();
+        dialog.ShowDialog();
 
-                if (dialog.Result)
-                {
-                    await transactionData.InsertTransactionAsync(transaction);
-                    var company = await companyData.GetCompanyAsync(transaction.CompanyID);
-                    company.TransactionCount++;
-                    await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
-                    var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
-                    if (updatedCompany != null)
-                    {
-                        updatedCompany.TransactionCount = company.TransactionCount;
-                    }
-
-                    ClearFieldsCommand.Execute(null);
-                    OrderFilteredCompanies();
-                    transaction.ID = await transactionData.GetID(transaction);
-                    await transactionData.UpdateTransactionAsync(transaction);
-                    eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
-                }
-            }
-            catch (Exception ex)
+        if (dialog.Result)
+        {
+            await transactionData.InsertTransactionAsync(transaction);
+            var company = await companyData.GetCompanyAsync(transaction.CompanyID);
+            company.TransactionCount++;
+            await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
+            var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+            if (updatedCompany != null)
             {
-                Log.Error(ex.Message);
+                updatedCompany.TransactionCount = company.TransactionCount;
+            }
+
+            ClearFieldsCommand.Execute(null);
+            OrderFilteredCompanies();
+            await transactionData.UpdateTransactionAsync(transaction);
+            transaction.ID = await transactionData.GetID(transaction);
+            eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
+        }
+    }
+
+    private async Task<bool> CheckTransactionValidity(Transaction transaction)
+    {
+        if (await new CheckTransaction(transactionData).IsExisting(transaction))
+        {
+            var errorDialog = new ErrorDialog()
+            {
+                DialogText = $"Transakcja już istnieje w bazie danych!"
+            };
+
+            errorDialog.ShowDialog();
+            return false;
+        }
+        return true;
+    }
+
+    private async Task<Transaction> SetClosingProperties(Transaction transaction)
+    {
+        transaction.CloseDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute);
+        transaction.IsClosed = true;
+
+        TimeSpan timeSpan = (TimeSpan)(transaction.CloseDate - transaction.EntryDate);
+        if (timeSpan.TotalDays > 7)
+        {
+            transaction.ClosingDescription = "Transakcja z archiwum.";
+        }
+
+        else
+        {
+            var dialog2 = new FinalizeTransactionDialog();
+            dialog2.ShowDialog();
+
+            if (dialog2.IsConfirmed)
+            {
+                var closingComment = dialog2.ClosingComment;
+                transaction.ClosingDescription = closingComment;
             }
         }
-    });
+        return transaction;
+    }
+
+    private async Task<bool> ValidateNewTransactionProperties(Transaction transaction)
+    {
+        var validator = new AddTransactionValidator();
+        var results = validator.Validate(transaction);
+
+        if (!results.IsValid)
+        {
+            var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+            var dialog = new ErrorDialog()
+            {
+                DialogText = validationErrors
+            };
+            dialog.ShowDialog();
+            return false;
+        }
+        return true;
+    }
+
+    private async Task<Transaction> FillNewTransactionProperties()
+    {
+        Transaction transaction = new()
+        {
+            CompanyName = SelectedCompanyName,
+            EntryDate = ParseEntryDate(EntryDate),
+            EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out var entryPrice) ? entryPrice : 0,
+            NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
+            PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out decimal positionSize) ? positionSize : 0,
+            InformationLink = InformationLink,
+            AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
+            InitialDescription = InitialDescription,
+        };
+        return transaction;
+    }
 
     public ICommand ClearFieldsCommand => new DelegateCommand(() =>
     {

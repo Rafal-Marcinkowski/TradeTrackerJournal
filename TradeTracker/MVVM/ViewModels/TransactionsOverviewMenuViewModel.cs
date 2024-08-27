@@ -14,11 +14,18 @@ class TransactionsOverviewMenuViewModel : BindableBase
 {
     private readonly IRegionManager regionManager;
     private readonly ICompanyData companyData;
+    private readonly ITransactionData transactionData;
 
-    private ObservableCollection<Company> filteredCompanies;
+    private Dictionary<DateTime, int> transactionCounts;
+    public Dictionary<DateTime, int> TransactionCounts
+    {
+        get => transactionCounts;
+        set => SetProperty(ref transactionCounts, value);
+    }
 
     private ObservableCollection<Company> companies;
 
+    private ObservableCollection<Company> filteredCompanies;
     public ObservableCollection<Company> FilteredCompanies
     {
         get => filteredCompanies;
@@ -34,8 +41,7 @@ class TransactionsOverviewMenuViewModel : BindableBase
         get => searchBoxText;
         set
         {
-            SetProperty(ref searchBoxText, value);
-            FilterCompanies();
+            SetProperty(ref searchBoxText, value, () => FilterCompanies());
         }
     }
 
@@ -44,11 +50,13 @@ class TransactionsOverviewMenuViewModel : BindableBase
         FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
     }
 
-    public TransactionsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData)
+    public TransactionsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData, ITransactionData transactionData)
     {
+        this.transactionData = transactionData;
         this.regionManager = regionManager;
         this.companyData = companyData;
         GetAllCompanies();
+        FillTransactionCounts();
     }
 
     private async Task GetAllCompanies()
@@ -58,6 +66,18 @@ class TransactionsOverviewMenuViewModel : BindableBase
         FilteredCompanies = new ObservableCollection<Company>(companies);
     }
 
+    private async Task FillTransactionCounts()
+    {
+        var transactions = await transactionData.GetAllTransactionsAsync();
+        var transactionsByDay = from trans in transactions
+                                group trans by trans.EntryDate into transGroups
+                                select new
+                                {
+                                    Day = transGroups.Key,
+                                    TransactionCount = transGroups.Count()
+                                };
+        TransactionCounts = transactionsByDay.ToDictionary(t => t.Day, t => t.TransactionCount);
+    }
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {

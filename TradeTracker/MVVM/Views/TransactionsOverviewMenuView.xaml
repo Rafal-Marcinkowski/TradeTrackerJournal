@@ -94,37 +94,7 @@
                     <iconPacks:PackIconModern Kind="Calendar" Width="50" Height="35"/>
                 </StackPanel>
             </Button>
-            <Calendar x:Name="calendar"
-              SelectedDate="{Binding SelectedDate}" 
-              FirstDayOfWeek="Monday"
-              DisplayDateStart="{Binding CalendarStartDate}"
-              DisplayDateEnd="{Binding CalendarEndDate}"
-              Width="250" Height="250"
-              >
-                <Calendar.Resources>
-                    <Style TargetType="CalendarDayButton">
-                        <Setter Property="Width" Value="20"/>
-                        <Setter Property="Height" Value="20"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="CalendarDayButton">
-                                    <Grid Width="20" Height="20">
-                                        <Border Background="White" BorderBrush="Gray" BorderThickness="0.5">
-                                            <StackPanel>
-                                                <TextBlock Text="{TemplateBinding Content}" FontWeight="Bold" HorizontalAlignment="Center" />
-                                                <TextBlock Text="{Binding DataContext.TransactionCounts[Content], RelativeSource={RelativeSource AncestorType=Calendar}}" 
-                                           Foreground="DarkBlue" FontSize="12" HorizontalAlignment="Center" 
-                                           Visibility="{Binding DataContext.TransactionCounts[Content], 
-                                                        Converter={StaticResource NullToCollapsedConverter}}"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Calendar.Resources>
-            </Calendar>
+            <xctk:DateTimePicker/>
             <!-- Podsumowanie miesiąca -->
             <!--<TextBlock Text="Podsumowanie miesiąca" FontSize="14" FontWeight="Black" Margin="0,10,0,0"/>
         <StackPanel Orientation="Vertical">

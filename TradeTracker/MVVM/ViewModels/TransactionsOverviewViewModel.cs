@@ -79,6 +79,11 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
         foreach (var transaction in transactions)
         {
             var dailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+            foreach (var item in dailyData)
+            {
+                item.TransactionCloseDate = transaction.CloseDate;
+                item.TransactionClosingDescription = transaction.ClosingDescription;
+            }
             transaction.DailyDataCollection = new ObservableCollection<DailyData>(dailyData);
         }
     }
@@ -283,7 +288,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
             TransactionComment transactionComment = new()
             {
                 TransactionID = transaction.ID,
-                EntryDate = DateTime.Now,
+                EntryDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
                 CommentText = NewCommentText
             };
             transaction.Comments.Add(transactionComment);

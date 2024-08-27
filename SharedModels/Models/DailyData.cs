@@ -4,6 +4,8 @@ public class DailyData
 {
     public int ID { get; set; }
     public int TransactionID { get; set; }
+    public DateTime? TransactionCloseDate { get; set; }
+    public string? TransactionClosingDescription { get; set; }
     public DateTime Date { get; set; }
     public decimal OpenPrice { get; set; }
     public decimal ClosePrice { get; set; }
