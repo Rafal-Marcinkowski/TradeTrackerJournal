@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Prism.Ioc;
 using Prism.Unity;
 using Serilog;
+using SessionOpening;
 using System.Windows;
 using TradeTracker.MVVM.ViewModels;
 using TradeTracker.MVVM.Views;
@@ -25,7 +26,7 @@ public partial class App : PrismApplication
 
         Task.Run(async () =>
         {
-            await Task.Delay(5000);
+            await Task.Delay(3000);
             DailyTradeTracker dailyTradeTracker = Container.Resolve<DailyTradeTracker>();
             dailyTradeTracker.StartTracker();
         });
@@ -59,6 +60,7 @@ public partial class App : PrismApplication
 
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
+        containerRegistry.Register<SessionOpeningViewModel>();
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
         containerRegistry.Register<OpenPositionsViewModel>();
@@ -66,6 +68,7 @@ public partial class App : PrismApplication
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsView>();
+        containerRegistry.RegisterForNavigation<SessionOpeningView, SessionOpeningViewModel>();
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();

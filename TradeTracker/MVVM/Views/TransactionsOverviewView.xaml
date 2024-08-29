@@ -361,7 +361,7 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BorderBrush="DimGray" BorderThickness="2" Margin="5,0,5,0">
+                                        <Border BorderBrush="DimGray" BorderThickness="2" Margin="5,0,2,0">
                                             <Grid Margin="5,0,5,0">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto"/>
@@ -382,7 +382,11 @@
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <iconPacks:PackIconModern Kind="BookPerspective"  Grid.Column="0" Margin="0,5,0,0">
+                                                    <iconPacks:PackIconModern Kind="BookPerspective"
+                                                                              Grid.Column="0"
+                                                                              Margin="0,0,0,0"
+                                                                              Height="15"
+                                                                              Width="15">
                                                         <iconPacks:PackIconModern.Visibility>
                                                         <MultiBinding Converter="{StaticResource DatesEqualToVisibilityConverter}">
                                                             <Binding Path="Date"/>

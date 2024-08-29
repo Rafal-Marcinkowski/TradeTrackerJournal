@@ -69,6 +69,8 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
             if (transaction != null)
             {
+                dailyData.TransactionCloseDate = transaction.CloseDate;
+                dailyData.TransactionClosingDescription = transaction.ClosingDescription;
                 transaction.DailyDataCollection.Add(dailyData);
             }
         });

@@ -28,14 +28,21 @@
         Command="{Binding NavigateToEventsCommand}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"                         
                 >
-                    <TextBlock Text="Dziennik zdarzeń" FontSize="20" VerticalAlignment="Center" Margin="10"/>
                     <iconPacks:PackIconPhosphorIcons Kind="WatchBold" Width="50" Height="50"></iconPacks:PackIconPhosphorIcons>
+                    <TextBlock Text="Dziennik zdarzeń" FontSize="20" VerticalAlignment="Center" Margin="10"/>
                 </StackPanel>
             </Button>
             <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Padding="15" Margin="0,0,5,0">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Notatki giełdowe" FontSize="20" VerticalAlignment="Center" Margin="10"/>
                     <iconPacks:PackIconVaadinIcons Kind="Edit" Width="50" Height="50"></iconPacks:PackIconVaadinIcons>
+                </StackPanel>
+            </Button>
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Padding="15" Margin="0,0,5,0"
+                    Command="{Binding NavigateToSessionOpeningCommand}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Otwarcie sesji" FontSize="20" VerticalAlignment="Center" Margin="10"/>
+                    <iconPacks:PackIconModern Kind="BookHardcoverOpen" Width="50" Height="50"></iconPacks:PackIconModern>
                 </StackPanel>
             </Button>
         </StackPanel>
