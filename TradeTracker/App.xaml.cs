@@ -60,11 +60,11 @@ public partial class App : PrismApplication
 
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
-        containerRegistry.Register<SessionOpeningViewModel>();
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
+        containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsView>();
