@@ -165,6 +165,7 @@ public class DailyTradeTracker
                 }
                 eventAggregator.GetEvent<DailyDataAddedEvent>().Publish(item);
             }
+
             await CheckTrackingProgress(transaction);
         }
     }

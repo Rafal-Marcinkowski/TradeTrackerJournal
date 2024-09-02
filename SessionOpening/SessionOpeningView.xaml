@@ -156,20 +156,20 @@
             </DataGrid>
            
         </Grid>
-        <Grid Grid.Column="1"
-              Grid.Row="1">
+        <Grid Grid.Column="1" Grid.Row="1">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition></ColumnDefinition>
                 <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Button 
-         Grid.Column="0"
-         Command="{Binding ConfirmCompanySelectionCommand}"
-         CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
-         Style="{StaticResource BigButtonStyle}" Width="auto" Height="250" Margin="5">
-                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <TextBlock Text="Wybierz spółkę" VerticalAlignment="Center" FontSize="16"/>
+                 VerticalAlignment="Top" 
+                 Command="{Binding ConfirmCompanySelectionCommand}"
+                 CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
+                 Style="{StaticResource BigButtonStyle}" Width="auto" Height="250" Margin="2,0,2,0">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Wybierz spółkę" FontSize="16"/>
                         <iconPacks:PackIconFontisto Kind="LineChart" Width="30" Height="30" Margin="10,0,0,0"/>
                     </StackPanel>
 
@@ -204,18 +204,20 @@
                     </ListBox>
                 </StackPanel>
             </Button>
-       
+
             <DataGrid Grid.Row="1" Grid.Column="1" ItemsSource="{Binding OpeningCompanies}"                                 
-                      AutoGenerateColumns="False"
-                      Height="auto"
-                      Width="auto"
-                      CanUserAddRows="False"
-                      CanUserDeleteRows="False"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="None"
-                      SelectionUnit="Cell"
-                      HorizontalScrollBarVisibility="Disabled">
-                
+                   x:Name="companiesDataGrid"
+                   CanUserAddRows="False"
+                   Height="auto"
+                   Width="auto"
+                   SelectionUnit="CellOrRowHeader"
+                   GridLinesVisibility="All"
+                   AutoGenerateColumns="False"
+                   VirtualizingStackPanel.IsVirtualizing="True"
+                   VirtualizingStackPanel.VirtualizationMode="Recycling"
+                      HorizontalScrollBarVisibility="Disabled"
+                    CanUserResizeColumns="False">
+
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Style.Setters>
@@ -231,37 +233,76 @@
                     </Style>
                 </DataGrid.RowStyle>
 
-                <DataGridTemplateColumn Header="Company Name">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding CompanyName}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Spółka" Width="*">
+                        <DataGridTemplateColumn.HeaderStyle>
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="20"/>
+                            </Style>
+                        </DataGridTemplateColumn.HeaderStyle>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
 
-                <DataGridTemplateColumn Header="Max Price">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="Position Size">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding PositionSize, UpdateSourceTrigger=PropertyChanged}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-
-                <DataGridTemplateColumn Header="Number of Shares">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding NumberOfShares}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="14*"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding CompanyName}" Margin="30,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Grid.Column="0"
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="16"
+                                                   FontWeight="DemiBold"/>
+                                        <Button 
+                                             Command="{Binding DataContext.DeleteOpeningCompanyCommand, RelativeSource={RelativeSource AncestorType=mah:MetroContentControl}}"
+                                             CommandParameter="{Binding}"
+                                             Margin="5"
+                                             Grid.Column="1"
+                                             Width="25"
+                                             HorizontalAlignment="Right"
+                                             Height="25">
+                                            <iconPacks:Material Kind="TrashCanOutline" Height="10" Width="10"/>
+                                        </Button>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                                        <TextBlock Text="Max cena: " FontSize="16" FontWeight="DemiBold"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding MaxPrice, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                 FontSize="14"
+                                                 VerticalAlignment="Center"
+                                                 FontWeight="DemiBold"
+                                                 Width="250"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                                        <TextBlock Text="Wielkość pozycji: " FontSize="16" FontWeight="DemiBold"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBox Text="{Binding PositionSize, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                 FontSize="14"
+                                                 VerticalAlignment="Center"
+                                                 FontWeight="DemiBold"
+                                                 Width="250"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+                                        <TextBlock Text="Ilość akcji: " FontSize="16" FontWeight="DemiBold"
+                                                   VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding NumberOfShares, UpdateSourceTrigger=PropertyChanged}"
+                                                   FontSize="14"
+                                                       VerticalAlignment="Center"
+                                                   FontWeight="DemiBold"
+                                                       />
+                                        </StackPanel>
+                                   
+                                </StackPanel>
+                                    
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
 
             </DataGrid>
         </Grid>

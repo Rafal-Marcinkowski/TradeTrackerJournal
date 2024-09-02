@@ -66,6 +66,8 @@ public class SessionOpeningViewModel : BindableBase
 
     public SessionOpeningViewModel(ICompanyData companyData)
     {
+        OpeningCompanies = [];
+        OpeningItems = [];
         this.companyData = companyData;
         GetAllCompanies();
     }
@@ -81,7 +83,7 @@ public class SessionOpeningViewModel : BindableBase
         set => SetProperty(ref visibility, value);
     }
 
-    public ObservableCollection<OpeningItem> OpeningItems { get; set; } = [];
+    public ObservableCollection<OpeningItem> OpeningItems { get; set; }
     public ObservableCollection<OpeningCompany> OpeningCompanies { get; set; }
 
     private void FilterCompanies()
@@ -131,6 +133,14 @@ public class SessionOpeningViewModel : BindableBase
         }
     });
 
+    public ICommand DeleteOpeningCompanyCommand => new DelegateCommand<OpeningCompany>((item) =>
+    {
+        if (item is not null)
+        {
+            OpeningCompanies.Remove(item);
+        }
+    });
+
     public ICommand LinkCommand => new DelegateCommand<OpeningItem>((item) =>
     {
         if (item is not null)
@@ -149,12 +159,13 @@ public class SessionOpeningViewModel : BindableBase
 
     public ICommand ConfirmCompanySelectionCommand => new DelegateCommand<Company>((item) =>
     {
-        OpeningCompanies ??= [];
-
         if (item is not null)
         {
-            OpeningCompany openingCompany = new();
-            openingCompany.CompanyName = item.CompanyName;
+            OpeningCompany openingCompany = new()
+            {
+                CompanyName = item.CompanyName
+            };
+
             OpeningCompanies.Add(openingCompany);
         }
     });

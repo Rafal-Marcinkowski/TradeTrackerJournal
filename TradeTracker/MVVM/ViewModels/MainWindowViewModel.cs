@@ -25,8 +25,6 @@ public class MainWindowViewModel(IRegionManager regionManager) : BindableBase
 
     public ICommand NavigateToSessionOpeningCommand => new DelegateCommand(() =>
     {
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(SessionOpeningView));
     });
 }
