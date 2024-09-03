@@ -143,7 +143,7 @@ public class AddTransactionViewModel : BindableBase
 
     private DateTime ParseEntryDate(string input)
     {
-        var normalizedInput = input.Replace(" ", "").Replace(",", "").Replace(".", "").Replace(";", "").Trim();
+        var normalizedInput = input.Replace(" ", "").Replace(",", "").Replace(".", "").Replace(";", "").Replace(":", "").Trim();
 
         if (normalizedInput.Length == 12)
         {

@@ -11,8 +11,8 @@ public class OpeningCompany : BindableBase
         set => SetProperty(ref companyName, value);
     }
 
-    private decimal maxPrice;
-    public decimal MaxPrice
+    private string maxPrice;
+    public string MaxPrice
     {
         get => maxPrice;
         set
@@ -24,8 +24,8 @@ public class OpeningCompany : BindableBase
         }
     }
 
-    private decimal positionSize;
-    public decimal PositionSize
+    private string positionSize;
+    public string PositionSize
     {
         get => positionSize;
         set
@@ -46,9 +46,12 @@ public class OpeningCompany : BindableBase
 
     private void CalculateNumberOfShares()
     {
-        if (MaxPrice > 0)
+        if (decimal.TryParse(MaxPrice, out decimal result) && result > 0)
         {
-            NumberOfShares = (int)(PositionSize / MaxPrice);
+            if (decimal.TryParse(PositionSize, out decimal posSize))
+            {
+                NumberOfShares = (int)(posSize / result);
+            }
         }
 
         else

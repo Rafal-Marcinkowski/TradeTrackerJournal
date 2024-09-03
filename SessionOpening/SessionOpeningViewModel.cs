@@ -145,14 +145,17 @@ public class SessionOpeningViewModel : BindableBase
     {
         if (item is not null)
         {
-            var url = item.Text;
-            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            foreach (var text in item.Text.Split(" "))
             {
-                Process.Start(new ProcessStartInfo
+                var url = text;
+                if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 {
-                    FileName = url,
-                    UseShellExecute = true
-                });
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = url,
+                        UseShellExecute = true
+                    });
+                }
             }
         }
     });

@@ -80,7 +80,7 @@ class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         foreach (var transaction in transactions)
         {
-            var dailyData = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
+            var dailyData = (await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID)).OrderBy(q => q.Date);
             foreach (var item in dailyData)
             {
                 item.TransactionCloseDate = transaction.CloseDate;

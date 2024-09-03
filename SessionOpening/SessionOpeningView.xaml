@@ -61,7 +61,8 @@
                           BorderThickness="2"
                           FontWeight="DemiBold"
                           FontSize="14"
-                          Height="30"
+                          Height="35"
+                          AcceptsReturn="True"
                           Visibility="{Binding Vis}" 
                           Text="{Binding NewItemText, UpdateSourceTrigger=PropertyChanged}"/>
                 <Button      Command="{Binding ConfirmNewItemCommand}" 
