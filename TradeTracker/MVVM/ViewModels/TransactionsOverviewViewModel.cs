@@ -1,9 +1,5 @@
 ﻿using DataAccess.Data;
 using Infrastructure.Events;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Mvvm;
-using Prism.Regions;
 using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -12,7 +8,7 @@ using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-class TransactionsOverviewViewModel : BindableBase, INavigationAware
+public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;

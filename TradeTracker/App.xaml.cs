@@ -1,10 +1,10 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
+using EventsTracker.MVVM.ViewModels;
+using EventsTracker.MVVM.Views;
 using Infrastructure;
 using Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
-using Prism.Ioc;
-using Prism.Unity;
 using Serilog;
 using SessionOpening;
 using System.Windows;
@@ -18,7 +18,6 @@ public partial class App : PrismApplication
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
-
         LogManager.InitializeLogger();
         Log.Information("Początek aplikacji.");
 
@@ -51,7 +50,7 @@ public partial class App : PrismApplication
         .Build());
 
         containerRegistry.RegisterSingleton<DailyTradeTracker>();
-        containerRegistry.RegisterInstance<ILogger>(LogManager.GetLogger());
+        containerRegistry.RegisterInstance<ILogger>(Log.Logger);
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
@@ -59,15 +58,18 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IDailyDataProvider, DailyDataProvider>();
 
         containerRegistry.Register<MainWindowViewModel>();
+        containerRegistry.Register<EventsMainMenuViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
         containerRegistry.Register<EventsViewModel>();
+        containerRegistry.Register<AddEventViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
         containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
-        containerRegistry.RegisterForNavigation<EventsView>();
+        containerRegistry.RegisterForNavigation<EventsMainMenuView, EventsMainMenuViewModel>();
+        containerRegistry.RegisterForNavigation<AddEventView>();
         containerRegistry.RegisterForNavigation<SessionOpeningView, SessionOpeningViewModel>();
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();

@@ -1,9 +1,6 @@
 ﻿using DataAccess.Data;
 using Infrastructure.DataFilters;
 using Infrastructure.Events;
-using Prism.Commands;
-using Prism.Events;
-using Prism.Mvvm;
 using Serilog;
 using SharedModels.Models;
 using System.Collections.ObjectModel;

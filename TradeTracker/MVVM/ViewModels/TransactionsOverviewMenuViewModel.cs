@@ -1,8 +1,5 @@
 ﻿using DataAccess.Data;
 using Infrastructure.DataFilters;
-using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Regions;
 using SharedModels.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -10,7 +7,7 @@ using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-class TransactionsOverviewMenuViewModel : BindableBase
+public class TransactionsOverviewMenuViewModel : BindableBase
 {
     private readonly IRegionManager regionManager;
     private readonly ICompanyData companyData;

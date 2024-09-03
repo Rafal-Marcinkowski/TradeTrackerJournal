@@ -1,5 +1,4 @@
-﻿using Prism.Events;
-using SharedModels.Models;
+﻿using SharedModels.Models;
 
 namespace Infrastructure.Events;
 

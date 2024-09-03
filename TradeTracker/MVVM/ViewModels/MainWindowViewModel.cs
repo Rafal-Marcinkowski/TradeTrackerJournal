@@ -1,6 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Regions;
+﻿using EventsTracker.MVVM.Views;
 using SessionOpening;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;
@@ -13,7 +11,7 @@ public class MainWindowViewModel(IRegionManager regionManager) : BindableBase
     {
         var region = regionManager.Regions["MainRegion"];
         region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(EventsView));
+        regionManager.RequestNavigate("MainRegion", nameof(EventsMainMenuView));
     });
 
     public ICommand NavigateToTransactionsCommand => new DelegateCommand(() =>

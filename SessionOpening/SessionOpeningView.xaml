@@ -54,7 +54,6 @@
                     <iconPacks:VaadinIcons Kind="Plus" Width="20" Height="20"/>
             </Button>
             <TextBox 
-                           
                           Width="600"
                           TextWrapping="Wrap"
                           BorderBrush="DimGray"

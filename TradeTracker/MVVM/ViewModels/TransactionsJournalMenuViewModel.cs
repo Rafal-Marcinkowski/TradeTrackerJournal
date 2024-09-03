@@ -1,7 +1,4 @@
-﻿using Prism.Commands;
-using Prism.Mvvm;
-using Prism.Regions;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
