@@ -34,7 +34,7 @@ public partial class App : PrismApplication
 
     private void FirstStartUp()
     {
-        Infrastructure.FirstStartUp.Initialize init = new(new CompanyData(new SQLDataAccess(Container.Resolve<IConfiguration>(), Container.Resolve<ILogger>())));
+        Infrastructure.FirstStartUp.Initialize init = new(Container.Resolve<ICompanyData>());
         init.FillDatabaseWithCompanies();
     }
 

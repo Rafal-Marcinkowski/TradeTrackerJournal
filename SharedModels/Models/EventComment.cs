@@ -1,10 +1,10 @@
 ﻿namespace SharedModels.Models;
 
-public class TransactionComment : BindableBase
+internal class EventComment : BindableBase
 {
     public DateTime EntryDate { get; set; }
 
-    public int TransactionID { get; set; }
+    public int EventID { get; set; }
     public int ID { get; set; }
     private string commentText;
     private bool isEditing;

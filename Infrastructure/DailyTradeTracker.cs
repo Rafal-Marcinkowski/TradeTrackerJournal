@@ -2,7 +2,6 @@
 using Infrastructure.Calculations;
 using Infrastructure.Events;
 using Infrastructure.GetDataFromHtml;
-using Prism.Events;
 using Serilog;
 using SharedModels.Models;
 
@@ -173,7 +172,7 @@ public class DailyTradeTracker
     private async Task CheckTrackingProgress(Transaction transaction)
     {
         var dailyDataCollection = await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID);
-        if (dailyDataCollection.Any())
+        if (dailyDataCollection.Any() && transaction.IsClosed)
         {
             if (dailyDataCollection.Count() >= 30)
             {
