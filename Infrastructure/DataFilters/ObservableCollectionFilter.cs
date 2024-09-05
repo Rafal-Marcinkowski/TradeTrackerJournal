@@ -14,5 +14,10 @@ public class ObservableCollectionFilter
     {
         return new ObservableCollection<Company>(collection.OrderByDescending(item => item.TransactionCount));
     }
+
+    public static ObservableCollection<Company> OrderByDescendingEventCount(ObservableCollection<Company> collection)
+    {
+        return new ObservableCollection<Company>(collection.OrderByDescending(item => item.EventCount));
+    }
 }
 

@@ -105,7 +105,7 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Informacja">
                         <DataGridTemplateColumn.HeaderStyle>
-                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
@@ -236,7 +236,7 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Spółka" Width="*">
                         <DataGridTemplateColumn.HeaderStyle>
-                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                            <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 <Setter Property="FontWeight" Value="Bold"/>

@@ -39,7 +39,7 @@
                 </DataGrid.RowStyle>
 
                 <DataGrid.Columns>
-                <DataGridTextColumn Header="NAZWA SPÓŁKI" Binding="{Binding CompanyName}" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="NAZWA SPÓŁKI" Binding="{Binding CompanyName}" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -49,7 +49,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="DATA" Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="DATA" Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -59,7 +59,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="CZAS TRWANIA" Binding="{Binding Duration}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="CZAS TRWANIA" Binding="{Binding Duration}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -69,7 +69,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="CENA WEJŚCIA" Binding="{Binding EntryPrice}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="CENA WEJŚCIA" Binding="{Binding EntryPrice}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -79,7 +79,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="WIELKOŚĆ POZYCJI" Binding="{Binding PositionSize}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="WIELKOŚĆ POZYCJI" Binding="{Binding PositionSize}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -89,7 +89,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="ILOŚĆ AKCJI" Binding="{Binding NumberOfShares}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTextColumn Header="ILOŚĆ AKCJI" Binding="{Binding NumberOfShares}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -99,7 +99,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="CENA SPRZEDAŻY" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTemplateColumn Header="CENA SPRZEDAŻY" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -120,7 +120,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="ZAKOŃCZ" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTemplateColumn Header="ZAKOŃCZ" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Background="DimGray" BorderBrush="DimGray"                             

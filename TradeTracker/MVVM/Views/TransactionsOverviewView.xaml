@@ -106,7 +106,7 @@
 
                                 <DataGridTemplateColumn Header="Komentarz" 
                                                         Width="auto" 
-                                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
