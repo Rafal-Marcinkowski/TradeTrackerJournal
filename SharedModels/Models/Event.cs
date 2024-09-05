@@ -39,5 +39,5 @@ public class Event : BindableBase
 
     public ObservableCollection<DailyData> DailyDataCollection { get; set; }
 
-    public ObservableCollection<TransactionComment> Comments { get; set; }
+    public ObservableCollection<Comment> Comments { get; set; }
 }

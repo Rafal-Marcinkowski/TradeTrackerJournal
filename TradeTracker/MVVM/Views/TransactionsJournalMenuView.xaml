@@ -14,7 +14,7 @@
                 Command="{Binding NavigateToAddTransactionCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Otwórz transakcję" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconModern Kind="VectorPenAdd" Width="50" Height="50" Margin="25,0,0,0"/>
+                <iconPacks:PackIconModern Kind="DrawPenAdd" Width="50" Height="50" Margin="25,0,0,0"/>
             </StackPanel>
         </Button>
         <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
@@ -28,7 +28,7 @@
          Command="{Binding NavigateToTransactionsOverviewMenuCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Przegląd transakcji" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconModern Kind="BookList" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>
+                <iconPacks:PackIconUnicons Kind="BookReaderLine" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>
             </StackPanel>
         </Button>
     </StackPanel>

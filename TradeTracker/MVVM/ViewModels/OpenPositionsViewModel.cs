@@ -1,12 +1,10 @@
 ﻿using DataAccess.Data;
-using Prism.Commands;
-using Prism.Mvvm;
-using SharedModels.Models;
+using SharedProject.Models;
+using SharedProject.Views;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
-using TradeTracker.MVVM.Views;
 using ValidationComponent.Transactions;
 
 namespace TradeTracker.MVVM.ViewModels;

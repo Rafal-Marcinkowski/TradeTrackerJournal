@@ -77,7 +77,7 @@
                                 <TextBlock Text="{Binding CompanyName}" Grid.Column="0"
                                        FontWeight="DemiBold"
                                        FontSize="12"/>
-                                <TextBlock Text="{Binding TransactionCount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" HorizontalAlignment="Right"
+                                <TextBlock Text="{Binding EventCount, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" HorizontalAlignment="Right"
                                        FontWeight="DemiBold"
                                        FontSize="12"
                                        Margin="0,0,15,0"/>
@@ -114,7 +114,7 @@
             <iconPacks:VaadinIcons Kind="Eraser" Width="50" Height="50"></iconPacks:VaadinIcons>
         </Button>
         <Button Grid.Column="5" Grid.Row="1" Grid.RowSpan="2" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,50,25,0" VerticalAlignment="Center"
-            Command="{Binding AddTransactionCommand}">
+            Command="{Binding AddEventCommand}">
             <iconPacks:Material Kind="ContentSaveEditOutline" Width="50" Height="50"></iconPacks:Material>
         </Button>
     </Grid>

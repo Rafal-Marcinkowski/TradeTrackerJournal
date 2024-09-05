@@ -5,20 +5,19 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                          xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
                          xmlns:local1="clr-namespace:TradeTracker"
-                         xmlns:local2="clr-namespace:SharedModels.Models;assembly=SharedModels"
-                         xmlns:Conv="clr-namespace:TradeTracker.Converters"
+                         xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
                          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
                          xmlns:prism="http://prismlibrary.com/"  
                          mc:Ignorable="d" 
-                         d:DesignHeight="900" d:DesignWidth="1500">
+                         d:DesignHeight="1000" d:DesignWidth="1675">
     <mah:MetroContentControl.Resources>
         <Conv:TransactionStatusToIconConverter x:Key="TransactionStatusToIconConverter"/>
         <Conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
         <Conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter"/>
-        <Conv:CommentTransactionMultiConverter x:Key="CommentTransactionMultiConverter"/>
+        <Conv:CommentObjectMultiConverter x:Key="CommentObjectMultiConverter"/>
         <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter"/>
         <Conv:VisibilityConverter x:Key="VisibilityConverter"/>
         <Conv:DatesEqualToVisibilityConverter x:Key="DatesEqualToVisibilityConverter"/>
@@ -31,7 +30,7 @@
                   ColumnHeaderHeight="40" 
                   CanUserAddRows="False"
                   RowHeight="100"          
-                  Width="1500"
+                  Width="auto"
                   SelectionUnit="CellOrRowHeader"
                   GridLinesVisibility="All"
                   AutoGenerateColumns="False"
@@ -156,7 +155,7 @@
                                                         Background="Transparent" 
                                                         BorderBrush="Transparent">
                                                     <Button.CommandParameter>
-                                                        <MultiBinding Converter="{StaticResource CommentTransactionMultiConverter}">
+                                                        <MultiBinding Converter="{StaticResource CommentObjectMultiConverter}">
                                                             <Binding />
                                                             <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" />
                                                         </MultiBinding>
@@ -215,7 +214,7 @@
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="TRANSAKCJA" 
                                         Width="auto" 
-                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -262,7 +261,7 @@
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header="" 
-                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
@@ -335,7 +334,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                <DataGridTemplateColumn Header="" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel>
@@ -350,7 +349,7 @@
                 </DataGridTemplateColumn>
 
                 <DataGridTemplateColumn Header=""
-                            HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOveriview}">
+                            HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ItemsControl ItemsSource="{Binding DailyDataCollection}" Margin="0">

@@ -1,9 +1,7 @@
 ﻿using DataAccess.Data;
 using Infrastructure.DataFilters;
-using Prism.Commands;
-using Prism.Mvvm;
 using Serilog;
-using SharedModels.Models;
+using SharedProject.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -170,6 +168,7 @@ public class SessionOpeningViewModel : BindableBase
             };
 
             OpeningCompanies.Add(openingCompany);
+            SearchBoxText = string.Empty;
         }
     });
 }

@@ -1,0 +1,410 @@
+﻿<mah:MetroContentControl x:Class="EventsTracker.MVVM.Views.EventsOverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EventsTracker.MVVM.Views"
+                             xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
+                     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                     xmlns:prism="http://prismlibrary.com/"  
+                     mc:Ignorable="d" 
+                     d:DesignHeight="1000" d:DesignWidth="1675">
+    <mah:MetroContentControl.Resources>
+        <Conv:TransactionStatusToIconConverter x:Key="TransactionStatusToIconConverter"/>
+        <Conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter"/>
+        <Conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+        <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter"/>
+        <Conv:CommentObjectMultiConverter x:Key="CommentObjectMultiConverter"/>
+        <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter"/>
+        <Conv:VisibilityConverter x:Key="VisibilityConverter"/>
+        <Conv:DatesEqualToVisibilityConverter x:Key="DatesEqualToVisibilityConverter"/>
+        <Conv:DateAndPriceConverter x:Key="DateAndPriceConverter"/>
+    </mah:MetroContentControl.Resources>
+
+    <Grid Margin="0,15,0,0">
+        <DataGrid ItemsSource="{Binding Events}"   
+              x:Name="MainGrid"
+              ColumnHeaderHeight="40" 
+              CanUserAddRows="False"
+              RowHeight="100"          
+              Width="auto"
+              SelectionUnit="CellOrRowHeader"
+              GridLinesVisibility="All"
+              AutoGenerateColumns="False"
+              VirtualizingStackPanel.IsVirtualizing="True"
+              VirtualizingStackPanel.VirtualizationMode="Recycling"
+              CanUserResizeColumns="False">
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Setters>
+                        <Setter Property="BorderBrush" Value="DimGray"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="DetailsVisibility" Value="Collapsed"/>
+                    </Style.Setters>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsDetailsVisible}" Value="True">
+                            <Setter Property="DetailsVisibility" Value="Visible"/>
+                        </DataTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.RowStyle>
+
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5,5,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Wstępny opis zdarzenia:" FontWeight="DemiBold" FontSize="12"/>
+                            <TextBlock Text="{Binding InitialDescription}" Margin="5,0,0,5" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <DataGrid ItemsSource="{Binding Comments}"                                 
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserDeleteRows="False"
+                              BorderBrush="DimGray"
+                              BorderThickness="1"
+                              HeadersVisibility="None"
+                              GridLinesVisibility="None"
+                              SelectionUnit="Cell"
+                              Margin="10,5,0,0"
+                              Visibility="{Binding Comments.Count, Converter={StaticResource IntToVisibilityConverter}}">
+
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Setters>
+                                        <Setter Property="BorderBrush" Value="DimGray"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </Style.Setters>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Data" 
+                                                Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" 
+                                                Width="auto" 
+                                                IsReadOnly="True"/>
+
+                                <DataGridTemplateColumn Header="Komentarz" 
+                                                    Width="auto" 
+                                                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding CommentText}" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="5,0,5,0"
+                                                       Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+                                                <TextBox Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" 
+                                                     VerticalAlignment="Center"
+                                                     Margin="5,0,5,0"
+                                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"/>
+                                                <Button Command="{Binding DataContext.EditCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"
+                                                    Width="30" 
+                                                    Height="30" 
+                                                    Margin="2,0,0,0"
+                                                    Background="Transparent" 
+                                                    BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="PencilOutline"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.ConfirmCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+                                                    Width="30" 
+                                                    Height="30"
+                                                    Margin="2,0,0,0"
+                                                    Background="Transparent" 
+                                                    BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="CheckOutline"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.DiscardCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+                                                    Width="30" 
+                                                    Height="30" 
+                                                    Margin="2,0,0,0"
+                                                    Background="Transparent" 
+                                                    BorderBrush="Transparent">
+                                                    <iconPacks:Material Kind="Cancel"/>
+                                                </Button>
+                                                <Button Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                                    Width="30" 
+                                                    Height="30" 
+                                                    Margin="2,0,0,0"
+                                                    Background="Transparent" 
+                                                    BorderBrush="Transparent">
+                                                    <Button.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource CommentObjectMultiConverter}">
+                                                            <Binding />
+                                                            <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type DataGrid}}" />
+                                                        </MultiBinding>
+                                                    </Button.CommandParameter>
+                                                    <iconPacks:Material Kind="DeleteOutline"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <StackPanel Orientation="Horizontal"
+                                     Margin="0,5,0,5"
+                                     Width="auto"
+                                     VerticalAlignment="Center">
+
+                            <Button Command="{Binding DataContext.AddNewCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
+                                     CommandParameter="{Binding}"
+                                     Width="30" 
+                                     Height="30" 
+                                     Margin="5"
+                                     Background="DimGray" 
+                                     BorderBrush="DimGray">
+                                <iconPacks:Material Kind="CommentPlusOutline"/>
+                            </Button>
+                            <TextBox MinWidth="300"
+                                      TextWrapping="Wrap"
+                                      BorderBrush="DimGray"
+                                      BorderThickness="2"
+                                      Height="auto"
+                                      VerticalAlignment="Center"
+                                      Visibility="{Binding IsNewCommentBeingAdded, 
+                                      Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}"
+                                      Margin="10,0,0,0" 
+                                      Text="{Binding DataContext.NewCommentText, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"/>
+                            <Button Command="{Binding DataContext.ConfirmNewCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
+                                            CommandParameter="{Binding}"
+                                             Width="30" 
+                                             Height="30" 
+                                             Margin="10,0,0,0" 
+                                             Background="DimGray" 
+                                             BorderBrush="DimGray" 
+                                             Visibility="{Binding IsNewCommentBeingAdded, 
+                                             Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
+                                <iconPacks:Material Kind="CheckOutline"/>
+                            </Button>
+                        </StackPanel>
+
+                    </StackPanel>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="ZDARZENIE" 
+                                    Width="auto" 
+                                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <DockPanel>
+                                    <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}"
+                                               Margin="15,0,0,0"
+                                               HorizontalAlignment="Center"/>
+                                </DockPanel>
+                                <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="" 
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Button Command="{Binding DataContext.ToggleEventTracker, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                    CommandParameter="{Binding}"
+                                    Grid.Row="1" Grid.Column="1"
+                                    Width="50" 
+                                    Height="30" 
+                                    Margin="1" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <TextBlock>
+                                            <Run Text="Status śledzenia: " FontWeight="DemiBold"/>
+                                            <Run Text="{Binding IsTracking}"/>
+                                        </TextBlock>
+                                    </Button.ToolTip>
+                                    <iconPacks:GameIcons Kind="VelociraptorTracks"/>
+                                </Button>
+                                <Button Command="{Binding ShowChartCommand}" 
+                                    Grid.Row="0" Grid.Column="0"
+                                    Width="50" 
+                                    Height="30" 
+                                    Margin="1" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Pokaż wykres"/>
+                                    </Button.ToolTip>
+                                    <iconPacks:Fontisto Kind="LineChart"/>
+                                </Button>
+                                <Button Command="{Binding DataContext.ShowInfoCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
+                                    CommandParameter="{Binding}"
+                                    Grid.Row="1" Grid.Column="0"
+                                    Width="50" 
+                                    Height="30" 
+                                    Margin="1" 
+                                    Background="DimGray" 
+                                    BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Link do informacji, na którą była reakcja"/>
+                                    </Button.ToolTip>
+                                    <iconPacks:Material Kind="InformationSlabSymbol"/>
+                                </Button>
+                                <Button Command="{Binding DataContext.ToggleCommentsPanelCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                        Grid.Row="2" Grid.Column="0"
+                                    CommandParameter="{Binding}"
+                                    Width="50"
+                                    Height="30"
+                                    Margin="1"
+                                    Background="DimGray"
+                                    BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Pokaż/Ukryj sekcję komentarzy"/>
+                                    </Button.ToolTip>
+                                    <iconPacks:Material Kind="CommentOutline"/>
+                                </Button>
+                            </Grid>
+
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="Dzień: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Otwarcie: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Min / Max dnia: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Obrót: " FontWeight="DemiBold"/>
+                                <TextBlock Text="Kurs zamknięcia: " FontWeight="DemiBold"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header=""
+                        HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{Binding DailyDataCollection}" Margin="0">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="DimGray" BorderThickness="2" Margin="5,0,2,0">
+                                            <Grid Margin="5,0,5,0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <iconPacks:PackIconModern Kind="BookPerspective"
+                                                                          Grid.Column="0"
+                                                                          Margin="0,0,0,0"
+                                                                          Height="15"
+                                                                          Width="15">
+                                                        <iconPacks:PackIconModern.Visibility>
+                                                            <MultiBinding Converter="{StaticResource DatesEqualToVisibilityConverter}">
+                                                                <Binding Path="Date"/>
+                                                                <Binding Path="TransactionCloseDate"/>
+                                                                <Binding Path="TransactionClosingDescription"/>
+                                                            </MultiBinding>
+                                                        </iconPacks:PackIconModern.Visibility>
+                                                    </iconPacks:PackIconModern>
+                                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
+                                                       Grid.Column="1"
+                                                       Grid.ColumnSpan="2"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="DemiBold" />
+                                                </Grid>
+
+                                                <TextBlock Text="{Binding OpenPrice}" 
+                                       Grid.Row="1" Grid.ColumnSpan="2"
+                                       HorizontalAlignment="Center"/>
+
+                                                <TextBlock Text="{Binding ClosePrice}" 
+                                                           Grid.Row="4" Grid.Column="0"
+                                           HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding PriceChange, StringFormat='{}{0}%'}" 
+                                                           Margin="10,0,0,0"
+                                                            Grid.Row="4" Grid.Column="1"
+                                           HorizontalAlignment="Right"/>
+
+                                                <TextBlock Text="{Binding Turnover, Converter={StaticResource VolumeToMillionConverter}}"
+                                                           Grid.Row="3" Grid.Column="0"
+                                           HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding TurnoverChange, StringFormat='{}{0}x'}" 
+                                                           Margin="10,0,0,0"
+                                                           Grid.Row="3" Grid.Column="1"
+                                           HorizontalAlignment="Right"/>
+
+                                                <TextBlock Text="{Binding MinPrice}" 
+                                                           Grid.Row="2" Grid.Column="0"
+                                           HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding MaxPrice}" Margin="10,0,0,0"
+                                                           Grid.Row="2" Grid.Column="1"
+                                           HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</mah:MetroContentControl>

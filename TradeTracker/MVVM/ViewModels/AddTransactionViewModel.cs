@@ -2,12 +2,12 @@
 using Infrastructure.DataFilters;
 using Infrastructure.Events;
 using Serilog;
-using SharedModels.Models;
+using SharedProject.Models;
+using SharedProject.Views;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
-using TradeTracker.MVVM.Views;
 using ValidationComponent.Transactions;
 
 namespace TradeTracker.MVVM.ViewModels;
@@ -136,6 +136,8 @@ public class AddTransactionViewModel : BindableBase
         {
             SelectedCompanyName = selectedCompany.CompanyName;
         }
+
+        SearchBoxText = string.Empty;
     });
 
     private DateTime ParseEntryDate(string input)
@@ -232,7 +234,7 @@ public class AddTransactionViewModel : BindableBase
             await transactionData.InsertTransactionAsync(transaction);
             var company = await companyData.GetCompanyAsync(transaction.CompanyID);
             company.TransactionCount++;
-            await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
+            await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
             var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
             if (updatedCompany != null)
             {

@@ -46,7 +46,7 @@
     <ProjectReference Include="..\EventsTracker\EventsTracker.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\SessionOpening\SessionOpening.csproj" />
-    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
+    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     <ProjectReference Include="..\TradeTrackerJournal_DB\TradeTrackerJournal_DB.sqlproj" />
     <ProjectReference Include="..\ValidationComponent\ValidationComponent.csproj" />
   </ItemGroup>

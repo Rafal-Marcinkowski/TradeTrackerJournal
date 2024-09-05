@@ -3,6 +3,6 @@
 AS
 BEGIN
     SELECT *
-    FROM [dbo].[TransactionComments]
+    FROM [dbo].[Comments]
     WHERE TransactionID = @TransactionID;
 END;

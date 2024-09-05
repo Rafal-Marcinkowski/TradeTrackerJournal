@@ -12,4 +12,11 @@ public class EventsMainMenuViewModel(IRegionManager regionManager) : BindableBas
         region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(AddEventView));
     });
+
+    public ICommand NavigateToEventsOverviewMenuCommand => new DelegateCommand(() =>
+    {
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
+        regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewMenuView));
+    });
 }

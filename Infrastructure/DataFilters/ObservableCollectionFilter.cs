@@ -1,4 +1,4 @@
-﻿using SharedModels.Models;
+﻿using SharedProject.Models;
 using System.Collections.ObjectModel;
 
 namespace Infrastructure.DataFilters;

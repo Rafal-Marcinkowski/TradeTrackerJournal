@@ -1,5 +1,5 @@
 ﻿using DataAccess.Data;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace ValidationComponent.Transactions;
 

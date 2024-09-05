@@ -1,6 +1,4 @@
-﻿using Prism.Mvvm;
-
-namespace SessionOpening;
+﻿namespace SessionOpening;
 
 public class OpeningCompany : BindableBase
 {

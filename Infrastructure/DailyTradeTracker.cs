@@ -3,7 +3,7 @@ using Infrastructure.Calculations;
 using Infrastructure.Events;
 using Infrastructure.GetDataFromHtml;
 using Serilog;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace Infrastructure;
 
@@ -151,6 +151,7 @@ public class DailyTradeTracker
             foreach (var item in recordsToAdd)
             {
                 item.TransactionID = transaction.ID;
+                item.EventID = null;
                 item.PriceChange = await DailyDataProperties.CalculatePriceChange(transaction.EntryPrice, item.ClosePrice);
                 item.TurnoverChange = await DailyDataProperties.CalculateTurnoverChange(transaction.EntryMedianTurnover, item.Turnover);
                 Log.Information($"Dodawanie rekordu: Date={item.Date}, TransactionID={item.TransactionID}, ClosePrice={item.ClosePrice}, Turnover={item.Turnover}, PriceChange, {item.PriceChange}, TurnoverChange={item.TurnoverChange}");

@@ -1,10 +1,11 @@
 ﻿CREATE PROCEDURE UpdateCompany
     @ID INT,
     @CompanyName NVARCHAR(35),
-    @TransactionCount INT = NULL
+    @TransactionCount INT = NULL,
+    @EventCount INT = NULL
 AS
 BEGIN
     UPDATE [dbo].[Companies]
-    SET CompanyName = @CompanyName, TransactionCount = @TransactionCount
+    SET CompanyName = @CompanyName, TransactionCount = @TransactionCount, EventCount = @EventCount
     WHERE ID = @ID;
 END;

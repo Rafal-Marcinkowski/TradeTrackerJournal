@@ -1,4 +1,4 @@
-﻿using SharedModels.Models;
+﻿using SharedProject.Models;
 
 namespace Infrastructure.Events;
 

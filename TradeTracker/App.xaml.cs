@@ -52,7 +52,8 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<DailyTradeTracker>();
         containerRegistry.RegisterInstance<ILogger>(Log.Logger);
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
-        containerRegistry.RegisterSingleton<ITransactionCommentData, TransactionCommentData>();
+        containerRegistry.RegisterSingleton<ICommentData, CommentData>();
+        containerRegistry.RegisterSingleton<IEventData, EventData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
         containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
         containerRegistry.RegisterSingleton<IDailyDataProvider, DailyDataProvider>();
@@ -63,18 +64,22 @@ public partial class App : PrismApplication
         containerRegistry.Register<EventsViewModel>();
         containerRegistry.Register<AddEventViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
+        containerRegistry.Register<EventsMainMenuViewModel>();
+        containerRegistry.Register<EventsOverviewViewModel>();
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
         containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
-        containerRegistry.RegisterForNavigation<EventsMainMenuView, EventsMainMenuViewModel>();
+        containerRegistry.RegisterForNavigation<EventsMainMenuView>();
         containerRegistry.RegisterForNavigation<AddEventView>();
-        containerRegistry.RegisterForNavigation<SessionOpeningView, SessionOpeningViewModel>();
+        containerRegistry.RegisterForNavigation<SessionOpeningView>();
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewView>();
         containerRegistry.RegisterForNavigation<TransactionsOverviewMenuView>();
+        containerRegistry.RegisterForNavigation<EventsOverviewMenuView>();
+        containerRegistry.RegisterForNavigation<EventsOverviewView>();
     }
 
     protected override void OnExit(ExitEventArgs e)

@@ -1,5 +1,5 @@
 ﻿using DataAccess.DBAccess;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace DataAccess.Data;
 
@@ -21,11 +21,17 @@ public class DailyDataProvider(ISQLDataAccess dBAccess) : IDailyDataProvider
         return await dBAccess.LoadDataAsync<DailyData, dynamic>("GetDailyDataForTransaction", new { TransactionID = transactionId });
     }
 
+    public async Task<IEnumerable<DailyData>> GetDailyDataForEventAsync(int eventId)
+    {
+        return await dBAccess.LoadDataAsync<DailyData, dynamic>("GetDailyDataForEvent", new { EventID = eventId });
+    }
+
     public async Task InsertDailyDataAsync(DailyData dailyData)
     {
         await dBAccess.SaveDataAsync("InsertDailyData", new
         {
             dailyData.TransactionID,
+            dailyData.EventID,
             dailyData.Date,
             dailyData.OpenPrice,
             dailyData.ClosePrice,
@@ -45,6 +51,7 @@ public class DailyDataProvider(ISQLDataAccess dBAccess) : IDailyDataProvider
         {
             dailyData.ID,
             dailyData.TransactionID,
+            dailyData.EventID,
             dailyData.Date,
             dailyData.OpenPrice,
             dailyData.ClosePrice,

@@ -1,6 +1,6 @@
 ﻿using Infrastructure.DownloadHtmlData;
 using Serilog;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace Infrastructure.GetDataFromHtml;
 

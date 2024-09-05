@@ -89,12 +89,12 @@
   <ItemGroup>
     <Build Include="dbo\Tables\Companies.sql" />
     <Build Include="dbo\Tables\Transactions\Transactions.sql" />
-    <Build Include="dbo\Tables\TransactionComments.sql" />
-    <Build Include="dbo\StoredProcedures\GetTransactionComment.sql" />
-    <Build Include="dbo\StoredProcedures\GetAllTransactionComments.sql" />
-    <Build Include="dbo\StoredProcedures\InsertTransactionComment.sql" />
-    <Build Include="dbo\StoredProcedures\UpdateTransactionComment.sql" />
-    <Build Include="dbo\StoredProcedures\DeleteTransactionComment.sql" />
+    <Build Include="dbo\Tables\Comments.sql" />
+    <Build Include="dbo\StoredProcedures\GetComment.sql" />
+    <Build Include="dbo\StoredProcedures\GetAllComments.sql" />
+    <Build Include="dbo\StoredProcedures\InsertComment.sql" />
+    <Build Include="dbo\StoredProcedures\UpdateComment.sql" />
+    <Build Include="dbo\StoredProcedures\DeleteComment.sql" />
     <Build Include="dbo\StoredProcedures\GetCompany.sql" />
     <Build Include="dbo\StoredProcedures\GetAllCompanies.sql" />
     <Build Include="dbo\StoredProcedures\InsertCompany.sql" />
@@ -114,6 +114,15 @@
     <Build Include="dbo\StoredProcedures\UpdateDailyData.sql" />
     <Build Include="dbo\StoredProcedures\DeleteDailyData.sql" />
     <Build Include="dbo\Tables\DailyData.sql" />
+    <Build Include="dbo\Tables\Events.sql" />
+    <Build Include="dbo\StoredProcedures\GetAllCommentsForEvent.sql" />
+    <Build Include="dbo\StoredProcedures\GetAllEventsForCompany.sql" />
+    <Build Include="dbo\StoredProcedures\DeleteEvent.sql" />
+    <Build Include="dbo\StoredProcedures\GetEvent.sql" />
+    <Build Include="dbo\StoredProcedures\GetAllEvents.sql" />
+    <Build Include="dbo\StoredProcedures\InsertEvent.sql" />
+    <Build Include="dbo\StoredProcedures\UpdateEvent.sql" />
+    <Build Include="dbo\StoredProcedures\GetDailyDataForEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TradeTrackerJournal_DB.refactorlog" />

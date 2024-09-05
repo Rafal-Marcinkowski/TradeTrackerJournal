@@ -71,5 +71,5 @@ public class Transaction : BindableBase
     public List<decimal>? AvgPriceOfTheDay { get; set; }
     public ObservableCollection<DailyData> DailyDataCollection { get; set; }
 
-    public ObservableCollection<TransactionComment> Comments { get; set; }
+    public ObservableCollection<Comment> Comments { get; set; }
 }

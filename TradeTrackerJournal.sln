@@ -9,15 +9,15 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TradeTrackerJournal_DB", "T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{943850F7-787A-4284-B09A-88EF1631DE07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharedModels", "SharedModels\SharedModels.csproj", "{941B0B98-AF38-4922-BE02-058056A31562}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{E99409F9-4EB3-408A-8BB1-66E1F8BFDA60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ValidationComponent", "ValidationComponent\ValidationComponent.csproj", "{AC3CEF07-F543-4B26-91C0-A274628C193D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SessionOpening", "SessionOpening\SessionOpening.csproj", "{C8C9974A-C813-4A3E-B827-F1A376CB5622}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsTracker", "EventsTracker\EventsTracker.csproj", "{0E617EFF-FD11-4790-81CD-1E653EF4B12C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventsTracker", "EventsTracker\EventsTracker.csproj", "{0E617EFF-FD11-4790-81CD-1E653EF4B12C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProject", "SharedProject\SharedProject.csproj", "{305112DC-F1E3-4116-BCF4-571D84B0FFB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,14 +52,6 @@ Global
 		{943850F7-787A-4284-B09A-88EF1631DE07}.Release|Any CPU.Build.0 = Release|Any CPU
 		{943850F7-787A-4284-B09A-88EF1631DE07}.Release|x86.ActiveCfg = Release|x86
 		{943850F7-787A-4284-B09A-88EF1631DE07}.Release|x86.Build.0 = Release|x86
-		{941B0B98-AF38-4922-BE02-058056A31562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{941B0B98-AF38-4922-BE02-058056A31562}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{941B0B98-AF38-4922-BE02-058056A31562}.Debug|x86.ActiveCfg = Debug|x86
-		{941B0B98-AF38-4922-BE02-058056A31562}.Debug|x86.Build.0 = Debug|x86
-		{941B0B98-AF38-4922-BE02-058056A31562}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{941B0B98-AF38-4922-BE02-058056A31562}.Release|Any CPU.Build.0 = Release|Any CPU
-		{941B0B98-AF38-4922-BE02-058056A31562}.Release|x86.ActiveCfg = Release|x86
-		{941B0B98-AF38-4922-BE02-058056A31562}.Release|x86.Build.0 = Release|x86
 		{E99409F9-4EB3-408A-8BB1-66E1F8BFDA60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E99409F9-4EB3-408A-8BB1-66E1F8BFDA60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E99409F9-4EB3-408A-8BB1-66E1F8BFDA60}.Debug|x86.ActiveCfg = Debug|x86
@@ -92,6 +84,14 @@ Global
 		{0E617EFF-FD11-4790-81CD-1E653EF4B12C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0E617EFF-FD11-4790-81CD-1E653EF4B12C}.Release|x86.ActiveCfg = Release|Any CPU
 		{0E617EFF-FD11-4790-81CD-1E653EF4B12C}.Release|x86.Build.0 = Release|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Debug|x86.Build.0 = Debug|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Release|x86.ActiveCfg = Release|Any CPU
+		{305112DC-F1E3-4116-BCF4-571D84B0FFB0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

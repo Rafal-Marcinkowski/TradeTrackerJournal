@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
-    <ProjectReference Include="..\SharedModels\SharedModels.csproj" />
+    <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     <ProjectReference Include="..\ValidationComponent\ValidationComponent.csproj" />
   </ItemGroup>
 

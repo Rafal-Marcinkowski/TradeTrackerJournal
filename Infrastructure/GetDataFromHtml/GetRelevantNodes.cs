@@ -1,5 +1,5 @@
 ﻿using HtmlAgilityPack;
-using SharedModels.Models;
+using SharedProject.Models;
 using System.Globalization;
 
 namespace Infrastructure.GetDataFromHtml;

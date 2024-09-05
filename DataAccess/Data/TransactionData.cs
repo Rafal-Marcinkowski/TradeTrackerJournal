@@ -1,5 +1,5 @@
 ﻿using DataAccess.DBAccess;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace DataAccess.Data;
 

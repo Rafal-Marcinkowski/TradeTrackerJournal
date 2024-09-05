@@ -1,10 +1,10 @@
 ﻿using DataAccess.Data;
 using Infrastructure.Events;
-using SharedModels.Models;
+using SharedProject.Models;
+using SharedProject.Views;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows.Input;
-using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
@@ -13,11 +13,11 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
-    private readonly ITransactionCommentData transactionCommentData;
+    private readonly ICommentData CommentData;
 
-    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, ITransactionCommentData transactionCommentData)
+    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, ICommentData CommentData)
     {
-        this.transactionCommentData = transactionCommentData;
+        this.CommentData = CommentData;
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
         isCommentBeingEdited = false;
@@ -114,8 +114,8 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         foreach (var transaction in transactions)
         {
-            var comments = await transactionCommentData.GetAllCommentsForTransactionAsync(transaction.ID);
-            transaction.Comments = (new ObservableCollection<TransactionComment>(comments));
+            var comments = await CommentData.GetAllCommentsForTransactionAsync(transaction.ID);
+            transaction.Comments = (new ObservableCollection<Comment>(comments));
         }
     }
 
@@ -155,6 +155,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         IsCommentBeingEdited = false;
         NewCommentText = string.Empty;
     });
+
     private bool isNewCommentBeingAdded;
     public bool IsNewCommentBeingAdded
     {
@@ -201,12 +202,11 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     public ICommand ToggleTransactionTracker => new DelegateCommand<Transaction>(async (transaction) =>
     {
+        var dialog = new ConfirmationDialog();
+
         if (transaction.IsTracking)
         {
-            var dialog = new ConfirmationDialog()
-            {
-                DialogText = "Czy na pewno wyłączyć śledzenie?"
-            };
+            dialog.DialogText = "Czy na pewno wyłączyć śledzenie?";
             dialog.ShowDialog();
 
             if (dialog.Result)
@@ -215,12 +215,10 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
                 await transactionData.UpdateTransactionAsync(transaction);
             }
         }
+
         else
         {
-            var dialog = new ConfirmationDialog()
-            {
-                DialogText = "Czy na pewno włączyć śledzenie?"
-            };
+            dialog.DialogText = "Czy na pewno włączyć śledzenie?";
             dialog.ShowDialog();
 
             if (dialog.Result)
@@ -230,8 +228,6 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
             }
         }
     });
-
-
 
     public ICommand AddNewCommentCommand => new DelegateCommand<Transaction>(async (transaction) =>
     {
@@ -252,16 +248,16 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
-    public ICommand ConfirmCommentChangesCommand => new DelegateCommand<TransactionComment>(async (comment) =>
+    public ICommand ConfirmCommentChangesCommand => new DelegateCommand<Comment>(async (comment) =>
     {
         if (comment.IsEditing)
         {
             comment.IsEditing = false;
-            await transactionCommentData.UpdateCommentAsync(comment);
+            await CommentData.UpdateCommentAsync(comment);
         }
     });
 
-    public ICommand DiscardCommentChangesCommand => new DelegateCommand<TransactionComment>((comment) =>
+    public ICommand DiscardCommentChangesCommand => new DelegateCommand<Comment>((comment) =>
     {
         if (comment.IsEditing)
         {
@@ -270,7 +266,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     });
 
-    public ICommand EditCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
+    public ICommand EditCommentCommand => new DelegateCommand<Comment>((comment) =>
     {
         if (!comment.IsEditing)
         {
@@ -283,37 +279,40 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         if (!String.IsNullOrEmpty(NewCommentText))
         {
-            TransactionComment transactionComment = new()
+            Comment Comment = new()
             {
                 TransactionID = transaction.ID,
+                EventID = null,
                 EntryDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
                 CommentText = NewCommentText
             };
-            transaction.Comments.Add(transactionComment);
-            await transactionCommentData.InsertCommentAsync(transactionComment);
+
+            transaction.Comments.Add(Comment);
+            await CommentData.InsertCommentAsync(Comment);
             transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
             NewCommentText = string.Empty;
         }
     });
 
-    public ICommand EditNewCommentCommand => new DelegateCommand<TransactionComment>((comment) =>
+    public ICommand EditNewCommentCommand => new DelegateCommand<Comment>((comment) =>
     {
 
     });
 
-    public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<TransactionComment, Transaction>>(async (parameters) =>
+    public ICommand DeleteCommentCommand => new DelegateCommand<Tuple<Comment, Transaction>>(async (parameters) =>
     {
-        var dialog = new ConfirmationDialog()
+        var dialog = new ConfirmationDialog
         {
             DialogText = "Czy na pewno chcesz usunąć komentarz?"
         };
+
         dialog.ShowDialog();
 
         if (dialog.Result)
         {
-            parameters.Item1.ID = await transactionCommentData.GetCommentID(parameters.Item1.CommentText);
+            parameters.Item1.ID = await CommentData.GetCommentID(parameters.Item1.CommentText);
             parameters.Item2.Comments.Remove(parameters.Item1);
-            await transactionCommentData.DeleteCommentAsync(parameters.Item1.ID);
+            await CommentData.DeleteCommentAsync(parameters.Item1.ID);
         }
     });
 }

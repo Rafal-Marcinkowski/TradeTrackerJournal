@@ -1,0 +1,6 @@
+﻿CREATE PROCEDURE GetEvent
+    @ID INT
+AS
+BEGIN
+    SELECT * FROM Events WHERE ID = @ID;
+END

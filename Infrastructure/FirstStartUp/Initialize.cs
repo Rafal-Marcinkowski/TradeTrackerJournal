@@ -1,5 +1,5 @@
 ﻿using DataAccess.Data;
-using SharedModels.Models;
+using SharedProject.Models;
 using System.IO;
 using System.Windows;
 
@@ -50,7 +50,7 @@ public class Initialize(ICompanyData companyData)
             {
                 Company company = new();
                 company.CompanyName = item.Value;
-                companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount);
+                companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount, company.EventCount);
             }
         }
         catch (Exception ex)

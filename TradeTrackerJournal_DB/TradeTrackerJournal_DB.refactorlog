@@ -15,9 +15,9 @@
     <Property Name="NewName" Value="ID" />
   </Operation>
   <Operation Name="Rename Refactor" Key="109b824c-eb0e-4835-971d-6a7941280e29" ChangeDateTime="08/17/2024 18:18:38">
-    <Property Name="ElementName" Value="[dbo].[TransactionComments].[Id]" />
+    <Property Name="ElementName" Value="[dbo].[Comments].[Id]" />
     <Property Name="ElementType" Value="SqlSimpleColumn" />
-    <Property Name="ParentElementName" Value="[dbo].[TransactionComments]" />
+    <Property Name="ParentElementName" Value="[dbo].[Comments]" />
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ID" />
   </Operation>

@@ -3,7 +3,8 @@
 public class DailyData
 {
     public int ID { get; set; }
-    public int TransactionID { get; set; }
+    public int? TransactionID { get; set; }
+    public int? EventID { get; set; }
     public DateTime? TransactionCloseDate { get; set; }
     public string? TransactionClosingDescription { get; set; }
     public DateTime Date { get; set; }

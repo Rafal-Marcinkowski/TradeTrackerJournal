@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE UpdateDailyData
     @ID INT,
     @TransactionID INT,
+    @EventID INT,
     @Date DATETIME,
     @OpenPrice DECIMAL(12,2),
     @ClosePrice DECIMAL(12,2),
@@ -15,6 +16,7 @@ AS
 BEGIN
     UPDATE DailyData
     SET TransactionID = @TransactionID,
+        EventID = @EventID,
         Date = @Date,
         OpenPrice = @OpenPrice,
         ClosePrice = @ClosePrice,

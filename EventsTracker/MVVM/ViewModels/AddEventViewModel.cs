@@ -1,16 +1,20 @@
 ﻿using DataAccess.Data;
 using Infrastructure.DataFilters;
+using Infrastructure.Events;
 using Serilog;
-using SharedModels.Models;
+using SharedProject.Models;
+using SharedProject.Views;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+using ValidationComponent.Events;
 
 namespace EventsTracker.MVVM.ViewModels;
 public class AddEventViewModel : BindableBase
 {
     private readonly ICompanyData companyData;
+    private readonly IEventData eventData;
     private readonly IEventAggregator eventAggregator;
     private ObservableCollection<Company> filteredCompanies;
 
@@ -74,8 +78,9 @@ public class AddEventViewModel : BindableBase
         FilteredCompanies = ObservableCollectionFilter.OrderByDescendingTransactionCount(FilteredCompanies);
     }
 
-    public AddEventViewModel(ICompanyData companyData, IEventAggregator eventAggregator)
+    public AddEventViewModel(ICompanyData companyData, IEventAggregator eventAggregator, IEventData eventData)
     {
+        this.eventData = eventData;
         this.eventAggregator = eventAggregator;
         this.companyData = companyData;
         GetAllCompanies();
@@ -102,6 +107,8 @@ public class AddEventViewModel : BindableBase
         {
             SelectedCompanyName = selectedCompany.CompanyName;
         }
+
+        SearchBoxText = string.Empty;
     });
 
     private DateTime ParseEntryDate(string input)
@@ -146,141 +153,108 @@ public class AddEventViewModel : BindableBase
 
     public ICommand AddEventCommand => new DelegateCommand(async () =>
     {
-        //if (!String.IsNullOrEmpty(SelectedCompanyName))
-        //{
-        //    Transaction transaction = await FillNewTransactionProperties();
+        if (!String.IsNullOrEmpty(SelectedCompanyName))
+        {
+            Event e = await FillNewEventProperties();
 
-        //    if (!await ValidateNewTransactionProperties(transaction))
-        //    {
-        //        return;
-        //    }
+            if (!await ValidateNewEventProperties(e))
+            {
+                return;
+            }
 
-        //    try
-        //    {
-        //        if (transaction.AvgSellPrice != null)
-        //        {
-        //            await SetClosingProperties(transaction);
-        //        }
+            try
+            {
+                e.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
 
-        //        transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+                if (!await CheckEventValidity(e))
+                {
+                    return;
+                }
 
-        //        if (!await CheckTransactionValidity(transaction))
-        //        {
-        //            return;
-        //        }
-
-        //        await ConfirmTransaction(transaction);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log.Error(ex, ex.Message);
-        //    }
-        //}
+                await ConfirmEvent(e);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+            }
+        }
     });
 
-    private async Task ConfirmEvent(Transaction transaction)
+    private async Task ConfirmEvent(Event e)
     {
-        //var dialog = new ConfirmationDialog()
-        //{
-        //    DialogText = $"Czy dodać transakcję? \n" +
-        //          $"{transaction.CompanyName}\n" +
-        //          $"{transaction.EntryDate}\n" +
-        //          $"Cena kupna: {transaction.EntryPrice.ToString().Replace(',', '.')}\n" +
-        //          $"Ilość akcji: {transaction.NumberOfShares}\n" +
-        //          $"Wielkość pozycji: {transaction.PositionSize}\n" +
-        //          $"{(transaction.AvgSellPrice != null ? $"Cena sprzedaży: {transaction.AvgSellPrice.ToString().Replace(',', '.')}" : string.Empty)}"
-        //};
+        var dialog = new ConfirmationDialog()
+        {
+            DialogText = $"Czy dodać zdarzenie? \n" +
+                  $"{e.CompanyName}\n" +
+                  $"{e.EntryDate}\n"
+        };
 
-        //dialog.ShowDialog();
+        dialog.ShowDialog();
 
-        //if (dialog.Result)
-        //{
-        //    await transactionData.InsertTransactionAsync(transaction);
-        //    var company = await companyData.GetCompanyAsync(transaction.CompanyID);
-        //    company.TransactionCount++;
-        //    await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount);
-        //    var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
-        //    if (updatedCompany != null)
-        //    {
-        //        updatedCompany.TransactionCount = company.TransactionCount;
-        //    }
+        if (dialog.Result)
+        {
+            await eventData.InsertEventAsync(e);
+            var company = await companyData.GetCompanyAsync(e.CompanyID);
+            company.EventCount++;
+            await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
+            var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+            if (updatedCompany != null)
+            {
+                updatedCompany.EventCount = company.EventCount;
+            }
 
-        //    ClearFieldsCommand.Execute(null);
-        //    OrderFilteredCompanies();
-        //    await transactionData.UpdateTransactionAsync(transaction);
-        //    transaction.ID = await transactionData.GetID(transaction);
-        //    eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
-        //}
+            ClearFieldsCommand.Execute(null);
+            OrderFilteredCompanies();
+            await eventData.UpdateEventAsync(e);
+            e.ID = await eventData.GetID(e);
+            eventAggregator.GetEvent<EventAddedEvent>().Publish(e);
+        }
     }
 
-    private async Task<bool> CheckEventValidity(Transaction transaction)
+    private async Task<bool> CheckEventValidity(Event e)
     {
-        //if (await new CheckTransaction(transactionData).IsExisting(transaction))
-        //{
-        //    var errorDialog = new ErrorDialog()
-        //    {
-        //        DialogText = $"Transakcja już istnieje w bazie danych!"
-        //    };
+        if (await new CheckEvent(eventData).IsExisting(e))
+        {
+            var errorDialog = new ErrorDialog()
+            {
+                DialogText = $"Zdarzenie już istnieje w bazie danych!"
+            };
 
-        //    errorDialog.ShowDialog();
-        //    return false;
-        //}
+            errorDialog.ShowDialog();
+            return false;
+        }
         return true;
     }
 
-    private async Task<Transaction> SetClosingProperties(Transaction transaction)
+    private async Task<bool> ValidateNewEventProperties(Event e)
     {
-        //transaction.CloseDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute);
-        //transaction.IsClosed = true;
+        var validator = new AddEventValidator();
+        var results = validator.Validate(e);
 
-        //TimeSpan timeSpan = (TimeSpan)(transaction.CloseDate - transaction.EntryDate);
-        //if (timeSpan.TotalDays > 7)
-        //{
-        //    transaction.ClosingDescription = "Transakcja z archiwum.";
-        //}
+        if (!results.IsValid)
+        {
+            var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+            var dialog = new ErrorDialog()
+            {
+                DialogText = validationErrors
+            };
 
-        //else
-        //{
-        //    var dialog2 = new FinalizeTransactionDialog();
-        //    dialog2.ShowDialog();
-
-        //    if (dialog2.IsConfirmed)
-        //    {
-        //        var closingComment = dialog2.ClosingComment;
-        //        transaction.ClosingDescription = closingComment;
-        //    }
-        //}
-        return transaction;
-    }
-
-    private async Task<bool> ValidateNewEventProperties(Transaction transaction)
-    {
-        //var validator = new AddTransactionValidator();
-        //var results = validator.Validate(transaction);
-
-        //if (!results.IsValid)
-        //{
-        //    var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
-        //    var dialog = new ErrorDialog()
-        //    {
-        //        DialogText = validationErrors
-        //    };
-        //    dialog.ShowDialog();
-        //    return false;
-        //}
+            dialog.ShowDialog();
+            return false;
+        }
         return true;
     }
 
-    private async Task<Transaction> FillNewEventProperties()
+    private async Task<Event> FillNewEventProperties()
     {
-        Transaction transaction = new()
+        Event e = new()
         {
             CompanyName = SelectedCompanyName,
             EntryDate = ParseEntryDate(EntryDate),
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
         };
-        return transaction;
+        return e;
     }
 
     public ICommand ClearFieldsCommand => new DelegateCommand(() =>

@@ -1,6 +1,6 @@
 ﻿using DataAccess.Data;
 using Infrastructure.DataFilters;
-using SharedModels.Models;
+using SharedProject.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;

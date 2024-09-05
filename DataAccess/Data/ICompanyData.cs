@@ -1,13 +1,12 @@
-﻿using SharedModels.Models;
+﻿using SharedProject.Models;
 
 namespace DataAccess.Data;
-
 public interface ICompanyData
 {
     Task DeleteCompanyAsync(int id);
     Task<IEnumerable<Company>> GetAllCompaniesAsync();
     Task<Company> GetCompanyAsync(int id);
     Task<int> GetCompanyID(string companyName);
-    Task InsertCompanyAsync(string companyName, int transactionCount);
-    Task UpdateCompanyAsync(int id, string companyName, int transactionCount);
+    Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount);
+    Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount);
 }

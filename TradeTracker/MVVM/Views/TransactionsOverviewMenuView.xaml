@@ -9,11 +9,11 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:prism="http://prismlibrary.com/"
-             xmlns:local1="clr-namespace:TradeTracker.Converters"
+             xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
              mc:Ignorable="d" 
-             d:DesignHeight="900" d:DesignWidth="1500">
+             d:DesignHeight="1000" d:DesignWidth="1675">
     <mah:MetroContentControl.Resources>
-        <local1:NullToCollapsedConverter x:Key="NullToCollapsedConverter"/>
+        <Conv:NullToCollapsedConverter x:Key="NullToCollapsedConverter"/>
     </mah:MetroContentControl.Resources>
     <Grid>
         <StackPanel x:Name="ButtonsStackPanel" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
@@ -75,9 +75,9 @@
                          BorderThickness="1" Width="50" Height="30"
                          BorderBrush="DimGray"
                          FontSize="16"
-                         Text="5"
+                         Text="10"
                          Controls:TextBoxHelper.Watermark="X"/>
-                    <iconPacks:PackIconLucide Kind="SquareStack" Width="30" Height="30" Margin="10,0,0,0"/>
+                    <iconPacks:PackIconMaterial Kind="StackOverflow" Width="30" Height="30" Margin="10,0,0,0"/>
                 </StackPanel>
             </Button>
 

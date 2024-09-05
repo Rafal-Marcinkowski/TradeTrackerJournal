@@ -9,7 +9,7 @@
         xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
         mc:Ignorable="d"     
         Title="TradeTrackerJournal" TitleCharacterCasing="Normal" TitleForeground="Black"
-        Height="900" Width="1500" TitleAlignment="Center">
+        Height="1000" Width="1675" TitleAlignment="Center">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

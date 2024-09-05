@@ -1,5 +1,5 @@
 ﻿using DataAccess.Data;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace ValidationComponent.DailyDataValidation;
 
@@ -17,7 +17,7 @@ public class CheckDailyData
     public async Task<bool> IsExisting(DailyData dailyData)
     {
         var comparer = new DailyDataComparer();
-        var data = await dailyDataProvider.GetDailyDataForTransactionAsync(dailyData.TransactionID);
+        var data = await dailyDataProvider.GetDailyDataForTransactionAsync(dailyData.TransactionID ?? 0);
         return data.Any(q => comparer.Equals(q, dailyData));
     }
 }

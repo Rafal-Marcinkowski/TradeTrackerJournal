@@ -1,5 +1,5 @@
 ﻿using DataAccess.DBAccess;
-using SharedModels.Models;
+using SharedProject.Models;
 
 namespace DataAccess.Data;
 
@@ -16,14 +16,14 @@ public class CompanyData(ISQLDataAccess dBAccess) : ICompanyData
         return companies.FirstOrDefault();
     }
 
-    public async Task InsertCompanyAsync(string companyName, int transactionCount)
+    public async Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount)
     {
-        await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount });
+        await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount });
     }
 
-    public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount)
+    public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount)
     {
-        await dBAccess.SaveDataAsync("UpdateCompany", new { ID = id, CompanyName = companyName, TransactionCount = transactionCount });
+        await dBAccess.SaveDataAsync("UpdateCompany", new { ID = id, CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount });
     }
 
     public async Task DeleteCompanyAsync(int id)

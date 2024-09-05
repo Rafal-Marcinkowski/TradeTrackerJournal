@@ -1,5 +1,6 @@
 ﻿CREATE PROCEDURE InsertDailyData
     @TransactionID INT,
+    @EventID INT,
     @Date DATETIME,
     @OpenPrice DECIMAL(12,2),
     @ClosePrice DECIMAL(12,2),
@@ -12,6 +13,6 @@
     @TransactionCount INT
 AS
 BEGIN
-    INSERT INTO DailyData (TransactionID, Date, OpenPrice, ClosePrice, Volume, Turnover, MinPrice, MaxPrice, PriceChange, TurnoverChange, TransactionCount)
-    VALUES (@TransactionID, @Date, @OpenPrice, @ClosePrice, @Volume, @Turnover, @MinPrice, @MaxPrice, @PriceChange, @TurnoverChange, @TransactionCount);
+    INSERT INTO DailyData (TransactionID, EventID,  Date, OpenPrice, ClosePrice, Volume, Turnover, MinPrice, MaxPrice, PriceChange, TurnoverChange, TransactionCount)
+    VALUES (@TransactionID, @EventID, @Date, @OpenPrice, @ClosePrice, @Volume, @Turnover, @MinPrice, @MaxPrice, @PriceChange, @TurnoverChange, @TransactionCount);
 END
