@@ -14,6 +14,9 @@ public class AddEventValidator : AbstractValidator<Event>
             .Must(BeAValidTime).WithMessage("Podaj poprawną datę wejścia")
             .When(x => !string.IsNullOrEmpty(x.EntryDate.ToString()));
 
+        RuleFor(x => x.EntryPrice)
+           .GreaterThan(0).WithMessage("Wprowadź cenę wejścia");
+
         RuleFor(x => x.InformationLink)
             .Must(BeAValidUrl).WithMessage("Wklej poprawny link")
             .When(x => !string.IsNullOrEmpty(x.InformationLink));

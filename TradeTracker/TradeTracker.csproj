@@ -43,8 +43,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
-    <ProjectReference Include="..\EventsTracker\EventsTracker.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\EventTracker\EventTracker.csproj" />
     <ProjectReference Include="..\SessionOpening\SessionOpening.csproj" />
     <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
     <ProjectReference Include="..\TradeTrackerJournal_DB\TradeTrackerJournal_DB.sqlproj" />

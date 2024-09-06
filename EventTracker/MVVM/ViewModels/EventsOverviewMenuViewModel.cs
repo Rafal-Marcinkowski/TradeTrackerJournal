@@ -1,11 +1,11 @@
 ﻿using DataAccess.Data;
-using EventsTracker.MVVM.Views;
+using EventTracker.MVVM.Views;
 using Infrastructure.DataFilters;
 using SharedProject.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace EventsTracker.MVVM.ViewModels;
+namespace EventTracker.MVVM.ViewModels;
 
 public class EventsOverviewMenuViewModel : BindableBase
 {

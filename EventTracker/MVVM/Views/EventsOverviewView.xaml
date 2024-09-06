@@ -1,9 +1,9 @@
-﻿<mah:MetroContentControl x:Class="EventsTracker.MVVM.Views.EventsOverviewView"
+﻿<mah:MetroContentControl x:Class="EventTracker.MVVM.Views.EventsOverviewView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:EventsTracker.MVVM.Views"
+             xmlns:local="clr-namespace:EventTracker.MVVM.Views"
                              xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
                      xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                      xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -217,11 +217,18 @@
                                                HorizontalAlignment="Center"/>
                                 </DockPanel>
                                 <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
+
+                                <StackPanel Orientation="Horizontal"  Margin="0,5,0,0">
+                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"
+                                              />
                                     <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
                                 </StackPanel>
 
+                                <StackPanel Orientation="Horizontal"  Margin="0,5,0,0">
+                                    <TextBlock Text="Początkowy kurs: " FontWeight="DemiBold"/>
+                                    <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
+
+                                </StackPanel>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

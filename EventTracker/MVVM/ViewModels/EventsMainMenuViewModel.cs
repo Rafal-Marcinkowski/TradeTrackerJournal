@@ -1,7 +1,7 @@
-﻿using EventsTracker.MVVM.Views;
+﻿using EventTracker.MVVM.Views;
 using System.Windows.Input;
 
-namespace EventsTracker.MVVM.ViewModels;
+namespace EventTracker.MVVM.ViewModels;
 
 public class EventsMainMenuViewModel(IRegionManager regionManager) : BindableBase
 {

@@ -2,6 +2,8 @@
     @ID INT,
     @CompanyID INT,
     @CompanyName NVARCHAR(35),
+    @EntryDate DATETIME,
+    @EntryPrice DECIMAL(12, 2) = NULL,
     @InitialDescription NVARCHAR(250) = NULL,
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,
@@ -12,6 +14,8 @@ BEGIN
     SET 
         CompanyID = @CompanyID, 
         CompanyName = @CompanyName, 
+        EntryDate = @EntryDate, 
+        EntryPrice = @EntryPrice, 
         InitialDescription = @InitialDescription, 
         InformationLink = @InformationLink,
         IsTracking = @IsTracking,

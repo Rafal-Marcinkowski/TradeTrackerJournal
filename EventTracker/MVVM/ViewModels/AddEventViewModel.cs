@@ -10,7 +10,8 @@ using System.Windows;
 using System.Windows.Input;
 using ValidationComponent.Events;
 
-namespace EventsTracker.MVVM.ViewModels;
+namespace EventTracker.MVVM.ViewModels;
+
 public class AddEventViewModel : BindableBase
 {
     private readonly ICompanyData companyData;
@@ -52,6 +53,13 @@ public class AddEventViewModel : BindableBase
     {
         get => entryDate;
         set => SetProperty(ref entryDate, value);
+    }
+
+    private string entryPrice = string.Empty;
+    public string EntryPrice
+    {
+        get => entryPrice;
+        set => SetProperty(ref entryPrice, value);
     }
 
     private string initialDescription = string.Empty;
@@ -251,6 +259,8 @@ public class AddEventViewModel : BindableBase
         {
             CompanyName = SelectedCompanyName,
             EntryDate = ParseEntryDate(EntryDate),
+            EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+                  .ToArray(), out var entryPrice) ? entryPrice : 0,
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
         };
@@ -260,6 +270,7 @@ public class AddEventViewModel : BindableBase
     public ICommand ClearFieldsCommand => new DelegateCommand(() =>
     {
         EntryDate = string.Empty;
+        EntryPrice = string.Empty;
         InformationLink = string.Empty;
         InitialDescription = string.Empty;
         SearchBoxText = string.Empty;

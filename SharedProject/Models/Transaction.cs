@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using SharedProject.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace SharedProject.Models;
 
-public class Transaction : BindableBase
+public class Transaction : BindableBase, ITrackable
 {
     public Transaction()
     {

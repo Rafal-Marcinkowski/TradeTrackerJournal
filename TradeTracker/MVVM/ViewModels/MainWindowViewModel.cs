@@ -1,4 +1,4 @@
-﻿using EventsTracker.MVVM.Views;
+﻿using EventTracker.MVVM.Views;
 using SessionOpening;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;

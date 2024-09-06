@@ -1,7 +1,7 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
-using EventsTracker.MVVM.ViewModels;
-using EventsTracker.MVVM.Views;
+using EventTracker.MVVM.ViewModels;
+using EventTracker.MVVM.Views;
 using Infrastructure;
 using Infrastructure.Logging;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +26,7 @@ public partial class App : PrismApplication
         Task.Run(async () =>
         {
             await Task.Delay(3000);
-            DailyTradeTracker dailyTradeTracker = Container.Resolve<DailyTradeTracker>();
+            DailyTracker dailyTradeTracker = Container.Resolve<DailyTracker>();
             dailyTradeTracker.StartTracker();
         });
         //FirstStartUp();
@@ -49,7 +49,7 @@ public partial class App : PrismApplication
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());
 
-        containerRegistry.RegisterSingleton<DailyTradeTracker>();
+        containerRegistry.RegisterSingleton<DailyTracker>();
         containerRegistry.RegisterInstance<ILogger>(Log.Logger);
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICommentData, CommentData>();

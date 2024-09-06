@@ -9,7 +9,8 @@ internal class EventComparer : IEqualityComparer<Event>
     {
         if (x == null || y == null) return false;
         return x.EntryDate == y.EntryDate
-            && x.CompanyID == y.CompanyID;
+            && x.CompanyID == y.CompanyID
+            && x.EntryPrice == y.EntryPrice;
     }
 
     public int GetHashCode([DisallowNull] Event obj)

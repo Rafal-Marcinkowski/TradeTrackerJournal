@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 
-namespace EventsTracker.MVVM.ViewModels;
+namespace EventTracker.MVVM.ViewModels;
 
 public class EventsOverviewViewModel : BindableBase, INavigationAware
 {

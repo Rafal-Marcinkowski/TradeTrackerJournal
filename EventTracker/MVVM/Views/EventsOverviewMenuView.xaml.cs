@@ -1,4 +1,4 @@
-﻿namespace EventsTracker.MVVM.Views;
+﻿namespace EventTracker.MVVM.Views;
 
 public partial class EventsOverviewMenuView
 {

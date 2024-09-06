@@ -30,6 +30,7 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
             e.CompanyID,
             e.CompanyName,
             e.EntryDate,
+            e.EntryPrice,
             e.InitialDescription,
             e.InformationLink,
             e.IsTracking,
@@ -46,6 +47,8 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
             e.ID,
             e.CompanyID,
             e.CompanyName,
+            e.EntryDate,
+            e.EntryPrice,
             e.InitialDescription,
             e.InformationLink,
             e.IsTracking,
@@ -58,8 +61,7 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
     public async Task<int> GetID(Event e)
     {
         var events = await GetAllEventsForCompany(e.CompanyID);
-        return events.FirstOrDefault(q => q.CompanyID == e.CompanyID && q.EntryDate == e.EntryDate && q.InitialDescription == e.InitialDescription).ID;
-
+        return events.FirstOrDefault(q => q.CompanyID == e.CompanyID && q.EntryDate == e.EntryDate && q.EntryPrice == e.EntryPrice).ID;
     }
 
     public async Task DeleteEventAsync(int id)

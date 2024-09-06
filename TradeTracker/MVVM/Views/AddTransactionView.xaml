@@ -127,10 +127,10 @@
         </StackPanel>
         <Button 
             Command="{Binding ClearFieldsCommand}"
-            Grid.Column="5" Grid.Row="1" Style="{StaticResource MahApps.Styles.Button}" Margin="0,0,25,0" VerticalAlignment="Center">
+            Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Style="{StaticResource MahApps.Styles.Button}" Margin="0,0,25,0" VerticalAlignment="Center">
             <iconPacks:VaadinIcons Kind="Eraser" Width="50" Height="50"></iconPacks:VaadinIcons>
         </Button>
-        <Button Grid.Column="5" Grid.Row="3" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,0" VerticalAlignment="Center"
+        <Button Grid.Column="5" Grid.Row="3" Grid.RowSpan="2" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,35" VerticalAlignment="Center"
                 Command="{Binding AddTransactionCommand}">
             <iconPacks:Material Kind="ContentSaveEditOutline" Width="50" Height="50"></iconPacks:Material>
         </Button>

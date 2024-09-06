@@ -246,11 +246,11 @@
                                     <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="15,0,0,0"/>
                                 </DockPanel>
                                 <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                     <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
                                     <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
                                 </StackPanel>
-                                <StackPanel Orientation="Horizontal">
+                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                     <TextBlock Text="Kurs WE: " FontWeight="DemiBold"/>
                                     <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
                                     

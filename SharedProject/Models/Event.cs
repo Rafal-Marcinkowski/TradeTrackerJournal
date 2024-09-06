@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using SharedProject.Interfaces;
+using System.Collections.ObjectModel;
 
 namespace SharedProject.Models;
 
-public class Event : BindableBase
+public class Event : BindableBase, ITrackable
 {
     public Event()
     {
@@ -38,6 +39,7 @@ public class Event : BindableBase
 
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }
+    public decimal EntryPrice { get; set; }
 
     public bool IsTracking { get; set; }
     public string? InformationLink { get; set; }

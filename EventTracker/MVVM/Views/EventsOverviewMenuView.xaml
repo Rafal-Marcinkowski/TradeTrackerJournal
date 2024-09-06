@@ -1,4 +1,4 @@
-﻿<mah:MetroContentControl x:Class="EventsTracker.MVVM.Views.EventsOverviewMenuView"
+﻿<mah:MetroContentControl x:Class="EventTracker.MVVM.Views.EventsOverviewMenuView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,7 +9,7 @@
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
-             xmlns:local="clr-namespace:EventsTracker.MVVM.Views"
+             xmlns:local="clr-namespace:EventTracker.MVVM.Views"
              mc:Ignorable="d" 
              d:DesignHeight="1000" d:DesignWidth="1675">
     <mah:MetroContentControl.Resources>
