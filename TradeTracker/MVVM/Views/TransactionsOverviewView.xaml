@@ -217,45 +217,69 @@
                                         HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <DockPanel>
-                                    <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
-                                        <iconPacks:PackIconModern.ToolTip>
-                                            <ToolTip>
-                                                <StackPanel>
-                                                    <TextBlock>
-                                                        <TextBlock.Text>
-                                                            <MultiBinding Converter="{StaticResource DateAndPriceConverter}">
-                                                                <Binding Path="CloseDate"/>
-                                                                <Binding Path="AvgSellPrice"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                        <TextBlock.Visibility>
-                                                            <MultiBinding Converter="{StaticResource VisibilityConverter}">
-                                                                <Binding Path="CloseDate"/>
-                                                                <Binding Path="AvgSellPrice"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Visibility>
-                                                    </TextBlock>
-                                                    <TextBlock Text="{Binding PositionSize, StringFormat='Wielkość pozycji: {0}'}"  />
-                                                    <TextBlock Text="{Binding NumberOfShares, StringFormat='Ilość akcji: {0}'}"  />
-                                                </StackPanel>
-                                            </ToolTip>
-                                        </iconPacks:PackIconModern.ToolTip>
-                                    </iconPacks:PackIconModern>
-                                    <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}" Margin="15,0,0,0"/>
-                                </DockPanel>
-                                <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                                    <TextBlock Text="Kurs WE: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
-                                    
-                                </StackPanel>
-                            </StackPanel>
+                            <Grid Margin="5,0,5,0" Width="auto">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="1.5*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="25" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto"></RowDefinition>
+                                        <RowDefinition></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                   
+                                       
+                                            <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
+                                                <iconPacks:PackIconModern.ToolTip>
+                                                    <ToolTip>
+                                                        <StackPanel>
+                                                            <TextBlock>
+                                                                <TextBlock.Text>
+                                                                    <MultiBinding Converter="{StaticResource DateAndPriceConverter}">
+                                                                        <Binding Path="CloseDate"/>
+                                                                        <Binding Path="AvgSellPrice"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Text>
+                                                                <TextBlock.Visibility>
+                                                                    <MultiBinding Converter="{StaticResource VisibilityConverter}">
+                                                                        <Binding Path="CloseDate"/>
+                                                                        <Binding Path="AvgSellPrice"/>
+                                                                    </MultiBinding>
+                                                                </TextBlock.Visibility>
+                                                            </TextBlock>
+                                                            <TextBlock Text="{Binding PositionSize, StringFormat='Wielkość pozycji: {0}'}"  />
+                                                            <TextBlock Text="{Binding NumberOfShares, StringFormat='Ilość akcji: {0}'}"  />
+                                                        </StackPanel>
+                                                    </ToolTip>
+                                                </iconPacks:PackIconModern.ToolTip>
+                                            </iconPacks:PackIconModern>
+                                            <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}"
+                                               Grid.Column="1"/>
+                                      
+                                </Grid>
+                                        <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold"
+                                           FontSize="17" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Grid.Row="1"
+                                          />
+                                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                            <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
+                                            <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Grid.Row="3">
+                                            <TextBlock Text="Kurs WE: " FontWeight="DemiBold" VerticalAlignment="Bottom"/>
+                                            <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold" VerticalAlignment="Bottom"/>
+
+                                        </StackPanel>
+                                   
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -361,29 +385,33 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border BorderBrush="DimGray" BorderThickness="2" Margin="5,0,2,0">
-                                            <Grid Margin="5,0,5,0">
+                                            <Grid Margin="5,0,5,0" Width="auto">
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="16"/>
+                                                    <RowDefinition Height="16"/>
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 
-                                                <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                                                <Grid Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="auto" />
                                                         <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="auto" />
                                                     </Grid.ColumnDefinitions>
-
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition></RowDefinition>
+                                                        <RowDefinition></RowDefinition>
+                                                    </Grid.RowDefinitions>
+                                                    
                                                     <iconPacks:PackIconModern Kind="BookPerspective"
-                                                                              Grid.Column="0"
-                                                                              Margin="0,0,0,0"
+                                                                              Grid.RowSpan="2"
+                                                                              VerticalAlignment="Center"
                                                                               Height="15"
                                                                               Width="15">
                                                         <iconPacks:PackIconModern.Visibility>
@@ -396,15 +424,32 @@
                                                     </iconPacks:PackIconModern>
                                                     <TextBlock Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy}'}"
                                                            Grid.Column="1"
-                                                           Grid.ColumnSpan="2"
-                                                           HorizontalAlignment="Center"
                                                            VerticalAlignment="Center"
+                                                           HorizontalAlignment="Center"
                                                            FontWeight="DemiBold" />
-                                                </Grid>
 
-                                                <TextBlock Text="{Binding OpenPrice}" 
-                                           Grid.Row="1" Grid.ColumnSpan="2"
-                                           HorizontalAlignment="Center"/>
+                                                    <Button     
+                                                            Grid.Column="2"
+                                                            Grid.RowSpan="2"
+                                                            VerticalAlignment="Center"
+                                                            Background="Transparent" 
+                                                            BorderBrush="Transparent" 
+                                                            Command="{Binding YourCommand}">
+                                                        
+                                                        <Button.Visibility>
+                                                            <MultiBinding Converter="{StaticResource DatesEqualToVisibilityConverter}">
+                                                                <Binding Path="Date"/>
+                                                                <Binding Path="EventDate"/>
+                                                            </MultiBinding>
+                                                        </Button.Visibility>
+
+                                                        <iconPacks:PackIconMaterial Kind="EyeSettings" Width="12" Height="12"/>
+                                                    </Button>
+
+                                                    <TextBlock Text="{Binding OpenPrice}" 
+                                                       Grid.Row="1" Grid.Column="1"
+                                                       HorizontalAlignment="Center"/>
+                                                </Grid>
 
                                                     <TextBlock Text="{Binding ClosePrice}" 
                                                                Grid.Row="4" Grid.Column="0"

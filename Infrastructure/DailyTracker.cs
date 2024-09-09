@@ -16,7 +16,7 @@ public class DailyTracker
     private readonly IEventData eventData;
     private List<ITrackable> failedTransactions;
     private static bool isTrackerWorking = false;
-    private Queue<ITrackable> queuedTransactions = [];
+    private Queue<ITrackable> queuedTrackables = [];
 
     public DailyTracker(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, IEventData eventData)
     {
@@ -45,7 +45,7 @@ public class DailyTracker
 
         else
         {
-            queuedTransactions.Enqueue(trackable);
+            queuedTrackables.Enqueue(trackable);
         }
     }
 
@@ -84,10 +84,10 @@ public class DailyTracker
 
     private async Task ProcessQueuedTrackables()
     {
-        while (queuedTransactions.Count > 0)
+        while (queuedTrackables.Count > 0)
         {
-            var nextTransaction = queuedTransactions.Dequeue();
-            await StartTracker(nextTransaction);
+            var nextTrackable = queuedTrackables.Dequeue();
+            await StartTracker(nextTrackable);
         }
     }
 

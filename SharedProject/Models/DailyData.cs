@@ -17,4 +17,5 @@ public class DailyData
     public decimal? PriceChange { get; set; }
     public decimal? TurnoverChange { get; set; }
     public int? TransactionCount { get; set; }
+    public DateTime? EventDate { get; set; }
 }

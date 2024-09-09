@@ -13,11 +13,14 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
-    private readonly ICommentData CommentData;
+    private readonly IEventData eventData;
+    private readonly ICommentData commentData;
 
-    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, ICommentData CommentData)
+    public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider,
+        IEventAggregator eventAggregator, ICommentData commentData, IEventData eventData)
     {
-        this.CommentData = CommentData;
+        this.commentData = commentData;
+        this.eventData = eventData;
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
         isCommentBeingEdited = false;
@@ -77,8 +80,12 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         foreach (var transaction in transactions)
         {
             var dailyData = (await dailyDataProvider.GetDailyDataForTransactionAsync(transaction.ID)).OrderBy(q => q.Date);
+            var allEvents = await eventData.GetAllEventsForCompany(transaction.CompanyID);
+
             foreach (var item in dailyData)
             {
+                var e = allEvents.FirstOrDefault(q => q.EntryDate.Date == item.Date.Date);
+                item.EventDate = e?.EntryDate.Date;
                 item.TransactionCloseDate = transaction.CloseDate;
                 item.TransactionClosingDescription = transaction.ClosingDescription;
             }
@@ -114,7 +121,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         foreach (var transaction in transactions)
         {
-            var comments = await CommentData.GetAllCommentsForTransactionAsync(transaction.ID);
+            var comments = await commentData.GetAllCommentsForTransactionAsync(transaction.ID);
             transaction.Comments = (new ObservableCollection<Comment>(comments));
         }
     }
@@ -253,7 +260,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         if (comment.IsEditing)
         {
             comment.IsEditing = false;
-            await CommentData.UpdateCommentAsync(comment);
+            await commentData.UpdateCommentAsync(comment);
         }
     });
 
@@ -288,7 +295,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
             };
 
             transaction.Comments.Add(Comment);
-            await CommentData.InsertCommentAsync(Comment);
+            await commentData.InsertCommentAsync(Comment);
             transaction.IsNewCommentBeingAdded = !transaction.IsNewCommentBeingAdded;
             NewCommentText = string.Empty;
         }
@@ -310,9 +317,9 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
         if (dialog.Result)
         {
-            parameters.Item1.ID = await CommentData.GetCommentID(parameters.Item1.CommentText);
+            parameters.Item1.ID = await commentData.GetCommentID(parameters.Item1.CommentText);
             parameters.Item2.Comments.Remove(parameters.Item1);
-            await CommentData.DeleteCommentAsync(parameters.Item1.ID);
+            await commentData.DeleteCommentAsync(parameters.Item1.ID);
         }
     });
 }

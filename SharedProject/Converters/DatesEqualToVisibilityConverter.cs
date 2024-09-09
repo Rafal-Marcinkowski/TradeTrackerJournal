@@ -8,12 +8,12 @@ public class DatesEqualToVisibilityConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values.Length != 3 || values[0] is not DateTime date1 || values[1] is not DateTime date2 || values[2] != null && values[2] is not string)
+        if (values.Length < 2 || values[0] is not DateTime date1 || values[1] is not DateTime date2)
         {
             return Visibility.Collapsed;
         }
 
-        if (values[2] is string desc && desc == "Transakcja z archiwum.")
+        if (values.Length == 3 && values[2] is string desc && desc == "Transakcja z archiwum.")
         {
             return Visibility.Collapsed;
         }

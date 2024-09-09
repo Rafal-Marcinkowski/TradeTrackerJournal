@@ -210,26 +210,35 @@
                                     HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <DockPanel>
-                                    <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}"
-                                               Margin="15,0,0,0"
-                                               HorizontalAlignment="Center"/>
-                                </DockPanel>
-                                <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold" FontSize="16" HorizontalAlignment="Center"/>
+                            <Grid Margin="5,0,5,0" Width="auto">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="1.5*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
 
-                                <StackPanel Orientation="Horizontal"  Margin="0,5,0,0">
-                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"
-                                              />
+                                    <TextBlock Text="{Binding EntryDate, StringFormat={}{0:dd/MM/yyyy HH:mm}}"
+                                                Grid.Column="0"
+                                               HorizontalAlignment="Center"
+                                               />
+
+                                <TextBlock Text="{Binding CompanyName}" FontWeight="DemiBold"
+                                           FontSize="17" HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Grid.Row="1"
+                                          />
+                                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                                    <TextBlock Text="Mediana obrotu: " FontWeight="DemiBold"/>
                                     <TextBlock Text="{Binding EntryMedianTurnover, Converter={StaticResource VolumeToMillionConverter}}" FontWeight="DemiBold"/>
                                 </StackPanel>
-
-                                <StackPanel Orientation="Horizontal"  Margin="0,5,0,0">
-                                    <TextBlock Text="Początkowy kurs: " FontWeight="DemiBold"/>
-                                    <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold"/>
+                                <StackPanel Orientation="Horizontal" Grid.Row="3">
+                                    <TextBlock Text="Początkowy kurs: " FontWeight="DemiBold" VerticalAlignment="Bottom"/>
+                                    <TextBlock Text="{Binding EntryPrice}" FontWeight="DemiBold" VerticalAlignment="Bottom"/>
 
                                 </StackPanel>
-                            </StackPanel>
+
+                                </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
