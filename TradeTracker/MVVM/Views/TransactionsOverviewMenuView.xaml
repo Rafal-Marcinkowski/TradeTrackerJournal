@@ -20,7 +20,7 @@
             <Button 
                 Command="{Binding TransactionsOverviewForCompanyCommand}"
                 CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
-                Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="50,0,5,0">
+                Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="50,0,5,0" Padding="10">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                         <TextBlock Text="Wybierz spółkę" VerticalAlignment="Center" FontSize="16"/>
@@ -63,6 +63,7 @@
                     Width="auto"
                     Height="50"
                     Margin="5"
+                    Padding="10"
                     Command="{Binding LastXTransactionsOverviewCommand}"
                     CommandParameter="{Binding ElementName=numberOfTransactionsTextBoxText, Path=Text}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -81,23 +82,24 @@
                 </StackPanel>
             </Button>
 
-            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5"
+            <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="50" Margin="5" Padding="10"
         Command="{Binding NavigateToOpenPositionsCommand}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
-                    <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="50" Height="35" Margin="15,0,0,0"/>
+                    <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="40" Height="27" Margin="15,0,0,0"/>
                 </StackPanel>
             </Button>
 
             <Button Style="{StaticResource BigButtonStyle}"
                     Width="auto"
                     Height="50"
+                    Padding="10"
                     Margin="5"
                     Command="{Binding TransactionsForCalendarDateCommand}"
                     CommandParameter="{Binding ElementName=calendar, Path=SelectedDate}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Wybierz z kalendarza" VerticalAlignment="Center" FontSize="16"/>
-                    <iconPacks:PackIconModern Kind="Calendar" Width="50" Height="35"/>
+                    <iconPacks:PackIconModern Kind="Calendar" Width="45" Height="30"/>
                 </StackPanel>
             </Button>
             <xctk:DateTimePicker/>

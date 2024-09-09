@@ -10,7 +10,7 @@
              d:DesignHeight="900" d:DesignWidth="1500">
         
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
             Command="{Binding NavigateToAddEventCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Dodaj zdarzenie" VerticalAlignment="Center" FontSize="16"/>
@@ -18,7 +18,7 @@
             </StackPanel>
         </Button>
 
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
      Command="{Binding NavigateToEventsOverviewMenuCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Przegląd zdarzeń" VerticalAlignment="Center" FontSize="16"/>

@@ -44,6 +44,7 @@
             </StackPanel>
         </Border>
         <Button 
+            Padding="10"
         Command="{Binding ConfirmCompanySelectionCommand}"
         CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
         Grid.Row="0" Grid.RowSpan="4" Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5">

@@ -9,22 +9,22 @@
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:prism="http://prismlibrary.com/"          
             d:DesignHeight="900" d:DesignWidth="1500">
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="auto">
+        <Button Style="{StaticResource BigButtonStyle}" Height="auto" Margin="5" Padding="10"
                 Command="{Binding NavigateToAddTransactionCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Otwórz transakcję" VerticalAlignment="Center" FontSize="16"/>
                 <iconPacks:PackIconModern Kind="DrawPenAdd" Width="50" Height="50" Margin="25,0,0,0"/>
             </StackPanel>
         </Button>
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
             Command="{Binding NavigateToOpenPositionsCommand}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBlock Text="Otwarte pozycje" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="50" Height="50" Margin="30,0,0,0"/>
+                <iconPacks:PackIconModern Kind="BookHardcoverOpenWriting" Width="50" Height="50" Margin="37,0,0,0"    />
             </StackPanel>
         </Button>
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5"
+        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
          Command="{Binding NavigateToTransactionsOverviewMenuCommand}">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <TextBlock Text="Przegląd transakcji" VerticalAlignment="Center" FontSize="16"/>
