@@ -178,7 +178,6 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         };
 
         var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
     });
 

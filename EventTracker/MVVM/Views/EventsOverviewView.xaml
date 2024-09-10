@@ -311,6 +311,18 @@
                                     </Button.ToolTip>
                                     <iconPacks:Material Kind="CommentOutline"/>
                                 </Button>
+                                <Button Command="{Binding DataContext.NavigateBackCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                        Grid.Row="0" Grid.Column="1"
+                                        Width="50"
+                                        Height="30"
+                                        Margin="1"
+                                        Background="DimGray"
+                                        BorderBrush="DimGray">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="Nawiguj do poprzedniego widoku"/>
+                                    </Button.ToolTip>
+                                    <iconPacks:Microns Kind="Undo"/>
+                                </Button>
                             </Grid>
 
                         </DataTemplate>

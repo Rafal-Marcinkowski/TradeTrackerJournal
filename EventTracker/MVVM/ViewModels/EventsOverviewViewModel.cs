@@ -12,12 +12,15 @@ namespace EventTracker.MVVM.ViewModels;
 public class EventsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly IEventData eventData;
+    private readonly IRegionManager regionManager;
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly ICommentData CommentData;
 
-    public EventsOverviewViewModel(IEventData eventData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, ICommentData CommentData)
+    public EventsOverviewViewModel(IEventData eventData, IDailyDataProvider dailyDataProvider,
+        IEventAggregator eventAggregator, ICommentData CommentData, IRegionManager regionManager)
     {
+        this.regionManager = regionManager;
         this.CommentData = CommentData;
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
@@ -155,6 +158,15 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
 
         IsCommentBeingEdited = false;
         NewCommentText = string.Empty;
+    });
+
+    public ICommand NavigateBackCommand => new DelegateCommand(() =>
+    {
+        var navigationJournal = regionManager.Regions.First().NavigationService.Journal;
+        if (navigationJournal.CanGoBack)
+        {
+            navigationJournal.GoBack();
+        }
     });
 
     private bool isNewCommentBeingAdded;
