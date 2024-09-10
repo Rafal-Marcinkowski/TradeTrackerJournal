@@ -87,9 +87,18 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
                 "selectedCompany" => Task.Run(() => GetEventsForCompany((int)navigationContext.Parameters[key])),
                 "op" => Task.Run(() => GetAllOpenEvents()),
                 "lastx" => Task.Run(() => GetLastXEvents((int)navigationContext.Parameters[key])),
+                "events" => Task.Run(() => GetEventsForTransaction((IEnumerable<Event>)navigationContext.Parameters[key])),
                 _ => Task.CompletedTask
             };
         }
+    }
+
+    private async Task GetEventsForTransaction(IEnumerable<Event> events)
+    {
+        var eventsList = new ObservableCollection<Event>(events);
+        await GetDailyData(eventsList);
+        await GetAllComments(eventsList);
+        Events = eventsList;
     }
 
     private async Task GetLastXEvents(int nrOfTransactionsToShow)

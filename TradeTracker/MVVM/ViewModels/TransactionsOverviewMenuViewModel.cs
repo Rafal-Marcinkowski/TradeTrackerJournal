@@ -91,7 +91,7 @@ public class TransactionsOverviewMenuViewModel : BindableBase
         {
             var parameters = new NavigationParameters
         {
-            { "selectedCompany", selectedCompany.ID }
+            {"selectedCompany", selectedCompany.ID }
         };
             var region = regionManager.Regions["MainRegion"];
             region.RemoveAll();

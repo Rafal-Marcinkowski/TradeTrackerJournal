@@ -434,8 +434,9 @@
                                                             VerticalAlignment="Center"
                                                             Background="Transparent" 
                                                             BorderBrush="Transparent" 
-                                                            Command="{Binding YourCommand}">
-                                                        
+                                                            Command="{Binding DataContext.GoToEventCommand, RelativeSource={RelativeSource AncestorType=mah:MetroContentControl}}"
+                                                            CommandParameter="{Binding TransactionID}">
+                                                            
                                                         <Button.Visibility>
                                                             <MultiBinding Converter="{StaticResource DatesEqualToVisibilityConverter}">
                                                                 <Binding Path="Date"/>

@@ -1,4 +1,5 @@
 ﻿using DataAccess.Data;
+using EventTracker.MVVM.Views;
 using Infrastructure.Events;
 using SharedProject.Models;
 using SharedProject.Views;
@@ -15,10 +16,12 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     private readonly IEventAggregator eventAggregator;
     private readonly IEventData eventData;
     private readonly ICommentData commentData;
+    private readonly IRegionManager regionManager;
 
     public TransactionsOverviewViewModel(ITransactionData transactionData, IDailyDataProvider dailyDataProvider,
-        IEventAggregator eventAggregator, ICommentData commentData, IEventData eventData)
+        IEventAggregator eventAggregator, ICommentData commentData, IEventData eventData, IRegionManager regionManager)
     {
+        this.regionManager = regionManager;
         this.commentData = commentData;
         this.eventData = eventData;
         this.dailyDataProvider = dailyDataProvider;
@@ -93,15 +96,15 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         }
     }
 
-    public void OnNavigatedTo(NavigationContext navigationContext)
+    public async void OnNavigatedTo(NavigationContext navigationContext)
     {
         foreach (var key in navigationContext.Parameters.Keys)
         {
             _ = key switch
             {
-                "selectedCompany" => Task.Run(() => GetTransactionsForCompany((int)navigationContext.Parameters[key])),
-                "op" => Task.Run(() => GetAllOpenTransactions()),
-                "lastx" => Task.Run(() => GetLastXTransactions((int)navigationContext.Parameters[key])),
+                "selectedCompany" => Task.Run(async () => await GetTransactionsForCompany((int)navigationContext.Parameters[key])),
+                "op" => Task.Run(async () => await GetAllOpenTransactions()),
+                "lastx" => Task.Run(async () => await GetLastXTransactions((int)navigationContext.Parameters[key])),
                 _ => Task.CompletedTask
             };
         }
@@ -161,6 +164,22 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
         IsCommentBeingEdited = false;
         NewCommentText = string.Empty;
+    });
+
+    public ICommand GoToEventCommand => new DelegateCommand<int?>(async transactionID =>
+    {
+        var transaction = await transactionData.GetTransactionAsync(transactionID ?? 0);
+        var events = await eventData.GetAllEventsForCompany(transaction.CompanyID);
+        events = events.Where(q => q.EntryDate >= transaction.EntryDate).OrderByDescending(q => q.EntryDate);
+
+        var parameters = new NavigationParameters
+        {
+            { "events", events }
+        };
+
+        var region = regionManager.Regions["MainRegion"];
+        region.RemoveAll();
+        regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
     });
 
     private bool isNewCommentBeingAdded;

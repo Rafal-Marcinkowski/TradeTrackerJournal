@@ -7,15 +7,15 @@ public class Comment : BindableBase
     public int? TransactionID { get; set; }
     public int? EventID { get; set; }
     public int ID { get; set; }
-    private string commentText;
-    private bool isEditing;
 
+    private string commentText;
     public string CommentText
     {
         get => commentText;
         set => SetProperty(ref commentText, value);
     }
 
+    private bool isEditing;
     public bool IsEditing
     {
         get => isEditing;

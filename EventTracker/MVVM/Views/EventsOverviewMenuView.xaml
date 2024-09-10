@@ -18,7 +18,7 @@
     <Grid>
         <StackPanel x:Name="ButtonsStackPanel" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
             <Button 
-            Command="{Binding TransactionsOverviewForCompanyCommand}"
+            Command="{Binding EventsOverviewForCompanyCommand}"
             CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}"
                 Padding="10"
             Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="50,0,5,0">
@@ -65,7 +65,7 @@
                 Height="50"
                     Padding="10"
                 Margin="5"
-                Command="{Binding LastXTransactionsOverviewCommand}"
+                Command="{Binding LastXEventsOverviewCommand}"
                 CommandParameter="{Binding ElementName=numberOfTransactionsTextBoxText, Path=Text}">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Ostatnie X zdarzeń" VerticalAlignment="Center" FontSize="16"/>

@@ -64,7 +64,7 @@ public class EventsOverviewMenuViewModel : BindableBase
         regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
     });
 
-    public ICommand TransactionsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
+    public ICommand EventsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
     {
         if (selectedCompany != null)
         {
@@ -78,7 +78,7 @@ public class EventsOverviewMenuViewModel : BindableBase
         }
     });
 
-    public ICommand LastXTransactionsOverviewCommand => new DelegateCommand<string>((nrOfLastTransactionsToShow) =>
+    public ICommand LastXEventsOverviewCommand => new DelegateCommand<string>((nrOfLastTransactionsToShow) =>
     {
         if (int.TryParse(nrOfLastTransactionsToShow, out int transactionsToShow))
         {
