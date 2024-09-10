@@ -132,7 +132,7 @@
         </Button>
         <Button Grid.Column="5" Grid.Row="3" Grid.RowSpan="2" Style="{StaticResource MahApps.Styles.Button}"  Margin="0,0,25,35" VerticalAlignment="Center"
                 Command="{Binding AddTransactionCommand}">
-            <iconPacks:Material Kind="ContentSaveEditOutline" Width="50" Height="50"></iconPacks:Material>
+            <iconPacks:MaterialDesign Kind="SaveAsSharp" Width="50" Height="50"></iconPacks:MaterialDesign>
         </Button>
     </Grid>
 </mah:MetroContentControl>

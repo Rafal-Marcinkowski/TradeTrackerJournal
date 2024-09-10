@@ -321,7 +321,7 @@
                                     <Button.ToolTip>
                                         <ToolTip Content="Nawiguj do poprzedniego widoku"/>
                                     </Button.ToolTip>
-                                    <iconPacks:Microns Kind="Undo"/>
+                                    <iconPacks:VaadinIcons Kind="TimeBackward"/>
                                 </Button>
                             </Grid>
 

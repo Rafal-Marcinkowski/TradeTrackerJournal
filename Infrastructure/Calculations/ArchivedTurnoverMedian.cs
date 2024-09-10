@@ -15,10 +15,12 @@ public class ArchivedTurnoverMedian
             .ToList();
 
         int count = turnoverValues.Count;
+
         if (count % 2 == 1)
         {
             return turnoverValues[count / 2];
         }
+
         else
         {
             decimal middle1 = turnoverValues[(count / 2) - 1];

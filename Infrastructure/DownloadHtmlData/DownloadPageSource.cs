@@ -5,7 +5,7 @@ namespace Infrastructure.DownloadHtmlData;
 
 public class DownloadPageSource
 {
-    private static readonly HttpClient client = new HttpClient(new HttpClientHandler
+    private static readonly HttpClient client = new(new HttpClientHandler
     {
         ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
     });

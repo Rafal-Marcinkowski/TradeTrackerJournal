@@ -155,7 +155,6 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
     {
         e.IsDetailsVisible = !e.IsDetailsVisible;
         e.IsNewCommentBeingAdded = false;
-
         IsCommentBeingEdited = false;
         NewCommentText = string.Empty;
     });
