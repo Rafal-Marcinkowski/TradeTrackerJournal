@@ -28,7 +28,7 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
         isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
         this.eventData = eventData;
-        events = new ObservableCollection<Event>();
+        events = [];
 
         this.eventAggregator.GetEvent<DailyDataAddedEvent>().Subscribe(async dailyData =>
         {

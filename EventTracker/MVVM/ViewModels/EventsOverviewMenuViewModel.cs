@@ -37,7 +37,7 @@ public class EventsOverviewMenuViewModel : BindableBase
 
     private void FilterCompanies()
     {
-        FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
+        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
     }
 
     public EventsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData, IEventData eventData)

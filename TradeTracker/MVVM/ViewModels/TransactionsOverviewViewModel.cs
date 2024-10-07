@@ -30,7 +30,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         isNewCommentBeingAdded = false;
         HasFinalComment = !string.IsNullOrEmpty(FinalComment);
         this.transactionData = transactionData;
-        transactions = new ObservableCollection<Transaction>();
+        transactions = [];
 
         this.eventAggregator.GetEvent<DailyDataAddedEvent>().Subscribe(async dailyData =>
         {

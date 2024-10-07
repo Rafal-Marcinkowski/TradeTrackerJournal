@@ -23,11 +23,13 @@ public class OpenPositionsViewModel : BindableBase
     {
         string normalizedText = (new string(transaction.AvgSellPriceText.Replace(',', '.').Trim()
         .Where(q => !char.IsWhiteSpace(q)).ToArray()));
+
         if (decimal.TryParse(normalizedText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal avgSellPrice))
         {
             avgSellPrice = Math.Round(avgSellPrice, 2);
             transaction.AvgSellPrice = avgSellPrice;
         }
+
         transaction.AvgSellPriceText = string.Empty;
     });
 
@@ -42,6 +44,7 @@ public class OpenPositionsViewModel : BindableBase
             MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
             return;
         }
+
         if (transaction.AvgSellPrice > 0)
         {
             var dialog = new ConfirmationDialog()
@@ -61,6 +64,7 @@ public class OpenPositionsViewModel : BindableBase
                     var closingComment = dialog2.ClosingComment;
                     transaction.ClosingDescription = closingComment;
                 }
+
                 transaction.IsClosed = true;
                 transaction.CloseDate = DateTime.Now.Date
                              .AddHours(DateTime.Now.Hour)
@@ -77,12 +81,15 @@ public class OpenPositionsViewModel : BindableBase
         {
             var allTransactions = await transactionData.GetAllTransactionsAsync();
             Transactions = new ObservableCollection<Transaction>(allTransactions.Where(q => !q.IsClosed));
+
             foreach (var transaction in Transactions)
             {
                 await SetDuration(transaction);
             }
+
             RaisePropertyChanged(nameof(Transactions));
         }
+
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading transactions: {ex.Message}");

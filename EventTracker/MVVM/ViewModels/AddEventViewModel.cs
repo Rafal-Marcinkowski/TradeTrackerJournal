@@ -43,8 +43,7 @@ public class AddEventViewModel : BindableBase
         get => searchBoxText;
         set
         {
-            SetProperty(ref searchBoxText, value);
-            FilterCompanies();
+            SetProperty(ref searchBoxText, value, () => FilterCompanies());
         }
     }
 
@@ -78,7 +77,7 @@ public class AddEventViewModel : BindableBase
 
     private void FilterCompanies()
     {
-        FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
+        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
     }
 
     private void OrderFilteredCompanies()

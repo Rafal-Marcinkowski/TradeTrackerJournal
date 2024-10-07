@@ -6,7 +6,7 @@ public class ArchivedTurnoverMedian
 {
     public static async Task<decimal> Calculate(IEnumerable<DataRecord> records)
     {
-        if (records.Count() == 0)
+        if (!records.Any())
             return 0;
 
         var turnoverValues = records
