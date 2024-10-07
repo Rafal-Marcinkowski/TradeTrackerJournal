@@ -34,6 +34,6 @@ public class CompanyData(ISQLDataAccess dBAccess) : ICompanyData
     public async Task<int> GetCompanyID(string companyName)
     {
         var companies = await GetAllCompaniesAsync();
-        return companies.FirstOrDefault(q => q.CompanyName == companyName).ID;
+        return companies.FirstOrDefault(q => q.CompanyName == companyName)?.ID ?? -1;
     }
 }

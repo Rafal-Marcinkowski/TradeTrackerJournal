@@ -61,7 +61,7 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
     public async Task<int> GetID(Event e)
     {
         var events = await GetAllEventsForCompany(e.CompanyID);
-        return events.FirstOrDefault(q => q.CompanyID == e.CompanyID && q.EntryDate == e.EntryDate && q.EntryPrice == e.EntryPrice).ID;
+        return events.FirstOrDefault(q => q.CompanyID == e.CompanyID && q.EntryDate == e.EntryDate && q.EntryPrice == e.EntryPrice)?.ID ?? -1;
     }
 
     public async Task DeleteEventAsync(int id)

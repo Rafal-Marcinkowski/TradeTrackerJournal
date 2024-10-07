@@ -135,6 +135,7 @@ public class AddEventViewModel : BindableBase
                 return fullDate;
             }
         }
+
         else if (normalizedInput.Length == 8)
         {
             string datePart = normalizedInput.Substring(0, 8);
@@ -146,6 +147,7 @@ public class AddEventViewModel : BindableBase
                 return dateOnly;
             }
         }
+
         else if (normalizedInput.Length == 4 || normalizedInput.Length == 3)
         {
             string timePart = normalizedInput.Length == 4 ? normalizedInput : $"0{normalizedInput[..1]}{normalizedInput.Substring(1, 2)}";
@@ -181,6 +183,7 @@ public class AddEventViewModel : BindableBase
 
                 await ConfirmEvent(e);
             }
+
             catch (Exception ex)
             {
                 Log.Error(ex, ex.Message);
@@ -202,10 +205,12 @@ public class AddEventViewModel : BindableBase
         if (dialog.Result)
         {
             await eventData.InsertEventAsync(e);
+            await Task.Delay(100);
             var company = await companyData.GetCompanyAsync(e.CompanyID);
             company.EventCount++;
             await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
             var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+
             if (updatedCompany != null)
             {
                 updatedCompany.EventCount = company.EventCount;
@@ -231,6 +236,7 @@ public class AddEventViewModel : BindableBase
             errorDialog.ShowDialog();
             return false;
         }
+
         return true;
     }
 
@@ -250,6 +256,7 @@ public class AddEventViewModel : BindableBase
             dialog.ShowDialog();
             return false;
         }
+
         return true;
     }
 
@@ -264,6 +271,7 @@ public class AddEventViewModel : BindableBase
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
         };
+
         return e;
     }
 
@@ -276,5 +284,4 @@ public class AddEventViewModel : BindableBase
         SearchBoxText = string.Empty;
         SelectedCompanyName = string.Empty;
     });
-
 }

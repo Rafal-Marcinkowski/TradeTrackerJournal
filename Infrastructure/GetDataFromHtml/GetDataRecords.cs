@@ -36,10 +36,12 @@ public class GetDataRecords
             {
                 return allNecessaryDataRecords;
             }
+
             if (trackable.EntryMedianTurnover == 0)
             {
                 predicate = allNecessaryDataRecords.Where(q => q.Date < trackable.EntryDate).Count() <= 20;
             }
+
             else
             {
                 predicate = !allNecessaryDataRecords.Any(q => q.Date.Date <= trackable.EntryDate.Date);

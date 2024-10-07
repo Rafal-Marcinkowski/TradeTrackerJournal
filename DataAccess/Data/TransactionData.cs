@@ -73,8 +73,8 @@ public class TransactionData(ISQLDataAccess dBAccess) : ITransactionData
     public async Task<int> GetID(Transaction transaction)
     {
         var transactions = await GetAllTransactionsForCompany(transaction.CompanyID);
-        return transactions.FirstOrDefault(q => q.CompanyID == transaction.CompanyID && q.EntryDate == transaction.EntryDate
-                                                 && q.EntryPrice == transaction.EntryPrice && q.PositionSize == transaction.PositionSize && q.NumberOfShares == transaction.NumberOfShares).ID;
+        return transactions?.FirstOrDefault(q => q.CompanyID == transaction.CompanyID && q.EntryDate == transaction.EntryDate
+                                             && q.EntryPrice == transaction.EntryPrice && q.PositionSize == transaction.PositionSize && q.NumberOfShares == transaction.NumberOfShares)?.ID ?? -1;
     }
 
     public async Task DeleteTransactionAsync(int id)

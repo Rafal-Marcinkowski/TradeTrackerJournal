@@ -114,6 +114,7 @@ public class DailyTracker
     {
         var allRecords = await GetDataRecords.GetAllNecessaryRecords(trackable);
         Log.Information($"Liczba rekordów pobranych z zewnętrznego źródła: {allRecords.Count()}");
+
         if (!allRecords.Any())
         {
             return;
@@ -143,8 +144,8 @@ public class DailyTracker
 
         var trackingRecords = allRecords
                 .Where(q => q.Date >= trackable.EntryDate.Date)
-                .OrderBy(q => q.Date)
-                .Take(30).ToList();
+                .OrderByDescending(q => q.Date)
+                .Take(trackable.IsClosed ? 30 : allRecords.Count()).ToList();
 
         if (trackingRecords.Count != 0)
         {
@@ -174,7 +175,7 @@ public class DailyTracker
         var recordsToAdd = newDataList
             .Where(d => oldestCurrentRecord == null || d.Date > oldestCurrentRecord.Date)
             .OrderBy(d => d.Date)
-            .Take(30 - currentDailyData.Count())
+            .Take(trackable.IsClosed ? 30 - currentDailyData.Count() : newDataList.Count)
             .ToList();
 
         if (recordsToAdd.Count != 0)

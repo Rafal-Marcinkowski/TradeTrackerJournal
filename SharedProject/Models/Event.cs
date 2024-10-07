@@ -11,6 +11,7 @@ public class Event : BindableBase, ITrackable
         isNewCommentBeingAdded = false;
         DailyDataCollection = [];
         IsTracking = true;
+        IsClosed = true;
     }
 
     public int ID { get; set; }
@@ -49,4 +50,5 @@ public class Event : BindableBase, ITrackable
     public ObservableCollection<DailyData> DailyDataCollection { get; set; }
 
     public ObservableCollection<Comment> Comments { get; set; }
+    public bool IsClosed { get; set; }
 }

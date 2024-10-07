@@ -18,21 +18,19 @@ public class TurnoverMedianTable
 
     public static async Task InitializeTurnoverMedian()
     {
-        TurnoverMedianDictionary = new Dictionary<string, string>();
+        TurnoverMedianDictionary = [];
         if (File.Exists("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable"))
         {
-            using (StreamReader reader = new StreamReader("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable"))
+            using StreamReader reader = new("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable");
+            string line;
+            while ((line = await reader.ReadLineAsync()) != null)
             {
-                string line;
-                while ((line = await reader.ReadLineAsync()) != null)
+                string[] parts = line.Split(' ');
+                if (parts.Length == 2)
                 {
-                    string[] parts = line.Split(' ');
-                    if (parts.Length == 2)
-                    {
-                        string key = parts[0].Trim();
-                        string value = parts[1].Trim();
-                        TurnoverMedianDictionary.Add(key, value);
-                    }
+                    string key = parts[0].Trim();
+                    string value = parts[1].Trim();
+                    TurnoverMedianDictionary.Add(key, value);
                 }
             }
         }
@@ -40,8 +38,8 @@ public class TurnoverMedianTable
 
     public async static Task<string> GetTurnoverMedianForCompany(string companyCode)
     {
-        if (TurnoverMedianDictionary == null || !TurnoverMedianDictionary.ContainsKey(companyCode))
+        if (TurnoverMedianDictionary == null || !TurnoverMedianDictionary.TryGetValue(companyCode, out string? value))
             return string.Empty;
-        return TurnoverMedianDictionary[companyCode];
+        return value;
     }
 }

@@ -50,7 +50,7 @@ public partial class App : PrismApplication
         .Build());
 
         containerRegistry.RegisterSingleton<DailyTracker>();
-        containerRegistry.RegisterInstance<ILogger>(Log.Logger);
+        containerRegistry.RegisterInstance(Log.Logger);
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICommentData, CommentData>();
         containerRegistry.RegisterSingleton<IEventData, EventData>();
