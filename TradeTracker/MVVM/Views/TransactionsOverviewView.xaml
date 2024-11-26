@@ -64,7 +64,7 @@
                             
                             <TextBlock Text="Wstępny opis transakcji:"
                                        FontWeight="DemiBold"
-                                       FontSize="14"/>
+                                       FontSize="13"/>
                             
                             <TextBlock Text="{Binding InitialDescription}" Margin="5,1,0,0" VerticalAlignment="Center"/>
                             
@@ -73,11 +73,11 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5" VerticalAlignment="Center">
                             
                             <TextBlock Text="Komentarz zamykający:"
-                                       FontSize="14"
+                                       FontSize="13"
                                        FontWeight="DemiBold"
                                        Visibility="{Binding ClosingDescription, Converter={StaticResource StringToVisibilityConverter}}"/>
                             
-                            <TextBlock Text="{Binding ClosingDescription}" Margin="5,2,0,0" VerticalAlignment="Center"
+                            <TextBlock Text="{Binding ClosingDescription}" Margin="5,1,0,0" VerticalAlignment="Center"
                                        Visibility="{Binding ClosingDescription, Converter={StaticResource StringToVisibilityConverter}}"/>
                             
                         </StackPanel>

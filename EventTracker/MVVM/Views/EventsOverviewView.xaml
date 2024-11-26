@@ -60,8 +60,8 @@
                 <DataTemplate>
                     <StackPanel Margin="5,5,0,0">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Wstępny opis zdarzenia:" FontWeight="DemiBold" FontSize="12"/>
-                            <TextBlock Text="{Binding InitialDescription}" Margin="5,0,0,5" VerticalAlignment="Center"/>
+                            <TextBlock Text="Wstępny opis zdarzenia:" FontWeight="DemiBold" FontSize="13"/>
+                            <TextBlock Text="{Binding InitialDescription}" Margin="5,1,0,5" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <DataGrid ItemsSource="{Binding Comments}"                                 
