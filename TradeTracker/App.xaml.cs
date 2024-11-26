@@ -29,6 +29,7 @@ public partial class App : PrismApplication
             DailyTracker dailyTradeTracker = Container.Resolve<DailyTracker>();
             dailyTradeTracker.StartTracker();
         });
+
         //FirstStartUp();
     }
 

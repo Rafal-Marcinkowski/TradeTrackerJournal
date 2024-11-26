@@ -77,7 +77,10 @@ public class AddEventViewModel : BindableBase
 
     private void FilterCompanies()
     {
-        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
+        if (FilteredCompanies is not null)
+        {
+            FilteredCompanies = FilteredCompanies.Count > 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
+        }
     }
 
     private void OrderFilteredCompanies()
@@ -162,31 +165,28 @@ public class AddEventViewModel : BindableBase
 
     public ICommand AddEventCommand => new DelegateCommand(async () =>
     {
-        if (!String.IsNullOrEmpty(SelectedCompanyName))
-        {
-            Event e = await FillNewEventProperties();
+        Event e = await FillNewEventProperties();
 
-            if (!await ValidateNewEventProperties(e))
+        if (!await ValidateNewEventProperties(e))
+        {
+            return;
+        }
+
+        try
+        {
+            e.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+
+            if (!await CheckEventValidity(e))
             {
                 return;
             }
 
-            try
-            {
-                e.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+            await ConfirmEvent(e);
+        }
 
-                if (!await CheckEventValidity(e))
-                {
-                    return;
-                }
-
-                await ConfirmEvent(e);
-            }
-
-            catch (Exception ex)
-            {
-                Log.Error(ex, ex.Message);
-            }
+        catch (Exception ex)
+        {
+            Log.Error(ex, ex.Message);
         }
     });
 
@@ -196,7 +196,8 @@ public class AddEventViewModel : BindableBase
         {
             DialogText = $"Czy dodać zdarzenie? \n" +
                   $"{e.CompanyName}\n" +
-                  $"{e.EntryDate}\n"
+                  $"{e.EntryDate}\n" +
+                  $"Początkowy kurs: {e.EntryPrice}\n"
         };
 
         dialog.ShowDialog();
@@ -204,7 +205,6 @@ public class AddEventViewModel : BindableBase
         if (dialog.Result)
         {
             await eventData.InsertEventAsync(e);
-            await Task.Delay(100);
             var company = await companyData.GetCompanyAsync(e.CompanyID);
             company.EventCount++;
             await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
@@ -247,6 +247,7 @@ public class AddEventViewModel : BindableBase
         if (!results.IsValid)
         {
             var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+
             var dialog = new ErrorDialog()
             {
                 DialogText = validationErrors

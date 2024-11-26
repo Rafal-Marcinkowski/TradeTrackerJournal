@@ -98,7 +98,10 @@ public class AddTransactionViewModel : BindableBase
 
     private void FilterCompanies()
     {
-        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
+        if (FilteredCompanies is not null)
+        {
+            FilteredCompanies = FilteredCompanies.Count > 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
+        }
     }
 
     private void OrderFilteredCompanies()
@@ -122,6 +125,7 @@ public class AddTransactionViewModel : BindableBase
             companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
             FilteredCompanies = new ObservableCollection<Company>(companies);
         }
+
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading companies: {ex.Message}");
@@ -155,6 +159,7 @@ public class AddTransactionViewModel : BindableBase
                 return fullDate;
             }
         }
+
         else if (normalizedInput.Length == 8)
         {
             string datePart = normalizedInput.Substring(0, 8);
@@ -166,6 +171,7 @@ public class AddTransactionViewModel : BindableBase
                 return dateOnly;
             }
         }
+
         else if (normalizedInput.Length == 4 || normalizedInput.Length == 3)
         {
             string timePart = normalizedInput.Length == 4 ? normalizedInput : $"0{normalizedInput[..1]}{normalizedInput.Substring(1, 2)}";
@@ -181,35 +187,33 @@ public class AddTransactionViewModel : BindableBase
 
     public ICommand AddTransactionCommand => new DelegateCommand(async () =>
     {
-        if (!String.IsNullOrEmpty(SelectedCompanyName))
-        {
-            Transaction transaction = await FillNewTransactionProperties();
+        Transaction transaction = await FillNewTransactionProperties();
 
-            if (!await ValidateNewTransactionProperties(transaction))
+        if (!await ValidateNewTransactionProperties(transaction))
+        {
+            return;
+        }
+
+        try
+        {
+            if (transaction.AvgSellPrice != null)
+            {
+                await SetClosingProperties(transaction);
+            }
+
+            transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
+
+            if (!await CheckTransactionValidity(transaction))
             {
                 return;
             }
 
-            try
-            {
-                if (transaction.AvgSellPrice != null)
-                {
-                    await SetClosingProperties(transaction);
-                }
+            await ConfirmTransaction(transaction);
+        }
 
-                transaction.CompanyID = await companyData.GetCompanyID(SelectedCompanyName);
-
-                if (!await CheckTransactionValidity(transaction))
-                {
-                    return;
-                }
-
-                await ConfirmTransaction(transaction);
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, ex.Message);
-            }
+        catch (Exception ex)
+        {
+            Log.Error(ex, ex.Message);
         }
     });
 
@@ -235,6 +239,7 @@ public class AddTransactionViewModel : BindableBase
             company.TransactionCount++;
             await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
             var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+
             if (updatedCompany != null)
             {
                 updatedCompany.TransactionCount = company.TransactionCount;
@@ -260,6 +265,7 @@ public class AddTransactionViewModel : BindableBase
             errorDialog.ShowDialog();
             return false;
         }
+
         return true;
     }
 
@@ -285,6 +291,7 @@ public class AddTransactionViewModel : BindableBase
                 transaction.ClosingDescription = closingComment;
             }
         }
+
         return transaction;
     }
 
@@ -296,13 +303,16 @@ public class AddTransactionViewModel : BindableBase
         if (!results.IsValid)
         {
             var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+
             var dialog = new ErrorDialog()
             {
                 DialogText = validationErrors
             };
+
             dialog.ShowDialog();
             return false;
         }
+
         return true;
     }
 
@@ -322,6 +332,7 @@ public class AddTransactionViewModel : BindableBase
                   .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
             InitialDescription = InitialDescription,
         };
+
         return transaction;
     }
 
