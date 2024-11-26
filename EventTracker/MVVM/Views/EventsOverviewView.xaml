@@ -68,8 +68,7 @@
                               AutoGenerateColumns="False"
                               CanUserAddRows="False"
                               CanUserDeleteRows="False"
-                              BorderBrush="DimGray"
-                              BorderThickness="1"
+                            
                               HeadersVisibility="None"
                               GridLinesVisibility="None"
                               SelectionUnit="Cell"
@@ -79,8 +78,8 @@
                             <DataGrid.RowStyle>
                                 <Style TargetType="DataGridRow">
                                     <Style.Setters>
-                                        <Setter Property="BorderBrush" Value="DimGray"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
+
+                                        <Setter Property="Margin" Value="0,3,0,3"/>
                                     </Style.Setters>
                                     <Style.Triggers>
                                         <Trigger Property="IsSelected" Value="True">
@@ -93,20 +92,27 @@
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Data" 
-                                                Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" 
-                                                Width="auto" 
-                                                IsReadOnly="True"/>
+                                                  Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" 
+                                                  Width="auto" 
+                                                  FontWeight="DemiBold"
+                                                  FontSize="14"
+                                                  IsReadOnly="True"/>
 
                                 <DataGridTemplateColumn Header="Komentarz" 
-                                                    Width="auto" 
-                                                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                                      Width="auto" 
+                                      HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">   
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding CommentText}" 
-                                                       VerticalAlignment="Center"
-                                                       Margin="5,0,5,0"
-                                                       Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+
+                                                <Border BorderBrush="DimGray" BorderThickness="2">
+                                                    <TextBlock 
+                                             Text="{Binding CommentText}" 
+                                             VerticalAlignment="Center"
+                                             Margin="5,0,5,0"
+                                             Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}"/>
+                                                </Border>
+                                                
                                                 <TextBox Text="{Binding CommentText, UpdateSourceTrigger=PropertyChanged}" 
                                                      VerticalAlignment="Center"
                                                      Margin="5,0,5,0"
