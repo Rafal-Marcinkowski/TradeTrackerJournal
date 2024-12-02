@@ -87,7 +87,6 @@
                                   CanUserAddRows="False"
                                   CanUserDeleteRows="False"
                                   HorizontalAlignment="Left"
-                                 
                                   HeadersVisibility="None"
                                   GridLinesVisibility="None"
                                   SelectionUnit="Cell"

@@ -14,7 +14,6 @@ public class DailyTracker
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly IEventData eventData;
-    private List<ITrackable> failedTransactions;
     private static bool isTrackerWorking = false;
     private Queue<ITrackable> queuedTrackables = [];
 
@@ -144,7 +143,7 @@ public class DailyTracker
 
         var trackingRecords = allRecords
                 .Where(q => q.Date >= trackable.EntryDate.Date)
-                .OrderByDescending(q => q.Date)
+                .OrderBy(q => q.Date) ///tutaj było OrderByDescending, potencjalny powró buga
                 .Take(trackable.IsClosed ? 30 : allRecords.Count()).ToList();
 
         if (trackingRecords.Count != 0)

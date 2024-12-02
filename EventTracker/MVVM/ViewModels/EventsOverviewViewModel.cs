@@ -214,28 +214,24 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
 
     public ICommand ToggleEventTracker => new DelegateCommand<Event>(async (e) =>
     {
-        var dialog = new ConfirmationDialog();
-        if (e.IsTracking)
+        if (e is not null)
         {
-            dialog.DialogText = "Czy na pewno wyłączyć śledzenie?";
+            var dialog = new ConfirmationDialog
+            {
+                DialogText = e.IsTracking ? "Czy na pewno wyłączyć śledzenie?" : "Czy na pewno włączyć śledzenie?"
+            };
+
             dialog.ShowDialog();
 
             if (dialog.Result)
             {
-                e.IsTracking = false;
+                e.IsTracking = !e.IsTracking;
                 await eventData.UpdateEventAsync(e);
-            }
-        }
 
-        else
-        {
-            dialog.DialogText = "Czy na pewno włączyć śledzenie?";
-            dialog.ShowDialog();
-
-            if (dialog.Result)
-            {
-                e.IsTracking = true;
-                await eventData.UpdateEventAsync(e);
+                if (e.IsTracking)
+                {
+                    eventAggregator.GetEvent<EventAddedEvent>().Publish(e);
+                }
             }
         }
     });

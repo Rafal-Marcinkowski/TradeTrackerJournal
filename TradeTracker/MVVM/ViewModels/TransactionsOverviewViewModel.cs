@@ -227,29 +227,24 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 
     public ICommand ToggleTransactionTracker => new DelegateCommand<Transaction>(async (transaction) =>
     {
-        var dialog = new ConfirmationDialog();
-
-        if (transaction.IsTracking)
+        if (transaction is not null)
         {
-            dialog.DialogText = "Czy na pewno wyłączyć śledzenie?";
+            var dialog = new ConfirmationDialog
+            {
+                DialogText = transaction.IsTracking ? "Czy na pewno wyłączyć śledzenie?" : "Czy na pewno włączyć śledzenie?"
+            };
+
             dialog.ShowDialog();
 
             if (dialog.Result)
             {
-                transaction.IsTracking = false;
+                transaction.IsTracking = !transaction.IsTracking;
                 await transactionData.UpdateTransactionAsync(transaction);
-            }
-        }
 
-        else
-        {
-            dialog.DialogText = "Czy na pewno włączyć śledzenie?";
-            dialog.ShowDialog();
-
-            if (dialog.Result)
-            {
-                transaction.IsTracking = true;
-                await transactionData.UpdateTransactionAsync(transaction);
+                if (transaction.IsTracking)
+                {
+                    eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
+                }
             }
         }
     });
