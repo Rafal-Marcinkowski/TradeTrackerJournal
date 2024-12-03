@@ -13,15 +13,17 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly IEventData eventData;
     private readonly IRegionManager regionManager;
+    private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
-    private readonly ICommentData CommentData;
+    private readonly ICommentData commentData;
 
     public EventsOverviewViewModel(IEventData eventData, IDailyDataProvider dailyDataProvider,
-        IEventAggregator eventAggregator, ICommentData CommentData, IRegionManager regionManager)
+        IEventAggregator eventAggregator, ICommentData commentData, IRegionManager regionManager, ITransactionData transactionData)
     {
         this.regionManager = regionManager;
-        this.CommentData = CommentData;
+        this.transactionData = transactionData;
+        this.commentData = commentData;
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
         isCommentBeingEdited = false;
@@ -81,16 +83,16 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
         }
     }
 
-    public void OnNavigatedTo(NavigationContext navigationContext)
+    public async void OnNavigatedTo(NavigationContext navigationContext)
     {
         foreach (var key in navigationContext.Parameters.Keys)
         {
             _ = key switch
             {
-                "selectedCompany" => Task.Run(() => GetEventsForCompany((int)navigationContext.Parameters[key])),
-                "op" => Task.Run(() => GetAllOpenEvents()),
-                "lastx" => Task.Run(() => GetLastXEvents((int)navigationContext.Parameters[key])),
-                "events" => Task.Run(() => GetEventsForTransaction((IEnumerable<Event>)navigationContext.Parameters[key])),
+                "selectedCompany" => Task.Run(async () => await GetEventsForCompany((int)navigationContext.Parameters[key])),
+                "op" => Task.Run(async () => await GetAllOpenEvents()),
+                "lastx" => Task.Run(async () => await GetLastXEvents((int)navigationContext.Parameters[key])),
+                "events" => Task.Run(async () => await GetEventsForTransaction((IEnumerable<Event>)navigationContext.Parameters[key])),
                 _ => Task.CompletedTask
             };
         }
@@ -118,18 +120,26 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
     {
         foreach (var e in events)
         {
-            var comments = await CommentData.GetAllCommentsForEventAsync(e.ID);
+            var comments = await commentData.GetAllCommentsForEventAsync(e.ID);
             e.Comments = (new ObservableCollection<Comment>(comments));
         }
     }
 
     private async Task GetAllOpenEvents()
     {
-        //var events = await eventData.GetAllEventsAsync();
-        //events = events.OrderByDescending(q => q.EntryDate).Where(q => q.IsClosed == false);
-        //await GetDailyData(new ObservableCollection<Event>(events));
-        //await GetAllComments(new ObservableCollection<Event>(events));
-        //Events = new ObservableCollection<Event>(events);
+        var openTransactions = (await transactionData.GetAllTransactionsAsync()).Where(q => !q.IsClosed).OrderBy(q => q.EntryDate).ToList();
+        var allEvents = await eventData.GetAllEventsAsync();
+        var openEvents = new List<Event>();
+
+        foreach (var openTransaction in openTransactions)
+        {
+            var eventsToAdd = allEvents.Where(q => q.EntryDate >= openTransaction.EntryDate && openTransaction.CompanyID == q.CompanyID).ToList();
+            openEvents.AddRange(eventsToAdd);
+        }
+
+        await GetDailyData(new ObservableCollection<Event>(openEvents));
+        await GetAllComments(new ObservableCollection<Event>(openEvents));
+        Events = new ObservableCollection<Event>(openEvents);
     }
 
     private async Task GetEventsForCompany(int selectedCompanyId)
@@ -162,6 +172,7 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
     public ICommand NavigateBackCommand => new DelegateCommand(() =>
     {
         var navigationJournal = regionManager.Regions.First().NavigationService.Journal;
+
         if (navigationJournal.CanGoBack)
         {
             navigationJournal.GoBack();
@@ -260,7 +271,7 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
         if (comment.IsEditing)
         {
             comment.IsEditing = false;
-            await CommentData.UpdateCommentAsync(comment);
+            await commentData.UpdateCommentAsync(comment);
         }
     });
 
@@ -295,7 +306,7 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
             };
 
             e.Comments.Add(Comment);
-            await CommentData.InsertCommentAsync(Comment);
+            await commentData.InsertCommentAsync(Comment);
             e.IsNewCommentBeingAdded = !e.IsNewCommentBeingAdded;
             NewCommentText = string.Empty;
         }
@@ -316,9 +327,9 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
 
         if (dialog.Result)
         {
-            parameters.Item1.ID = await CommentData.GetCommentID(parameters.Item1.CommentText);
+            parameters.Item1.ID = await commentData.GetCommentID(parameters.Item1.CommentText);
             parameters.Item2.Comments.Remove(parameters.Item1);
-            await CommentData.DeleteCommentAsync(parameters.Item1.ID);
+            await commentData.DeleteCommentAsync(parameters.Item1.ID);
         }
     });
 }

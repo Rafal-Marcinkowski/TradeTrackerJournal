@@ -57,8 +57,11 @@ public class EventsOverviewMenuViewModel : BindableBase
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {
-        var parameters = new NavigationParameters();
-        parameters.Add("op", "op");
+        var parameters = new NavigationParameters
+        {
+            { "op", "op" }
+        };
+
         var region = regionManager.Regions["MainRegion"];
         region.RemoveAll();
         regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
