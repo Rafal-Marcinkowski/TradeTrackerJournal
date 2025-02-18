@@ -21,11 +21,13 @@ public class DownloadPageSource
         }
 
         Log.Information($"Pobieranie danych z URL: {url}");
+
         try
         {
             while (true)
             {
                 HttpResponseMessage response = await client.GetAsync(url);
+
                 if (!response.IsSuccessStatusCode)
                 {
                     string reason = response.ReasonPhrase;
@@ -34,19 +36,23 @@ public class DownloadPageSource
                 }
 
                 string requestUri = response.RequestMessage.RequestUri.ToString();
+
                 if (requestUri != url)
                 {
                     url = requestUri;
                     continue;
                 }
+
                 return (await response.Content.ReadAsStringAsync(), url);
             }
         }
+
         catch (HttpRequestException httpEx)
         {
             Log.Error<Exception>($"Problemy z połączeniem: {httpEx.Message}", httpEx);
             return ("BiznesRadarServerError", url);
         }
+
         catch (Exception ex)
         {
             Log.Error<Exception>($"Problemy z BiznesRadarem: {ex.Message}", ex);

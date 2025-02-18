@@ -23,7 +23,7 @@ public class GetRelevantNodes
 
                 var record = new DataRecord
                 {
-                    Date = DateTime.Parse(cells[0]).Date,
+                    Date = DateTime.ParseExact(cells[0], "dd.MM.yyyy", CultureInfo.InvariantCulture).Date,
                     Open = Math.Round(decimal.Parse(cells[1].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
                     Max = Math.Round(decimal.Parse(cells[2].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),
                     Min = Math.Round(decimal.Parse(cells[3].Replace(" ", "").Replace(",", "."), CultureInfo.InvariantCulture), 2),

@@ -266,8 +266,15 @@ public class AddEventViewModel : BindableBase
         {
             CompanyName = SelectedCompanyName,
             EntryDate = ParseEntryDate(EntryDate),
-            EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out var entryPrice) ? entryPrice : 0,
+            EntryPrice = decimal.TryParse(
+            EntryPrice.Replace(" ", "").Replace(",", "."),
+            NumberStyles.Any,
+            CultureInfo.InvariantCulture,
+            out var entryPrice)
+            ? entryPrice
+            : 0,
+            //EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+            //      .ToArray(), out var entryPrice) ? entryPrice : 0,
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
         };

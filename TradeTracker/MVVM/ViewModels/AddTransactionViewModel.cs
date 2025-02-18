@@ -122,7 +122,7 @@ public class AddTransactionViewModel : BindableBase
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
+            companies = [.. companyList.OrderByDescending(q => q.TransactionCount)];
             FilteredCompanies = new ObservableCollection<Company>(companies);
         }
 
@@ -224,7 +224,7 @@ public class AddTransactionViewModel : BindableBase
             DialogText = $"Czy dodać transakcję? \n" +
                   $"{transaction.CompanyName}\n" +
                   $"{transaction.EntryDate}\n" +
-                  $"Cena kupna: {transaction.EntryPrice.ToString().Replace(',', '.')}\n" +
+                  $"Cena kupna: {transaction.EntryPrice}\n" +
                   $"Ilość akcji: {transaction.NumberOfShares}\n" +
                   $"Wielkość pozycji: {transaction.PositionSize}\n" +
                   $"{(transaction.AvgSellPrice != null ? $"Cena sprzedaży: {transaction.AvgSellPrice.ToString().Replace(',', '.')}" : string.Empty)}"
@@ -322,8 +322,16 @@ public class AddTransactionViewModel : BindableBase
         {
             CompanyName = SelectedCompanyName,
             EntryDate = ParseEntryDate(EntryDate),
-            EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out var entryPrice) ? entryPrice : 0,
+            EntryPrice = decimal.TryParse(
+            EntryPrice.Replace(" ", "").Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                                     .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator),
+            NumberStyles.Any,
+            CultureInfo.CurrentCulture,
+            out var entryPrice)
+            ? entryPrice
+            : 0,
+            //EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
+            //      .ToArray(), out var entryPrice) ? entryPrice : 0,
             NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
             PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out decimal positionSize) ? positionSize : 0,

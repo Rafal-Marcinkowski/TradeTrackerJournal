@@ -24,12 +24,14 @@ public class GetDataRecords
             : await DownloadPageSource.DownloadHtmlAsync(misdirectedUrl, true, counter);
 
             currentDataRecords = await GetRelevantNodes.PrepareRecords(html);
+
             if (currentDataRecords.Count == 0)
             {
                 Log.Information("Osiągnięto koniec dostępnych danych. Błędne dane obiektu lub błąd serwera.");
                 allNecessaryDataRecords.Clear();
                 break;
             }
+
             allNecessaryDataRecords.AddRange(currentDataRecords);
 
             if (allNecessaryDataRecords.First().Date <= trackable.EntryDate.Date)

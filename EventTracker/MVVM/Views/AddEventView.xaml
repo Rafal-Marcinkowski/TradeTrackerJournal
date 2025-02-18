@@ -96,7 +96,7 @@
              Width="250"
              Grid.ColumnSpan="3"
              Grid.Row="1"
-             Controls:TextBoxHelper.Watermark="Data zdarzenia: DD/MM/RRRR: HH:MM"
+             Controls:TextBoxHelper.Watermark="Data zdarzenia: DD/MM/RRRR HH:MM"
              Text="{Binding EntryDate, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBox Style="{StaticResource CustomTextBoxStyle}"

@@ -11,6 +11,7 @@ public class TurnoverMedianTable
             File.Copy("C:\\Users\\rafal\\Desktop\\Pogromcy\\NotoriaSerwis_2\\TurnoverMedianTable",
                  "C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable", true);
         }
+
         await InitializeTurnoverMedian();
     }
 
@@ -23,6 +24,7 @@ public class TurnoverMedianTable
         {
             using StreamReader reader = new("C:\\Users\\rafal\\Desktop\\Pogromcy\\TradeTrackerJournal\\TurnoverMedianTable");
             string line;
+
             while ((line = await reader.ReadLineAsync()) != null)
             {
                 string[] parts = line.Split(' ');
@@ -40,6 +42,7 @@ public class TurnoverMedianTable
     {
         if (TurnoverMedianDictionary == null || !TurnoverMedianDictionary.TryGetValue(companyCode, out string? value))
             return string.Empty;
+
         return value;
     }
 }
