@@ -101,7 +101,7 @@ public class AddEventViewModel : BindableBase
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.EventCount));
+            companies = [.. companyList.OrderByDescending(q => q.EventCount)];
             FilteredCompanies = new ObservableCollection<Company>(companies);
         }
         catch (Exception ex)
