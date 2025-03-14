@@ -34,7 +34,8 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
             e.InitialDescription,
             e.InformationLink,
             e.IsTracking,
-            e.EntryMedianTurnover
+            e.EntryMedianTurnover,
+            e.Description
         };
 
         await dBAccess.SaveDataAsync("InsertEvent", parameters);
@@ -52,7 +53,8 @@ public class EventData(ISQLDataAccess dBAccess) : IEventData
             e.InitialDescription,
             e.InformationLink,
             e.IsTracking,
-            e.EntryMedianTurnover
+            e.EntryMedianTurnover,
+            e.Description
         };
 
         await dBAccess.SaveDataAsync("UpdateEvent", parameters);

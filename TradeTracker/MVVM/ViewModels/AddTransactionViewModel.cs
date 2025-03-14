@@ -89,6 +89,13 @@ public class AddTransactionViewModel : BindableBase
         set => SetProperty(ref initialDescription, value);
     }
 
+    private string description = string.Empty;
+    public string Description
+    {
+        get => description;
+        set => SetProperty(ref description, value);
+    }
+
     private string informationLink = string.Empty;
     public string InformationLink
     {
@@ -123,7 +130,7 @@ public class AddTransactionViewModel : BindableBase
         {
             var companyList = await companyData.GetAllCompaniesAsync();
             companies = [.. companyList.OrderByDescending(q => q.TransactionCount)];
-            FilteredCompanies = new ObservableCollection<Company>(companies);
+            FilteredCompanies = [.. companies];
         }
 
         catch (Exception ex)
@@ -339,6 +346,7 @@ public class AddTransactionViewModel : BindableBase
             AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
             InitialDescription = InitialDescription,
+            Description = Description
         };
 
         return transaction;
@@ -355,5 +363,6 @@ public class AddTransactionViewModel : BindableBase
         SearchBoxText = string.Empty;
         SelectedCompanyName = string.Empty;
         AvgSellPrice = string.Empty;
+        Description = string.Empty;
     });
 }

@@ -6,7 +6,8 @@
     @InitialDescription NVARCHAR(250) = NULL,
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,
-    @EntryMedianTurnover INT
+    @EntryMedianTurnover INT,
+    @Description NVARCHAR(2000) = NULL
 AS
 BEGIN
     INSERT INTO [dbo].[Events] (
@@ -17,7 +18,8 @@ BEGIN
         InitialDescription, 
         InformationLink,
         IsTracking,
-        EntryMedianTurnover)
+        EntryMedianTurnover,
+        Description)
     VALUES (
         @CompanyID, 
         @CompanyName, 
@@ -26,7 +28,8 @@ BEGIN
         @InitialDescription, 
         @InformationLink,
         @IsTracking,
-        @EntryMedianTurnover);
+        @EntryMedianTurnover,
+        @Description);
     
     SELECT SCOPE_IDENTITY() AS NewID;
 END;

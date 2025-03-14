@@ -7,7 +7,8 @@
     @InitialDescription NVARCHAR(250) = NULL,
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,
-    @EntryMedianTurnover INT
+    @EntryMedianTurnover INT,
+    @Description NVARCHAR(2000) = NULL
 AS
 BEGIN
     UPDATE [dbo].[Events]
@@ -19,6 +20,7 @@ BEGIN
         InitialDescription = @InitialDescription, 
         InformationLink = @InformationLink,
         IsTracking = @IsTracking,
-        EntryMedianTurnover = @EntryMedianTurnover
+        EntryMedianTurnover = @EntryMedianTurnover,
+        Description = @Description
     WHERE ID = @ID;
 END;

@@ -51,4 +51,5 @@ public class Event : BindableBase, ITrackable
 
     public ObservableCollection<Comment> Comments { get; set; }
     public bool IsClosed { get; set; }
+    public string? Description { get; set; }
 }

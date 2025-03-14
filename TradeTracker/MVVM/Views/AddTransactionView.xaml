@@ -75,6 +75,7 @@
                     <TextBox Style="{StaticResource CustomTextBoxStyle}"
                  VerticalAlignment="Top"
                              Margin="25,0,0,0"
+                             Width="250"
                  Controls:TextBoxHelper.Watermark="Data wejścia: DD/MM/RRRR HH:MM"
                  Text="{Binding EntryDate, UpdateSourceTrigger=PropertyChanged}"/>
 
@@ -114,14 +115,22 @@
                      Text="{Binding InformationLink, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
 
-            <StackPanel  Margin="10" VerticalAlignment="Center">
-                <TextBlock Text="Wstępny opis transakcji" Margin="0,0,0,10"
-                           Foreground="WhiteSmoke" HorizontalAlignment="Center"
-                           FontWeight="DemiBold" FontSize="18"/>
-                <TextBox Width="320" Height="195" TextWrapping="Wrap"
-                         Controls:TextBoxHelper.Watermark="Wpisz komentarz..."
-                         Text="{Binding InitialDescription, UpdateSourceTrigger=PropertyChanged}"
-                         Style="{StaticResource CustomTextBoxStyle}"/>
+            <StackPanel Margin="10" VerticalAlignment="Center">
+                <TextBlock Text="Tytuł" Margin="0,0,0,10"
+               Foreground="WhiteSmoke" HorizontalAlignment="Center"
+               FontWeight="DemiBold" FontSize="18"/>
+                <TextBox Width="320" TextWrapping="Wrap"
+             Controls:TextBoxHelper.Watermark="Wpisz tytuł informacji..."
+             Text="{Binding InitialDescription, UpdateSourceTrigger=PropertyChanged}"
+             Style="{StaticResource CustomTextBoxStyle}"/>
+
+                <TextBlock Text="Opis transakcji" Margin="0,25,0,10"
+               Foreground="WhiteSmoke" HorizontalAlignment="Center"
+               FontWeight="DemiBold" FontSize="18"/>
+                <TextBox Width="320" Height="195" TextWrapping="Wrap" FontSize="12"
+             Controls:TextBoxHelper.Watermark="Opisz transakcję..."
+             Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+             Style="{StaticResource CustomTextBoxStyle}"/>
             </StackPanel>
 
             <StackPanel VerticalAlignment="Center">

@@ -13,7 +13,8 @@
     @InitialDescription NVARCHAR(250) = NULL,
     @ClosingDescription NVARCHAR(250),
     @InformationLink NVARCHAR(250) = NULL,
-    @IsTracking BIT
+    @IsTracking BIT,
+    @Description NVARCHAR(2000) = NULL
 AS
 BEGIN
     UPDATE [dbo].[Transactions]
@@ -31,6 +32,7 @@ BEGIN
         InitialDescription = @InitialDescription, 
         ClosingDescription = @ClosingDescription,
         InformationLink = @InformationLink,
-        IsTracking = @IsTracking
+        IsTracking = @IsTracking,
+        Description=@Description
     WHERE ID = @ID;
 END;

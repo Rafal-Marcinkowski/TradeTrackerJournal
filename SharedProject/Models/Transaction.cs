@@ -68,6 +68,7 @@ public class Transaction : BindableBase, ITrackable
 
     public string? InitialDescription { get; set; }
     public string? ClosingDescription { get; set; }
+    public string? Description { get; set; }
 
     public List<decimal>? AvgPriceOfTheDay { get; set; }
     public ObservableCollection<DailyData> DailyDataCollection { get; set; }

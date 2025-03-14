@@ -15,7 +15,7 @@ public class DailyTracker
     private readonly IEventAggregator eventAggregator;
     private readonly IEventData eventData;
     private static bool isTrackerWorking = false;
-    private Queue<ITrackable> queuedTrackables = [];
+    private readonly Queue<ITrackable> queuedTrackables = [];
 
     public DailyTracker(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, IEventData eventData)
     {
@@ -71,7 +71,7 @@ public class DailyTracker
 
         if (trackables.Count != 0)
         {
-            trackables = trackables.Where(q => q.IsTracking).ToList();
+            trackables = [.. trackables.Where(q => q.IsTracking)];
             Log.Information($"{trackables.Count} transakcji/zdarzeń do prześledzenia.");
             await TrackTrackables(trackables);
             await ProcessQueuedTrackables();

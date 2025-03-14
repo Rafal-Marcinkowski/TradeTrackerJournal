@@ -40,7 +40,8 @@ public class TransactionData(ISQLDataAccess dBAccess) : ITransactionData
             transaction.InitialDescription,
             transaction.ClosingDescription,
             transaction.InformationLink,
-            transaction.IsTracking
+            transaction.IsTracking,
+            transaction.Description
         };
 
         await dBAccess.SaveDataAsync("InsertTransaction", parameters);
@@ -64,7 +65,8 @@ public class TransactionData(ISQLDataAccess dBAccess) : ITransactionData
             transaction.InitialDescription,
             transaction.ClosingDescription,
             transaction.InformationLink,
-            transaction.IsTracking
+            transaction.IsTracking,
+            transaction.Description
         };
 
         await dBAccess.SaveDataAsync("UpdateTransaction", parameters);

@@ -68,6 +68,13 @@ public class AddEventViewModel : BindableBase
         set => SetProperty(ref initialDescription, value);
     }
 
+    private string description = string.Empty;
+    public string Description
+    {
+        get => description;
+        set => SetProperty(ref description, value);
+    }
+
     private string informationLink = string.Empty;
     public string InformationLink
     {
@@ -102,7 +109,7 @@ public class AddEventViewModel : BindableBase
         {
             var companyList = await companyData.GetAllCompaniesAsync();
             companies = [.. companyList.OrderByDescending(q => q.EventCount)];
-            FilteredCompanies = new ObservableCollection<Company>(companies);
+            FilteredCompanies = [.. companies];
         }
         catch (Exception ex)
         {
@@ -277,6 +284,7 @@ public class AddEventViewModel : BindableBase
             //      .ToArray(), out var entryPrice) ? entryPrice : 0,
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
+            Description = Description,
         };
 
         return e;
@@ -288,6 +296,7 @@ public class AddEventViewModel : BindableBase
         EntryPrice = string.Empty;
         InformationLink = string.Empty;
         InitialDescription = string.Empty;
+        Description = string.Empty;
         SearchBoxText = string.Empty;
         SelectedCompanyName = string.Empty;
     });

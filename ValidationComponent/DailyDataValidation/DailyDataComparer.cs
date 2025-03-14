@@ -18,7 +18,7 @@ public class DailyDataComparer : IEqualityComparer<DailyData>
 
     public int GetHashCode([DisallowNull] DailyData obj)
     {
-        if (obj == null) throw new ArgumentNullException(nameof(obj));
+        ArgumentNullException.ThrowIfNull(obj);
 
         unchecked
         {

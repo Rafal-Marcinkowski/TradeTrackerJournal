@@ -3,17 +3,8 @@ using SharedProject.Models;
 
 namespace ValidationComponent.DailyDataValidation;
 
-public class CheckDailyData
+public class CheckDailyData(IDailyDataProvider dailyDataProvider)
 {
-    private readonly ITransactionData transactionData;
-    private readonly IDailyDataProvider dailyDataProvider;
-
-    public CheckDailyData(ITransactionData transactionData, IDailyDataProvider dailyDataProvider)
-    {
-        this.transactionData = transactionData;
-        this.dailyDataProvider = dailyDataProvider;
-    }
-
     public async Task<bool> IsExisting(DailyData dailyData)
     {
         var comparer = new DailyDataComparer();
