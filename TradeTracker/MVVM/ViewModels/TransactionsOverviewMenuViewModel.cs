@@ -1,13 +1,12 @@
 ﻿using DataAccess.Data;
-using Infrastructure.DataFilters;
 using SharedProject.Models;
-using System.Collections.ObjectModel;
+using SharedProject.ViewModels;
 using System.Windows.Input;
 using TradeTracker.MVVM.Views;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-public class TransactionsOverviewMenuViewModel : BindableBase
+public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
 {
     private readonly IRegionManager regionManager;
     private readonly ICompanyData companyData;
@@ -20,47 +19,19 @@ public class TransactionsOverviewMenuViewModel : BindableBase
         set => SetProperty(ref transactionCounts, value);
     }
 
-    private ObservableCollection<Company> companies;
-
-    private ObservableCollection<Company> filteredCompanies;
-    public ObservableCollection<Company> FilteredCompanies
-    {
-        get => filteredCompanies;
-        set
-        {
-            SetProperty(ref filteredCompanies, value);
-        }
-    }
-
-    private string searchBoxText;
-    public string SearchBoxText
-    {
-        get => searchBoxText;
-        set
-        {
-            SetProperty(ref searchBoxText, value, () => FilterCompanies());
-        }
-    }
-
-    private void FilterCompanies()
-    {
-        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
-    }
-
     public TransactionsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData, ITransactionData transactionData)
     {
         this.transactionData = transactionData;
         this.regionManager = regionManager;
         this.companyData = companyData;
-        GetAllCompanies();
-        FillTransactionCounts();
+        _ = GetAllCompanies();
+        _ = FillTransactionCounts();
     }
 
     private async Task GetAllCompanies()
     {
         var companyList = await companyData.GetAllCompaniesAsync();
-        companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
-        FilteredCompanies = new ObservableCollection<Company>(companies);
+        ItemsSource = [.. companyList.OrderByDescending(q => q.TransactionCount)];
     }
 
     private async Task FillTransactionCounts()

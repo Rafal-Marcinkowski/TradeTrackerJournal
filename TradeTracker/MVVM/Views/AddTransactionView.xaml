@@ -25,18 +25,18 @@
                     </StackPanel>
 
                     <TextBox Style="{StaticResource MahApps.Styles.TextBox.Search}"
-                             Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged, Delay=100}"
                              Margin="0,10,0,0"
                              BorderThickness="2" BorderBrush="DimGray" Width="200" Height="30" 
                              Controls:TextBoxHelper.Watermark="Szukaj spółki..." />
                                     <ListBox x:Name="companyListBox" BorderBrush="DimGray"
                              BorderThickness="2" Width="200" Height="150" Margin="0,5,0,0"
-                             ItemsSource="{Binding FilteredCompanies}"
+                             ItemsSource="{Binding ItemsSource}"
                              IsHitTestVisible="True">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
                                 <prism:InvokeCommandAction Command="{Binding ConfirmCompanySelectionCommand}"
-                           CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}" />
+                           CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}" AutoEnable="True"/>
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                         <ListBox.ItemTemplate>

@@ -3,8 +3,8 @@ using Infrastructure.DataFilters;
 using Infrastructure.Events;
 using Serilog;
 using SharedProject.Models;
+using SharedProject.ViewModels;
 using SharedProject.Views;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
@@ -12,39 +12,17 @@ using ValidationComponent.Events;
 
 namespace EventTracker.MVVM.ViewModels;
 
-public class AddEventViewModel : BindableBase
+public class AddEventViewModel : BaseListViewModel<Company>
 {
     private readonly ICompanyData companyData;
     private readonly IEventData eventData;
     private readonly IEventAggregator eventAggregator;
-    private ObservableCollection<Company> filteredCompanies;
-
-    private ObservableCollection<Company> companies;
 
     private string selectedCompanyName;
     public string SelectedCompanyName
     {
         get => selectedCompanyName;
         set => SetProperty(ref selectedCompanyName, value);
-    }
-
-    public ObservableCollection<Company> FilteredCompanies
-    {
-        get => filteredCompanies;
-        set
-        {
-            SetProperty(ref filteredCompanies, value);
-        }
-    }
-
-    private string searchBoxText;
-    public string SearchBoxText
-    {
-        get => searchBoxText;
-        set
-        {
-            SetProperty(ref searchBoxText, value, () => FilterCompanies());
-        }
     }
 
     private string entryDate = string.Empty;
@@ -82,17 +60,9 @@ public class AddEventViewModel : BindableBase
         set => SetProperty(ref informationLink, value);
     }
 
-    private void FilterCompanies()
+    protected override void OnCollectionFiltered()
     {
-        if (FilteredCompanies is not null)
-        {
-            FilteredCompanies = FilteredCompanies.Count > 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
-        }
-    }
-
-    private void OrderFilteredCompanies()
-    {
-        FilteredCompanies = ObservableCollectionFilter.OrderByDescendingEventCount(FilteredCompanies);
+        ItemsSource = ObservableCollectionFilter.OrderByDescendingEventCount(ItemsSource);
     }
 
     public AddEventViewModel(ICompanyData companyData, IEventAggregator eventAggregator, IEventData eventData)
@@ -100,7 +70,7 @@ public class AddEventViewModel : BindableBase
         this.eventData = eventData;
         this.eventAggregator = eventAggregator;
         this.companyData = companyData;
-        GetAllCompanies();
+        _ = GetAllCompanies();
     }
 
     private async Task GetAllCompanies()
@@ -108,8 +78,7 @@ public class AddEventViewModel : BindableBase
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = [.. companyList.OrderByDescending(q => q.EventCount)];
-            FilteredCompanies = [.. companies];
+            ItemsSource = [.. companyList.OrderByDescending(q => q.EventCount)];
         }
         catch (Exception ex)
         {
@@ -124,8 +93,6 @@ public class AddEventViewModel : BindableBase
         {
             SelectedCompanyName = selectedCompany.CompanyName;
         }
-
-        SearchBoxText = string.Empty;
     });
 
     private DateTime ParseEntryDate(string input)
@@ -215,7 +182,7 @@ public class AddEventViewModel : BindableBase
             var company = await companyData.GetCompanyAsync(e.CompanyID);
             company.EventCount++;
             await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
-            var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+            var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == company.ID);
 
             if (updatedCompany != null)
             {
@@ -223,7 +190,6 @@ public class AddEventViewModel : BindableBase
             }
 
             ClearFieldsCommand.Execute(null);
-            OrderFilteredCompanies();
             await eventData.UpdateEventAsync(e);
             e.ID = await eventData.GetID(e);
             eventAggregator.GetEvent<EventAddedEvent>().Publish(e);
@@ -280,8 +246,6 @@ public class AddEventViewModel : BindableBase
             out var entryPrice)
             ? entryPrice
             : 0,
-            //EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-            //      .ToArray(), out var entryPrice) ? entryPrice : 0,
             InformationLink = InformationLink,
             InitialDescription = InitialDescription,
             Description = Description,
@@ -297,7 +261,7 @@ public class AddEventViewModel : BindableBase
         InformationLink = string.Empty;
         InitialDescription = string.Empty;
         Description = string.Empty;
-        SearchBoxText = string.Empty;
+        SearchKeyword = string.Empty;
         SelectedCompanyName = string.Empty;
     });
 }

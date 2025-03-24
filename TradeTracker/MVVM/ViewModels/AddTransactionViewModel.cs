@@ -3,8 +3,8 @@ using Infrastructure.DataFilters;
 using Infrastructure.Events;
 using Serilog;
 using SharedProject.Models;
+using SharedProject.ViewModels;
 using SharedProject.Views;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
@@ -12,39 +12,17 @@ using ValidationComponent.Transactions;
 
 namespace TradeTracker.MVVM.ViewModels;
 
-public class AddTransactionViewModel : BindableBase
+public class AddTransactionViewModel : BaseListViewModel<Company>
 {
     private readonly ITransactionData transactionData;
     private readonly ICompanyData companyData;
     private readonly IEventAggregator eventAggregator;
-    private ObservableCollection<Company> filteredCompanies;
-
-    private ObservableCollection<Company> companies;
 
     private string selectedCompanyName;
     public string SelectedCompanyName
     {
         get => selectedCompanyName;
         set => SetProperty(ref selectedCompanyName, value);
-    }
-
-    public ObservableCollection<Company> FilteredCompanies
-    {
-        get => filteredCompanies;
-        set
-        {
-            SetProperty(ref filteredCompanies, value);
-        }
-    }
-
-    private string searchBoxText;
-    public string SearchBoxText
-    {
-        get => searchBoxText;
-        set
-        {
-            SetProperty(ref searchBoxText, value, () => FilterCompanies());
-        }
     }
 
     private string entryDate = string.Empty;
@@ -103,25 +81,17 @@ public class AddTransactionViewModel : BindableBase
         set => SetProperty(ref informationLink, value);
     }
 
-    private void FilterCompanies()
-    {
-        if (FilteredCompanies is not null)
-        {
-            FilteredCompanies = FilteredCompanies.Count > 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
-        }
-    }
-
-    private void OrderFilteredCompanies()
-    {
-        FilteredCompanies = ObservableCollectionFilter.OrderByDescendingTransactionCount(FilteredCompanies);
-    }
-
     public AddTransactionViewModel(ITransactionData transactionData, ICompanyData companyData, IEventAggregator eventAggregator)
     {
         this.eventAggregator = eventAggregator;
         this.transactionData = transactionData;
         this.companyData = companyData;
-        GetAllCompanies();
+        _ = GetAllCompanies();
+    }
+
+    protected override void OnCollectionFiltered()
+    {
+        ItemsSource = ObservableCollectionFilter.OrderByDescendingTransactionCount(ItemsSource);
     }
 
     private async Task GetAllCompanies()
@@ -129,8 +99,7 @@ public class AddTransactionViewModel : BindableBase
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = [.. companyList.OrderByDescending(q => q.TransactionCount)];
-            FilteredCompanies = [.. companies];
+            ItemsSource = [.. companyList.OrderByDescending(q => q.TransactionCount)];
         }
 
         catch (Exception ex)
@@ -146,8 +115,6 @@ public class AddTransactionViewModel : BindableBase
         {
             SelectedCompanyName = selectedCompany.CompanyName;
         }
-
-        SearchBoxText = string.Empty;
     });
 
     private DateTime ParseEntryDate(string input)
@@ -245,7 +212,7 @@ public class AddTransactionViewModel : BindableBase
             var company = await companyData.GetCompanyAsync(transaction.CompanyID);
             company.TransactionCount++;
             await companyData.UpdateCompanyAsync(company.ID, SelectedCompanyName, company.TransactionCount, company.EventCount);
-            var updatedCompany = FilteredCompanies.FirstOrDefault(c => c.ID == company.ID);
+            var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == company.ID);
 
             if (updatedCompany != null)
             {
@@ -253,7 +220,6 @@ public class AddTransactionViewModel : BindableBase
             }
 
             ClearFieldsCommand.Execute(null);
-            OrderFilteredCompanies();
             await transactionData.UpdateTransactionAsync(transaction);
             transaction.ID = await transactionData.GetID(transaction);
             eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);
@@ -337,8 +303,6 @@ public class AddTransactionViewModel : BindableBase
             out var entryPrice)
             ? entryPrice
             : 0,
-            //EntryPrice = decimal.TryParse(EntryPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-            //      .ToArray(), out var entryPrice) ? entryPrice : 0,
             NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
             PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out decimal positionSize) ? positionSize : 0,
@@ -360,8 +324,8 @@ public class AddTransactionViewModel : BindableBase
         NumberOfShares = string.Empty;
         InformationLink = string.Empty;
         InitialDescription = string.Empty;
-        SearchBoxText = string.Empty;
         SelectedCompanyName = string.Empty;
+        SearchKeyword = string.Empty;
         AvgSellPrice = string.Empty;
         Description = string.Empty;
     });

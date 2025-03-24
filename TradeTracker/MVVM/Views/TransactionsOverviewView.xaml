@@ -5,6 +5,7 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                          xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
                          xmlns:local1="clr-namespace:TradeTracker"
+                         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                          xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
                          xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                          xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -95,6 +96,7 @@
                           Height="auto">
                             <ItemsControl ItemsSource="{Binding Comments}"                                 
                               Visibility="{Binding Comments.Count, Converter={StaticResource IntToVisibilityConverter}}">
+                       
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal" 
@@ -255,7 +257,6 @@
                                         <RowDefinition Height="auto"></RowDefinition>
                                         <RowDefinition></RowDefinition>
                                     </Grid.RowDefinitions>
-                                   
                                        
                                             <iconPacks:PackIconModern Kind="{Binding IsClosed, Converter={StaticResource TransactionStatusToIconConverter}}">
                                                 <iconPacks:PackIconModern.ToolTip>

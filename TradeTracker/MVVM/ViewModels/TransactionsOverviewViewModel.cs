@@ -92,7 +92,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
                 item.TransactionCloseDate = transaction.CloseDate;
                 item.TransactionClosingDescription = transaction.ClosingDescription;
             }
-            transaction.DailyDataCollection = new ObservableCollection<DailyData>(dailyData);
+            transaction.DailyDataCollection = [.. dailyData];
         }
     }
 
@@ -125,7 +125,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         foreach (var transaction in transactions)
         {
             var comments = await commentData.GetAllCommentsForTransactionAsync(transaction.ID);
-            transaction.Comments = (new ObservableCollection<Comment>(comments));
+            transaction.Comments = [.. comments];
         }
     }
 
@@ -133,18 +133,18 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     {
         var transactions = await transactionData.GetAllTransactionsAsync();
         transactions = transactions.OrderByDescending(q => q.EntryDate).Where(q => q.IsClosed == false);
-        await GetDailyData(new ObservableCollection<Transaction>(transactions));
-        await GetAllComments(new ObservableCollection<Transaction>(transactions));
-        Transactions = new ObservableCollection<Transaction>(transactions);
+        await GetDailyData([.. transactions]);
+        await GetAllComments([.. transactions]);
+        Transactions = [.. transactions];
     }
 
     private async Task GetTransactionsForCompany(int selectedCompanyId)
     {
         var transactions = await transactionData.GetAllTransactionsForCompany(selectedCompanyId);
         transactions = transactions.OrderByDescending(q => q.EntryDate);
-        await GetDailyData(new ObservableCollection<Transaction>(transactions));
-        await GetAllComments(new ObservableCollection<Transaction>(transactions));
-        Transactions = new ObservableCollection<Transaction>(transactions);
+        await GetDailyData([.. transactions]);
+        await GetAllComments([.. transactions]);
+        Transactions = [.. transactions];
     }
 
     public bool IsNavigationTarget(NavigationContext navigationContext)

@@ -1,58 +1,27 @@
 ﻿using DataAccess.Data;
 using EventTracker.MVVM.Views;
-using Infrastructure.DataFilters;
 using SharedProject.Models;
-using System.Collections.ObjectModel;
+using SharedProject.ViewModels;
 using System.Windows.Input;
 
 namespace EventTracker.MVVM.ViewModels;
 
-public class EventsOverviewMenuViewModel : BindableBase
+public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
 {
     private readonly IRegionManager regionManager;
     private readonly ICompanyData companyData;
-    private readonly IEventData eventData;
 
-    private ObservableCollection<Company> companies;
-
-    private ObservableCollection<Company> filteredCompanies;
-    public ObservableCollection<Company> FilteredCompanies
+    public EventsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData)
     {
-        get => filteredCompanies;
-        set
-        {
-            SetProperty(ref filteredCompanies, value);
-        }
-    }
-
-    private string searchBoxText;
-    public string SearchBoxText
-    {
-        get => searchBoxText;
-        set
-        {
-            SetProperty(ref searchBoxText, value, () => FilterCompanies());
-        }
-    }
-
-    private void FilterCompanies()
-    {
-        FilteredCompanies = companies.Count >= 0 ? ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText) : [];
-    }
-
-    public EventsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData, IEventData eventData)
-    {
-        this.eventData = eventData;
         this.regionManager = regionManager;
         this.companyData = companyData;
-        GetAllCompanies();
+        _ = GetAllCompanies();
     }
 
     private async Task GetAllCompanies()
     {
         var companyList = await companyData.GetAllCompaniesAsync();
-        companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.EventCount));
-        FilteredCompanies = new ObservableCollection<Company>(companies);
+        ItemsSource = [.. companyList.OrderByDescending(q => q.EventCount)];
     }
 
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>

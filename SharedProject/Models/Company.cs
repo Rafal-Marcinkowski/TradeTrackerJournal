@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using SharedProject.Services.Filtering;
+using System.Collections.ObjectModel;
 
 namespace SharedProject.Models;
 
@@ -14,6 +15,7 @@ public class Company : BindableBase
 
     public int ID { get; set; }
 
+    [Filterable]
     public string CompanyName { get; set; }
 
     private int transactionCount;
