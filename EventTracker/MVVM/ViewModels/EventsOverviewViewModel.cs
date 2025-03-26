@@ -302,7 +302,7 @@ public class EventsOverviewViewModel : BindableBase, INavigationAware
                 TransactionID = null,
                 EventID = e.ID,
                 EntryDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
-                CommentText = NewCommentText
+                CommentText = NewCommentText.Trim()
             };
 
             e.Comments.Add(Comment);

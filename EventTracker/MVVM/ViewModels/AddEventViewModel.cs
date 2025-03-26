@@ -246,9 +246,9 @@ public class AddEventViewModel : BaseListViewModel<Company>
             out var entryPrice)
             ? entryPrice
             : 0,
-            InformationLink = InformationLink,
-            InitialDescription = InitialDescription,
-            Description = Description,
+            InformationLink = InformationLink.Trim(),
+            InitialDescription = InitialDescription.Trim(),
+            Description = Description.Trim(),
         };
 
         return e;

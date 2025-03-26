@@ -304,7 +304,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
                 TransactionID = transaction.ID,
                 EventID = null,
                 EntryDate = DateTime.Now.Date.AddHours(DateTime.Now.Hour).AddMinutes(DateTime.Now.Minute),
-                CommentText = NewCommentText
+                CommentText = NewCommentText.Trim()
             };
 
             transaction.Comments.Add(Comment);

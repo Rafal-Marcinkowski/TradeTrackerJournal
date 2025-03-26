@@ -255,12 +255,12 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
 
         else
         {
-            var dialog2 = new FinalizeTransactionDialog();
-            dialog2.ShowDialog();
+            var dialog = new FinalizeTransactionDialog();
+            dialog.ShowDialog();
 
-            if (dialog2.IsConfirmed)
+            if (dialog.IsConfirmed)
             {
-                var closingComment = dialog2.ClosingComment;
+                var closingComment = dialog.ClosingComment.Trim();
                 transaction.ClosingDescription = closingComment;
             }
         }
@@ -306,11 +306,11 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
             NumberOfShares = int.TryParse(NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
             PositionSize = decimal.TryParse(PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out decimal positionSize) ? positionSize : 0,
-            InformationLink = InformationLink,
+            InformationLink = InformationLink.Trim(),
             AvgSellPrice = decimal.TryParse(AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
                   .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-            InitialDescription = InitialDescription,
-            Description = Description
+            InitialDescription = InitialDescription.Trim(),
+            Description = Description.Trim()
         };
 
         return transaction;
