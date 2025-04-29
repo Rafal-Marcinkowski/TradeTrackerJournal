@@ -20,4 +20,3 @@ public class ObservableCollectionFilter
         return [.. collection.OrderByDescending(item => item.EventCount)];
     }
 }
-

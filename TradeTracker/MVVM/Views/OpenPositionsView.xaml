@@ -1,15 +1,17 @@
-﻿<mah:MetroContentControl x:Class="TradeTracker.MVVM.Views.OpenPositionsView"
-                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                         xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                         xmlns:prism="http://prismlibrary.com/"
-                         xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
-                         mc:Ignorable="d"
-                         d:DesignHeight="1000" d:DesignWidth="1675">
+﻿<mah:MetroContentControl
+    x:Class="TradeTracker.MVVM.Views.OpenPositionsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    d:DesignHeight="1000"
+    d:DesignWidth="1675"
+    mc:Ignorable="d">
 
     <Grid Margin="0,15,0,0">
         <Grid.RowDefinitions>
@@ -17,17 +19,26 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DataGrid     
-                      ItemsSource="{Binding Transactions}"
-                      Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="False" SelectionUnit="CellOrRowHeader"
-                      CanUserDeleteRows="False" IsReadOnly="True" ColumnHeaderHeight="30" 
-                      RowHeight="30" HeadersVisibility="Column" GridLinesVisibility="All" FontSize="14" FontWeight="DemiBold">
+        <DataGrid
+            Grid.Row="1"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            ColumnHeaderHeight="30"
+            FontSize="14"
+            FontWeight="DemiBold"
+            GridLinesVisibility="All"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{Binding Transactions}"
+            RowHeight="30"
+            SelectionUnit="CellOrRowHeader">
 
             <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
+                <Style TargetType="DataGridRow">
                     <Style.Setters>
-                        <Setter Property="BorderBrush" Value="DimGray"/>
-                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="BorderBrush" Value="DimGray" />
+                        <Setter Property="BorderThickness" Value="0" />
                     </Style.Setters>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
@@ -36,10 +47,14 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-                </DataGrid.RowStyle>
+            </DataGrid.RowStyle>
 
-                <DataGrid.Columns>
-                <DataGridTextColumn Header="NAZWA SPÓŁKI" Binding="{Binding CompanyName}" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+            <DataGrid.Columns>
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding CompanyName}"
+                    Header="NAZWA SPÓŁKI"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -49,7 +64,12 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="DATA" Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding EntryDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
+                    Header="DATA"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
+                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -59,7 +79,12 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="CZAS TRWANIA" Binding="{Binding Duration}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding Duration}"
+                    Header="CZAS TRWANIA"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
+                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -69,7 +94,12 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="CENA WEJŚCIA" Binding="{Binding EntryPrice}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding EntryPrice}"
+                    Header="CENA WEJŚCIA"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
+                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -79,7 +109,12 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="WIELKOŚĆ POZYCJI" Binding="{Binding PositionSize}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding PositionSize}"
+                    Header="WIELKOŚĆ POZYCJI"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
+                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -89,7 +124,12 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="ILOŚĆ AKCJI" Binding="{Binding NumberOfShares}" Width="*" IsReadOnly="True" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding NumberOfShares}"
+                    Header="ILOŚĆ AKCJI"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
+                    IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -99,40 +139,65 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="CENA SPRZEDAŻY" Width="*" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTemplateColumn
+                    Width="*"
+                    Header="CENA SPRZEDAŻY"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding AvgSellPrice, UpdateSourceTrigger=PropertyChanged}" 
-                                               VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                            <TextBox Width="auto" Height="25" BorderBrush="SteelBlue" Background="Gray" BorderThickness="0"                                           
-                                     Text="{Binding AvgSellPriceText, UpdateSourceTrigger=PropertyChanged}"
-                                             VerticalAlignment="Center" Margin="15,0,0,0" HorizontalAlignment="Center" Controls:TextBoxHelper.Watermark="wpisz..."/>
-                                <Button  Width="auto"  Height="25" HorizontalAlignment="Right"  Margin="1,0,0,0" BorderBrush="DimGray" BorderThickness="0" 
-                                     Command="{Binding DataContext.SetAvgSellPriceCommand, RelativeSource={RelativeSource AncestorType=mah:MetroContentControl}}"
-                                     CommandParameter="{Binding}"
-                                     Background="DimGray" Padding="5">
-                                    <iconPacks:VaadinIcons Kind="EnterArrow"></iconPacks:VaadinIcons>
-                                   
-                            </Button>
-                        </StackPanel>
-                    </DataTemplate>
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding AvgSellPrice, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox
+                                    Width="auto"
+                                    Height="25"
+                                    Margin="15,0,0,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Controls:TextBoxHelper.Watermark="wpisz..."
+                                    Background="Gray"
+                                    BorderBrush="SteelBlue"
+                                    BorderThickness="0"
+                                    Text="{Binding AvgSellPriceText, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button
+                                    Width="auto"
+                                    Height="25"
+                                    Margin="1,0,0,0"
+                                    Padding="5"
+                                    HorizontalAlignment="Right"
+                                    Background="DimGray"
+                                    BorderBrush="DimGray"
+                                    BorderThickness="0"
+                                    Command="{Binding DataContext.SetAvgSellPriceCommand, RelativeSource={RelativeSource AncestorType=mah:MetroContentControl}}"
+                                    CommandParameter="{Binding}">
+                                    <iconPacks:VaadinIcons Kind="EnterArrow" />
+
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="ZAKOŃCZ" Width="auto" HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
+                <DataGridTemplateColumn
+                    Width="auto"
+                    Header="ZAKOŃCZ"
+                    HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Background="DimGray" BorderBrush="DimGray"                             
-                                        Command="{Binding DataContext.CloseTransactionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                        CommandParameter="{Binding}" >
-                                <iconPacks:Octicons Kind="MoveToEnd16"/>
+                            <Button
+                                Background="DimGray"
+                                BorderBrush="DimGray"
+                                Command="{Binding DataContext.CloseTransactionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                CommandParameter="{Binding}">
+                                <iconPacks:Octicons Kind="MoveToEnd16" />
                             </Button>
                         </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-                
-            </DataGrid>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
     </Grid>
 </mah:MetroContentControl>

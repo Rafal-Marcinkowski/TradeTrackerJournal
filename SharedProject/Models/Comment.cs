@@ -21,4 +21,6 @@ public class Comment : BindableBase
         get => isEditing;
         set => SetProperty(ref isEditing, value);
     }
+
+    public string OldCommentText { get; set; }
 }

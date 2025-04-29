@@ -3,7 +3,10 @@ using DataAccess.DBAccess;
 using EventTracker.MVVM.ViewModels;
 using EventTracker.MVVM.Views;
 using Infrastructure;
+using Infrastructure.Interfaces;
 using Infrastructure.Logging;
+using Infrastructure.Services;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using SessionOpening;
@@ -21,13 +24,13 @@ public partial class App : PrismApplication
         LogManager.InitializeLogger();
         Log.Information("Początek aplikacji.");
 
-        TurnoverMedianTable.UpdateMedianTable();
+        _ = TurnoverMedianTable.UpdateMedianTable();
 
         Task.Run(async () =>
         {
             await Task.Delay(3000);
             DailyTracker dailyTradeTracker = Container.Resolve<DailyTracker>();
-            dailyTradeTracker.StartTracker();
+            _ = dailyTradeTracker.StartTracker();
         });
 
         //FirstStartUp();
@@ -57,6 +60,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<IEventData, EventData>();
         containerRegistry.RegisterSingleton<ICompanyData, CompanyData>();
         containerRegistry.RegisterSingleton<ISQLDataAccess, SQLDataAccess>();
+        containerRegistry.RegisterSingleton<IDialogCoordinator, DialogCoordinator>();
         containerRegistry.RegisterSingleton<IDailyDataProvider, DailyDataProvider>();
 
         containerRegistry.Register<MainWindowViewModel>();
@@ -69,6 +73,13 @@ public partial class App : PrismApplication
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
         containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
+
+        containerRegistry.RegisterSingleton<ICommentManager, CommentManager>();
+        containerRegistry.RegisterSingleton<ViewManager>();
+        containerRegistry.RegisterSingleton<ITransactionManager, TransactionManager>();
+        containerRegistry.RegisterSingleton<IEventManager, Infrastructure.Services.EventManager>();
+        containerRegistry.RegisterSingleton<ICompanyManager, CompanyManager>();
+        containerRegistry.RegisterSingleton<ITradeTrackerFacade, TradeTrackerFacade>();
 
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsMainMenuView>();
@@ -89,5 +100,3 @@ public partial class App : PrismApplication
         base.OnExit(e);
     }
 }
-
-

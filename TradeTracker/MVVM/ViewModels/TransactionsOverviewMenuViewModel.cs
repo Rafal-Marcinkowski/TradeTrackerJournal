@@ -1,4 +1,5 @@
-﻿using DataAccess.Data;
+﻿using Infrastructure.DataFilters;
+using Infrastructure.Interfaces;
 using SharedProject.Models;
 using SharedProject.ViewModels;
 using System.Windows.Input;
@@ -8,9 +9,14 @@ namespace TradeTracker.MVVM.ViewModels;
 
 public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
 {
-    private readonly IRegionManager regionManager;
-    private readonly ICompanyData companyData;
-    private readonly ITransactionData transactionData;
+    public TransactionsOverviewMenuViewModel(ITradeTrackerFacade facade)
+    {
+        this.facade = facade;
+        _ = FillTransactionCounts();
+        _ = GetAllCompanies();
+    }
+
+    private readonly ITradeTrackerFacade facade;
 
     private Dictionary<DateTime, int> transactionCounts;
     public Dictionary<DateTime, int> TransactionCounts
@@ -18,25 +24,20 @@ public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
         get => transactionCounts;
         set => SetProperty(ref transactionCounts, value);
     }
-
-    public TransactionsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData, ITransactionData transactionData)
+    protected override void OnCollectionFiltered()
     {
-        this.transactionData = transactionData;
-        this.regionManager = regionManager;
-        this.companyData = companyData;
-        _ = GetAllCompanies();
-        _ = FillTransactionCounts();
+        ItemsSource = ObservableCollectionFilter.OrderByDescendingTransactionCount(ItemsSource);
     }
 
     private async Task GetAllCompanies()
     {
-        var companyList = await companyData.GetAllCompaniesAsync();
+        var companyList = await facade.CompanyManager.GetAllCompanies();
         ItemsSource = [.. companyList.OrderByDescending(q => q.TransactionCount)];
     }
 
     private async Task FillTransactionCounts()
     {
-        var transactions = await transactionData.GetAllTransactionsAsync();
+        var transactions = await facade.TransactionManager.GetAllTransactions();
         var transactionsByDay = from trans in transactions
                                 group trans by trans.EntryDate into transGroups
                                 select new
@@ -53,10 +54,7 @@ public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
         {
             { "op", "op" }
         };
-
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
+        facade.ViewManager.NavigateTo(nameof(TransactionsOverviewView), parameters);
     });
 
     public ICommand TransactionsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
@@ -67,9 +65,7 @@ public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
         {
             {"selectedCompany", selectedCompany.ID }
         };
-            var region = regionManager.Regions["MainRegion"];
-            region.RemoveAll();
-            regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
+            facade.ViewManager.NavigateTo(nameof(TransactionsOverviewView), parameters);
         }
     });
 
@@ -83,17 +79,16 @@ public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
                 {
                     {"lastx", transactionsToShow },
                 };
-                var region = regionManager.Regions["MainRegion"];
-                region.RemoveAll();
-                regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView), parameters);
+                facade.ViewManager.NavigateTo(nameof(TransactionsOverviewView), parameters);
             }
         }
     });
 
     public ICommand TransactionsForCalendarDateCommand => new DelegateCommand<DateTime?>((calendarDate) =>
     {
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
+        facade.ViewManager.NavigateTo(nameof(TransactionsOverviewView), new NavigationParameters
+        {
+            { "calendarDate", calendarDate }
+        });
     });
 }

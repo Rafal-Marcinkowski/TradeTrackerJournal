@@ -1,28 +1,29 @@
-﻿using DataAccess.Data;
+﻿using Infrastructure.Events;
+using Infrastructure.Interfaces;
 using SharedProject.Models;
-using SharedProject.Views;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
-using ValidationComponent.Transactions;
 
 namespace TradeTracker.MVVM.ViewModels;
 
 public class OpenPositionsViewModel : BindableBase
 {
-    private readonly ITransactionData transactionData;
+    private readonly ITradeTrackerFacade facade;
 
-    public OpenPositionsViewModel(ITransactionData transactionData)
+    public OpenPositionsViewModel(ITradeTrackerFacade facade)
     {
-        this.transactionData = transactionData;
-        LoadTransactionsAsync();
+        this.facade = facade;
+        facade.EventAggregator.GetEvent<TransactionClosedEvent>().Subscribe(async (transaction) => await HandleTransactionClosed(transaction));
+        _ = LoadTransactionsAsync();
     }
+
+    public ObservableCollection<Transaction> Transactions { get; set; }
 
     public ICommand SetAvgSellPriceCommand => new DelegateCommand<Transaction>(transaction =>
     {
-        string normalizedText = (new string(transaction.AvgSellPriceText.Replace(',', '.').Trim()
-        .Where(q => !char.IsWhiteSpace(q)).ToArray()));
+        string normalizedText = (new string([.. transaction.AvgSellPriceText.Replace(',', '.').Trim().Where(q => !char.IsWhiteSpace(q))]));
 
         if (decimal.TryParse(normalizedText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal avgSellPrice))
         {
@@ -33,59 +34,19 @@ public class OpenPositionsViewModel : BindableBase
         transaction.AvgSellPriceText = string.Empty;
     });
 
-    public ICommand CloseTransactionCommand => new DelegateCommand<Transaction>(async transaction =>
+    public ICommand CloseTransactionCommand => new DelegateCommand<Transaction>(async transaction => await facade.TransactionManager.CloseTransaction(transaction));
+
+    private async Task HandleTransactionClosed(Transaction transaction)
     {
-        var validator = new CloseTransactionValidation();
-        var results = validator.Validate(transaction);
-
-        if (!results.IsValid)
-        {
-            var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
-            MessageBox.Show(validationErrors, "Validation Errors", MessageBoxButton.OK, MessageBoxImage.Error);
-            return;
-        }
-
-        if (transaction.AvgSellPrice > 0)
-        {
-            var dialog = new ConfirmationDialog()
-            {
-                DialogText = "Czy na pewno chcesz zamknąć transakcję?\n" +
-                $"{transaction.CompanyName} {transaction.EntryDate}\nŚrednia cena sprzedaży: {transaction.AvgSellPrice}"
-            };
-            dialog.ShowDialog();
-
-            if (dialog.Result)
-            {
-                var dialog2 = new FinalizeTransactionDialog();
-                dialog2.ShowDialog();
-
-                if (dialog2.IsConfirmed)
-                {
-                    var closingComment = dialog2.ClosingComment;
-                    transaction.ClosingDescription = closingComment;
-                }
-
-                transaction.IsClosed = true;
-                transaction.CloseDate = DateTime.Now.Date
-                             .AddHours(DateTime.Now.Hour)
-                             .AddMinutes(DateTime.Now.Minute);
-                await transactionData.UpdateTransactionAsync(transaction);
-                Transactions.Remove(transaction);
-            }
-        }
-    });
+        Transactions.Remove(transaction);
+        RaisePropertyChanged(nameof(Transactions));
+    }
 
     private async Task LoadTransactionsAsync()
     {
         try
         {
-            var allTransactions = await transactionData.GetAllTransactionsAsync();
-            Transactions = new ObservableCollection<Transaction>(allTransactions.Where(q => !q.IsClosed));
-
-            foreach (var transaction in Transactions)
-            {
-                await SetDuration(transaction);
-            }
+            Transactions = [.. await facade.TransactionManager.LoadAndSetOpenTransactions()];
 
             RaisePropertyChanged(nameof(Transactions));
         }
@@ -95,12 +56,4 @@ public class OpenPositionsViewModel : BindableBase
             MessageBox.Show($"Error loading transactions: {ex.Message}");
         }
     }
-
-    private async Task SetDuration(Transaction transaction)
-    {
-        TimeSpan timeSpan = DateTime.Now.Date - transaction.EntryDate.Date;
-        transaction.Duration = (int)timeSpan.TotalDays;
-    }
-
-    public ObservableCollection<Transaction> Transactions { get; set; }
 }

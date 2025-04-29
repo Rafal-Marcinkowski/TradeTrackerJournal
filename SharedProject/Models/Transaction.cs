@@ -26,6 +26,16 @@ public class Transaction : BindableBase, ITrackable
         set => SetProperty(ref isDetailsVisible, value);
     }
 
+    private bool isCommentBeingEdited;
+    public bool IsCommentBeingEdited
+    {
+        get => isCommentBeingEdited;
+        set
+        {
+            SetProperty(ref isCommentBeingEdited, value);
+        }
+    }
+
     private bool isNewCommentBeingAdded;
     public bool IsNewCommentBeingAdded
     {
@@ -74,4 +84,11 @@ public class Transaction : BindableBase, ITrackable
     public ObservableCollection<DailyData> DailyDataCollection { get; set; }
 
     public ObservableCollection<Comment> Comments { get; set; }
+
+    private string newCommentText = string.Empty;
+    public string NewCommentText
+    {
+        get => newCommentText;
+        set => SetProperty(ref newCommentText, value);
+    }
 }

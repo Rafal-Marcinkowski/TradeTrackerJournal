@@ -143,7 +143,7 @@ public class DailyTracker
 
         var trackingRecords = allRecords
                 .Where(q => q.Date >= trackable.EntryDate.Date)
-                .OrderBy(q => q.Date) ///tutaj było OrderByDescending, potencjalny powró buga
+                .OrderBy(q => q.Date)
                 .Take(trackable.IsClosed ? 30 : allRecords.Count()).ToList();
 
         if (trackingRecords.Count != 0)
