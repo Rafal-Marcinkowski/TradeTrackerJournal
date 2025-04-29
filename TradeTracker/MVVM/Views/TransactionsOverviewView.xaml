@@ -198,7 +198,7 @@
                         Margin="0,5,0,5"
                         Width="auto"
                         VerticalAlignment="Center">
-                            <Button Command="{Binding DataContext.AddNewCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}" 
+                            VerticalAlignment="Center"
                         CommandParameter="{Binding}"
                         Width="30" 
                         Height="30" 
