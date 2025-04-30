@@ -15,10 +15,9 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
     private readonly ITradeTrackerFacade facade;
     private readonly IDialogCoordinator dialogCoordinator;
 
-    public TransactionViewModel Transaction { get; set; } = new();
+    public TransactionEventViewModel Transaction { get; set; } = new();
 
-    public AddTransactionViewModel(ITradeTrackerFacade facade, IEventAggregator eventAggregator
-         , IDialogCoordinator dialogCoordinator)
+    public AddTransactionViewModel(ITradeTrackerFacade facade, IDialogCoordinator dialogCoordinator)
     {
         this.facade = facade;
         this.dialogCoordinator = dialogCoordinator;
@@ -28,7 +27,7 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
 
     protected override void OnCollectionFiltered()
     {
-        ItemsSource = ObservableCollectionFilter.OrderByDescendingTransactionCount(ItemsSource);
+        ItemsSource = ObservableCollectionFilter.OrderByDescending(ItemsSource, c => c.TransactionCount);
     }
 
     private async Task GetAllCompanies()
@@ -58,7 +57,7 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
     {
         if (await facade.TransactionManager.TryAddTransaction(Transaction))
         {
-            await dialogCoordinator.ShowMessageAsync(this, "Sukces", "transakcja pomyślnie dodana");
+            await dialogCoordinator.ShowMessageAsync(this, "Sukces", "Transakcja pomyślnie dodana");
         }
     });
 

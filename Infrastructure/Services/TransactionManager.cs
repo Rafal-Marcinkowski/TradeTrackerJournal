@@ -106,7 +106,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         eventAggregator.GetEvent<TransactionUpdatedEvent>().Publish(Transaction);
     }
 
-    public async Task<bool> TryAddTransaction(TransactionViewModel transactionVM)
+    public async Task<bool> TryAddTransaction(TransactionEventViewModel transactionVM)
     {
         Transaction transaction = await FillNewTransactionProperties(transactionVM);
 
@@ -245,7 +245,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         return allTransactions;
     }
 
-    private async Task<Transaction> FillNewTransactionProperties(TransactionViewModel transactionVM)
+    private async Task<Transaction> FillNewTransactionProperties(TransactionEventViewModel transactionVM)
     {
         Transaction transaction = new()
         {

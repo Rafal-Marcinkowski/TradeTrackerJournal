@@ -364,7 +364,7 @@
                                     Margin="1"
                                     Background="DimGray"
                                     BorderBrush="DimGray"
-                                    Command="{Binding DataContext.Commands.ToggleTransactionTrackerCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                    Command="{Binding DataContext.Commands.ToggleTrackingCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
                                     CommandParameter="{Binding}">
                                     <Button.ToolTip>
                                         <TextBlock>
@@ -411,7 +411,7 @@
                                     Margin="1"
                                     Background="DimGray"
                                     BorderBrush="DimGray"
-                                    Command="{Binding DataContext.Commands.ToggleCommentsPanelCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
+                                    Command="{Binding DataContext.Commands.ToggleDetailsPanelCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
                                     CommandParameter="{Binding}">
                                     <Button.ToolTip>
                                         <ToolTip Content="Pokaż/Ukryj sekcję komentarzy" />

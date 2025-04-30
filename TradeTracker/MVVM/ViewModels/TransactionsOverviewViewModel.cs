@@ -9,7 +9,7 @@ namespace TradeTracker.MVVM.ViewModels;
 public class TransactionsOverviewViewModel : BindableBase, INavigationAware
 {
     private readonly ITradeTrackerFacade _facade;
-    private readonly TransactionLoader _transactionLoader;
+    private readonly TrackableDataLoader _transactionLoader;
 
     public ObservableCollection<Transaction> Transactions { get; } = [];
     public CommandManager Commands { get; }
@@ -17,7 +17,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
     public TransactionsOverviewViewModel(ITradeTrackerFacade facade)
     {
         _facade = facade;
-        _transactionLoader = new TransactionLoader(facade);
+        _transactionLoader = new TrackableDataLoader(facade);
         Commands = new CommandManager(facade);
 
         SubscribeToEvents();
@@ -29,7 +29,7 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
             .Subscribe(d => _transactionLoader.OnDailyDataAdded(d, Transactions));
 
         _facade.EventAggregator.GetEvent<TransactionUpdatedEvent>()
-            .Subscribe(t => _transactionLoader.OnTransactionUpdated(t, Transactions));
+            .Subscribe(t => _transactionLoader.OnTrackableUpdated(t, Transactions));
     }
 
     public async void OnNavigatedTo(NavigationContext navigationContext)
@@ -38,9 +38,9 @@ public class TransactionsOverviewViewModel : BindableBase, INavigationAware
         {
             await (key switch
             {
-                "selectedCompany" => _transactionLoader.GetTransactionsForCompany((int)navigationContext.Parameters[key]),
-                "op" => _transactionLoader.GetAllOpenTransactions(),
-                "lastx" => _transactionLoader.GetLastXTransactions((int)navigationContext.Parameters[key]),
+                "selectedCompany" => _transactionLoader.GetItemsForCompany<Transaction>((int)navigationContext.Parameters[key]),
+                "op" => _transactionLoader.GetAllOpenItems<Transaction>(),
+                "lastx" => _transactionLoader.GetLastXItems<Transaction>((int)navigationContext.Parameters[key]),
                 _ => Task.FromResult(new ObservableCollection<Transaction>())
             }).ContinueWith(t =>
             {

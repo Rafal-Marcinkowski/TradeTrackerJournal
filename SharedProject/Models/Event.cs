@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace SharedProject.Models;
 
-public class Event : BindableBase, ITrackable
+public class Event : BindableBase, ITrackable, IDetailable, ILinkable, ICommentable
 {
     public Event()
     {
@@ -37,6 +37,40 @@ public class Event : BindableBase, ITrackable
         get => entryMedianTurnover;
         set => SetProperty(ref entryMedianTurnover, value);
     }
+
+    public string FinalComment { get; set; }
+
+    private string newCommentText;
+    public string NewCommentText
+    {
+        get => newCommentText;
+        set
+        {
+            SetProperty(ref newCommentText, value);
+        }
+    }
+
+    private bool isCommentBeingEdited;
+    public bool IsCommentBeingEdited
+    {
+        get => isCommentBeingEdited;
+        set
+        {
+            SetProperty(ref isCommentBeingEdited, value);
+        }
+    }
+
+    private bool hasFinalComment;
+    public bool HasFinalComment
+    {
+        get => hasFinalComment;
+        set
+        {
+            SetProperty(ref hasFinalComment, value);
+        }
+    }
+
+    private string editedCommentOldText;
 
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }

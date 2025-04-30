@@ -1,22 +1,12 @@
 ﻿using EventTracker.MVVM.Views;
+using Infrastructure.Services;
 using System.Windows.Input;
 
 namespace EventTracker.MVVM.ViewModels;
 
-public class EventsMainMenuViewModel(IRegionManager regionManager) : BindableBase
+public class EventsMainMenuViewModel(ViewManager viewManager) : BindableBase
 {
+    public ICommand NavigateToAddEventCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(AddEventView)));
 
-    public ICommand NavigateToAddEventCommand => new DelegateCommand(() =>
-    {
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(AddEventView));
-    });
-
-    public ICommand NavigateToEventsOverviewMenuCommand => new DelegateCommand(() =>
-    {
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewMenuView));
-    });
+    public ICommand NavigateToEventsOverviewMenuCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(EventsOverviewMenuView)));
 }

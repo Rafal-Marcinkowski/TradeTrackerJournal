@@ -25,4 +25,9 @@ public class CommentManager(ICommentData commentData) : ICommentManager
     {
         return await commentData.GetAllCommentsForTransactionAsync(transactionId);
     }
+
+    public async Task<IEnumerable<Comment>> GetCommentsForEvent(int eventId)
+    {
+        return await commentData.GetAllCommentsForEventAsync(eventId);
+    }
 }

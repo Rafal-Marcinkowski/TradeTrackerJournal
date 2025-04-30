@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace SharedProject.Models;
 
-public class Transaction : BindableBase, ITrackable
+public class Transaction : BindableBase, ITrackable, IDetailable, ILinkable, ICommentable
 {
     public Transaction()
     {

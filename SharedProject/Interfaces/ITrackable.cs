@@ -14,4 +14,7 @@ public interface ITrackable
     ObservableCollection<DailyData> DailyDataCollection { get; set; }
     int EntryMedianTurnover { get; set; }
     bool IsClosed { get; set; }
+    ObservableCollection<Comment> Comments { get; set; }
+    bool IsDetailsVisible { get; set; }
+    string InformationLink { get; set; }
 }

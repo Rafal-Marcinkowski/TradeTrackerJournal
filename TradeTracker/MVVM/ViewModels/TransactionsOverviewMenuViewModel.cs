@@ -26,7 +26,7 @@ public class TransactionsOverviewMenuViewModel : BaseListViewModel<Company>
     }
     protected override void OnCollectionFiltered()
     {
-        ItemsSource = ObservableCollectionFilter.OrderByDescendingTransactionCount(ItemsSource);
+        ItemsSource = ObservableCollectionFilter.OrderByDescending(ItemsSource, c => c.TransactionCount);
     }
 
     private async Task GetAllCompanies()

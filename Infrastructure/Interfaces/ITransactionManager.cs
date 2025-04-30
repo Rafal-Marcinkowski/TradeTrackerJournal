@@ -13,6 +13,6 @@ public interface ITransactionManager
     Task<Transaction> GetTransaction(int transactionId);
     Task<IEnumerable<Transaction>> GetTransactionsForCompany(int companyId);
     Task<IEnumerable<Transaction>> LoadAndSetOpenTransactions();
-    Task<bool> TryAddTransaction(TransactionViewModel transactionVM);
+    Task<bool> TryAddTransaction(TransactionEventViewModel transactionVM);
     Task UpdateTransaction(Transaction Transaction);
 }

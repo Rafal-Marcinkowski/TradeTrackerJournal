@@ -1,6 +1,6 @@
 ﻿namespace SharedProject.ViewModels;
 
-public class TransactionViewModel : BindableBase
+public class TransactionEventViewModel : BindableBase
 {
     private string selectedCompanyName;
     public string SelectedCompanyName

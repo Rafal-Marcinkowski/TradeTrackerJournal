@@ -1,5 +1,7 @@
 ﻿using DataAccess.Data;
 using EventTracker.MVVM.Views;
+using Infrastructure.DataFilters;
+using Infrastructure.Services;
 using SharedProject.Models;
 using SharedProject.ViewModels;
 using System.Windows.Input;
@@ -8,12 +10,12 @@ namespace EventTracker.MVVM.ViewModels;
 
 public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
 {
-    private readonly IRegionManager regionManager;
+    private readonly ViewManager viewManager;
     private readonly ICompanyData companyData;
 
-    public EventsOverviewMenuViewModel(IRegionManager regionManager, ICompanyData companyData)
+    public EventsOverviewMenuViewModel(ViewManager viewManager, ICompanyData companyData)
     {
-        this.regionManager = regionManager;
+        this.viewManager = viewManager;
         this.companyData = companyData;
         _ = GetAllCompanies();
     }
@@ -24,6 +26,11 @@ public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
         ItemsSource = [.. companyList.OrderByDescending(q => q.EventCount)];
     }
 
+    protected override void OnCollectionFiltered()
+    {
+        ItemsSource = ObservableCollectionFilter.OrderByDescending(ItemsSource, c => c.EventCount);
+    }
+
     public ICommand NavigateToOpenPositionsCommand => new DelegateCommand(() =>
     {
         var parameters = new NavigationParameters
@@ -31,9 +38,7 @@ public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
             { "op", "op" }
         };
 
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
+        viewManager.NavigateTo(nameof(EventsOverviewView), parameters);
     });
 
     public ICommand EventsOverviewForCompanyCommand => new DelegateCommand<Company>((selectedCompany) =>
@@ -44,9 +49,7 @@ public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
         {
             { "selectedCompany", selectedCompany.ID }
         };
-            var region = regionManager.Regions["MainRegion"];
-            region.RemoveAll();
-            regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
+            viewManager.NavigateTo(nameof(EventsOverviewView), parameters);
         }
     });
 
@@ -60,17 +63,20 @@ public class EventsOverviewMenuViewModel : BaseListViewModel<Company>
                 {
                     {"lastx", transactionsToShow },
                 };
-                var region = regionManager.Regions["MainRegion"];
-                region.RemoveAll();
-                regionManager.RequestNavigate("MainRegion", nameof(EventsOverviewView), parameters);
+                viewManager.NavigateTo(nameof(EventsOverviewView), parameters);
             }
         }
     });
 
-    public ICommand TransactionsForCalendarDateCommand => new DelegateCommand<DateTime?>((calendarDate) =>
+    public ICommand EventsForCalendarDateCommand => new DelegateCommand<DateTime?>((calendarDate) =>
     {
-        var region = regionManager.Regions["MainRegion"];
-        region.RemoveAll();
-        // regionManager.RequestNavigate("MainRegion", nameof(TransactionsOverviewView));
+        if (calendarDate == null) return;
+
+        var parameters = new NavigationParameters
+        {
+            { "calendarDate", calendarDate }
+        };
+
+        viewManager.NavigateTo(nameof(EventsOverviewView), parameters);
     });
 }

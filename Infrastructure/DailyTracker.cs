@@ -14,7 +14,7 @@ public class DailyTracker
     private readonly IDailyDataProvider dailyDataProvider;
     private readonly IEventAggregator eventAggregator;
     private readonly IEventData eventData;
-    private static bool isTrackerWorking = false;
+    private bool isTrackerWorking = false;
     private readonly Queue<ITrackable> queuedTrackables = [];
 
     public DailyTracker(ITransactionData transactionData, IDailyDataProvider dailyDataProvider, IEventAggregator eventAggregator, IEventData eventData)

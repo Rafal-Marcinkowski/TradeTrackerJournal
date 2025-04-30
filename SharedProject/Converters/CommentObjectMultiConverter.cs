@@ -1,30 +1,26 @@
-﻿using SharedProject.Models;
+﻿using SharedProject.Interfaces;
+using SharedProject.Models;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace SharedProject.Converters;
 
 public class CommentObjectMultiConverter : IMultiValueConverter
 {
-    public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-        if (values.Length == 2 && values[0] is Comment comment)
-        {
-            if (values[1] is Transaction transaction)
-            {
-                return Tuple.Create(comment, transaction);
-            }
+        if (values == null || values.Length < 2)
+            return null;
 
-            else if (values[1] is Event eventObj)
-            {
-                return Tuple.Create(comment, eventObj);
-            }
-        }
+        if (values[0] is not Comment comment || values[1] is not ICommentable parent)
+            return null;
 
-        return null;
+        return new Tuple<Comment, ICommentable>(comment, parent);
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
     }
 }
+
