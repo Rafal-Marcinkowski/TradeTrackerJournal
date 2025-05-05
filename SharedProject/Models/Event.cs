@@ -70,8 +70,6 @@ public class Event : BindableBase, ITrackable, IDetailable, ILinkable, ICommenta
         }
     }
 
-    private string editedCommentOldText;
-
     public string CompanyName { get; set; }
     public DateTime EntryDate { get; set; }
     public decimal EntryPrice { get; set; }

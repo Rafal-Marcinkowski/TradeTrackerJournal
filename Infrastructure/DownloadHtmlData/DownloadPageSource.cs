@@ -17,7 +17,7 @@ public class DownloadPageSource
 
         if (archivedPageNumber >= 3)
         {
-            url = url.Remove(url.IndexOf(',') + 1) + archivedPageNumber;
+            url = url[..(url.IndexOf(',') + 1)] + archivedPageNumber;
         }
 
         Log.Information($"Pobieranie danych z URL: {url}");

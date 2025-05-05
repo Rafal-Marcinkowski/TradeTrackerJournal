@@ -2,7 +2,4 @@
 
 namespace Infrastructure.Events;
 
-public class TransactionAddedEvent : PubSubEvent<Transaction>
-{
-
-}
+public class TransactionAddedEvent : PubSubEvent<Transaction>;

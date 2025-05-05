@@ -1,59 +1,188 @@
 ﻿using FluentValidation;
-using SharedProject.Models;
+using SharedProject.Extensions;
+using SharedProject.ViewModels;
+using System.Globalization;
 
 namespace ValidationComponent.Transactions;
 
-public class AddTransactionValidator : AbstractValidator<Transaction>
+public class AddTransactionValidator : AbstractValidator<TransactionEventViewModel>
 {
     public AddTransactionValidator()
     {
-        RuleFor(x => x.CompanyName)
+        RuleFor(x => x.SelectedCompanyName)
             .NotEmpty().WithMessage("Wybierz spółkę");
 
         RuleFor(x => x.EntryDate)
-            .Must(BeAValidTime).WithMessage("Podaj poprawną datę wejścia")
-            .When(x => !string.IsNullOrEmpty(x.EntryDate.ToString()));
+            .NotEmpty().WithMessage("Data wejścia jest wymagana")
+            .Must(BeValidDateTimeFormat).WithMessage("Nieprawidłowy format daty")
+            .Must(BeWithinTradingHours).WithMessage("Transakcja musi być między 9:00 a 17:05")
+            .Must(BeNotFutureDate).WithMessage("Data nie może być z przyszłości");
 
         RuleFor(x => x.EntryPrice)
-            .GreaterThan(0).WithMessage("Wprowadź cenę wejścia");
+            .NotEmpty().WithMessage("Cena wejścia jest wymagana")
+            .Must(BeValidDecimal).WithMessage("Nieprawidłowy format ceny")
+            .Must((_, price) =>
+            {
+                try
+                {
+                    return decimal.Parse(price.CleanNumberInput(), CultureInfo.InvariantCulture) > 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }).WithMessage("Cena musi być większa od 0");
 
         RuleFor(x => x.NumberOfShares)
-            .GreaterThan(0).WithMessage("Wprowadź ilość akcji");
+            .NotEmpty().WithMessage("Ilość akcji jest wymagana")
+            .Must(BeValidInteger).WithMessage("Nieprawidłowa ilość akcji (tylko liczby całkowite)")
+            .Must((_, shares) =>
+            {
+                try
+                {
+                    var cleaned = shares.CleanNumberInput();
+                    if (string.IsNullOrEmpty(cleaned)) return false;
+                    return int.Parse(cleaned, CultureInfo.InvariantCulture) > 0;
+                }
+                catch
+                {
+                    return false;
+                }
+            }).WithMessage("Ilość akcji musi być większa od 0");
 
         RuleFor(x => x.PositionSize)
-            .GreaterThan(0).WithMessage("Wprowadź wielkość pozycji");
-
-        RuleFor(x => x.InformationLink)
-            .Must(BeAValidUrl).WithMessage("Wklej poprawny link")
-            .When(x => !string.IsNullOrEmpty(x.InformationLink));
+     .NotEmpty().WithMessage("Wielkość pozycji jest wymagana")
+     .Must(BeValidDecimal).WithMessage("Nieprawidłowy format wielkości pozycji")
+     .Must((_, size) => SafeDecimalParse(size) > 0)
+     .WithMessage("Wielkość pozycji musi być większa od 0")
+     .Must((_, size) => SafeDecimalParse(size) <= 100000000)
+     .WithMessage("Wielkość pozycji nie może przekraczać 100 000 000 \n");
 
         RuleFor(x => x.AvgSellPrice)
-            .GreaterThan(0).WithMessage("Niepoprawna cena sprzedaży")
-            .When(x => x.AvgSellPrice.HasValue);
+            .Must(BeValidDecimalOrEmpty).WithMessage("Nieprawidłowy format ceny sprzedaży")
+            .When(x => !string.IsNullOrWhiteSpace(x.AvgSellPrice))
+            .Must((_, price) => SafeDecimalParse(price) > 0)
+            .WithMessage("Cena sprzedaży musi być większa od 0")
+            .When(x => !string.IsNullOrWhiteSpace(x.AvgSellPrice));
 
         RuleFor(x => x)
-            .Must(x => Math.Abs(x.EntryPrice * x.NumberOfShares - x.PositionSize) < 100m)
-            .When(x => x.EntryPrice > 0 && x.NumberOfShares > 0)
-            .WithMessage(x => $"Wielkość pozycji:  ({x.EntryPrice} * {x.NumberOfShares} = {x.NumberOfShares * x.EntryPrice})");
-
-        RuleFor(x => x)
-            .Must(x => x.NumberOfShares > 0)
-            .When(x => x.PositionSize > 0 && x.EntryPrice > 0)
+            .Must(x =>
+            {
+                try
+                {
+                    var entryPrice = SafeDecimalParse(x.EntryPrice);
+                    var numberOfShares = SafeIntegerParse(x.NumberOfShares);
+                    var positionSize = SafeDecimalParse(x.PositionSize);
+                    return Math.Abs((entryPrice * numberOfShares) - positionSize) < 100m;
+                }
+                catch
+                {
+                    return false;
+                }
+            })
             .WithMessage(x =>
             {
-                var numberOfShares = x.EntryPrice != 0 ? (int)(x.PositionSize / x.EntryPrice) : 0;
-                return $"Ilość akcji: ({x.PositionSize} / {x.EntryPrice} = {numberOfShares})";
+                try
+                {
+                    var entryPrice = SafeDecimalParse(x.EntryPrice);
+                    var numberOfShares = SafeIntegerParse(x.NumberOfShares);
+                    return $"Niespójność danych: Cena ({x.EntryPrice}) × Ilość ({x.NumberOfShares}) = {entryPrice * numberOfShares}, a pozycja: {x.PositionSize}";
+                }
+                catch
+                {
+                    return "Niespójność danych: nieprawidłowe wartości liczbowe";
+                }
             });
+
+        RuleFor(x => x.InitialDescription)
+            .MaximumLength(2000).WithMessage("Opis początkowy nie może przekraczać 2000 znaków");
+
+        RuleFor(x => x.Description)
+            .MaximumLength(2000).WithMessage("Opis nie może przekraczać 2000 znaków");
     }
 
-    private bool BeAValidTime(DateTime entryDate)
+    private decimal SafeDecimalParse(string input)
     {
-        var timeComponent = entryDate.TimeOfDay;
-        return timeComponent >= TimeSpan.FromHours(9) && timeComponent <= TimeSpan.FromHours(17).Add(TimeSpan.FromMinutes(5));
+        if (string.IsNullOrWhiteSpace(input)) return 0m;
+
+        try
+        {
+            var cleaned = input.CleanNumberInput();
+            return decimal.Parse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture);
+        }
+
+        catch
+        {
+            return 0m;
+        }
     }
 
-    private bool BeAValidUrl(string url)
+    private int SafeIntegerParse(string input)
     {
-        return Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        if (string.IsNullOrWhiteSpace(input)) return 0;
+
+        try
+        {
+            var cleaned = input.CleanNumberInput(isInteger: true);
+            return int.Parse(cleaned, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        catch
+        {
+            return 0;
+        }
+    }
+
+    private bool BeValidDateTimeFormat(string date)
+    {
+        return DateTime.TryParse(date, out _);
+    }
+
+    private bool BeWithinTradingHours(string date)
+    {
+        if (DateTime.TryParse(date, out DateTime parsedDate))
+        {
+            var time = parsedDate.TimeOfDay;
+            return time >= TimeSpan.FromHours(9) && time <= TimeSpan.FromHours(17).Add(TimeSpan.FromMinutes(5));
+        }
+
+        return false;
+    }
+
+    private bool BeNotFutureDate(string date)
+    {
+        if (DateTime.TryParse(date, out DateTime parsedDate))
+        {
+            return parsedDate <= DateTime.Now;
+        }
+
+        return false;
+    }
+
+    private bool BeValidDecimal(string number)
+    {
+        return decimal.TryParse(number.CleanNumberInput(), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
+    }
+
+    private bool BeValidInteger(string number)
+    {
+        if (string.IsNullOrWhiteSpace(number))
+            return false;
+
+        try
+        {
+            var cleaned = number.CleanNumberInput();
+            return int.TryParse(cleaned, NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+        }
+
+        catch
+        {
+            return false;
+        }
+    }
+
+    private bool BeValidDecimalOrEmpty(string number)
+    {
+        return string.IsNullOrWhiteSpace(number) || BeValidDecimal(number);
     }
 }

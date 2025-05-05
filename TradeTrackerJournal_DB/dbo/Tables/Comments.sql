@@ -4,5 +4,5 @@
     [TransactionID] INT FOREIGN KEY REFERENCES Transactions(ID) NULL, 
     [EventID] INT FOREIGN KEY REFERENCES Events(ID) NULL,
     [EntryDate] DATETIME NOT NULL,
-    [CommentText] NVARCHAR(250) NOT NULL, 
+    [CommentText] NVARCHAR(250) NOT NULL
 )

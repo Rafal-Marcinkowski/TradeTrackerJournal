@@ -2,7 +2,7 @@
 
 public class TransactionEventViewModel : BindableBase
 {
-    private string selectedCompanyName;
+    private string selectedCompanyName = string.Empty;
     public string SelectedCompanyName
     {
         get => selectedCompanyName;

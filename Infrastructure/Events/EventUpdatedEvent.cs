@@ -2,7 +2,4 @@
 
 namespace Infrastructure.Events;
 
-public class EventUpdatedEvent : PubSubEvent<Event>
-{
-
-}
+public class EventUpdatedEvent : PubSubEvent<Event>;

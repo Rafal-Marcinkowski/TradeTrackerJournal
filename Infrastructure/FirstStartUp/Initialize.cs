@@ -11,7 +11,7 @@ public class Initialize(ICompanyData companyData)
     {
         try
         {
-            translations = new List<Translation>();
+            translations = [];
 
             string filePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
@@ -23,19 +23,19 @@ public class Initialize(ICompanyData companyData)
             {
                 var lineWords = line.Trim().Split(' ');
 
-                if (!lineWords.Any() || lineWords.Count() < 2)
+                if (lineWords.Length == 0 || lineWords.Length < 2)
                     continue;
 
-                if (!lineWords.Last().All(q => char.IsUpper(q) || char.IsDigit(q)))
+                if (!lineWords[^1].All(q => char.IsUpper(q) || char.IsDigit(q)))
                 {
                     continue;
                 }
-                Translation translation = new Translation
+                Translation translation = new()
                 {
                     Key = String.Join(" ", lineWords.Reverse().Skip(1).Reverse()),
-                    Value = lineWords.Last()
+                    Value = lineWords[^1]
                 };
-                if (translation.Key == "" || translation.Value == "")
+                if (translation.Key?.Length == 0 || translation.Value?.Length == 0)
                 {
                     continue;
                 }
@@ -44,12 +44,14 @@ public class Initialize(ICompanyData companyData)
                     continue;
                 }
                 translations.Add(translation);
-
             }
+
             foreach (var item in translations)
             {
-                Company company = new();
-                company.CompanyName = item.Value;
+                Company company = new()
+                {
+                    CompanyName = item.Value
+                };
                 companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount, company.EventCount);
             }
         }

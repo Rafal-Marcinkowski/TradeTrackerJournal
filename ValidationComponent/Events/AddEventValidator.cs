@@ -20,7 +20,6 @@ public class AddEventValidator : AbstractValidator<Event>
         RuleFor(x => x.InformationLink)
             .Must(BeAValidUrl).WithMessage("Wklej poprawny link")
             .When(x => !string.IsNullOrEmpty(x.InformationLink));
-
     }
 
     private bool BeAValidTime(DateTime entryDate)

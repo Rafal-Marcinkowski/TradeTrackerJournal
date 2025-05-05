@@ -11,7 +11,7 @@ public class ArchivedTurnoverMedian
 
         var turnoverValues = records
             .Select(r => r.Turnover)
-            .OrderBy(t => t)
+            .Order()
             .ToList();
 
         int count = turnoverValues.Count;

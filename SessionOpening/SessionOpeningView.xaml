@@ -210,7 +210,7 @@
                         BorderBrush="DimGray"
                         BorderThickness="2"
                         Style="{StaticResource MahApps.Styles.TextBox.Search}"
-                        Text="{Binding SearchBoxText, UpdateSourceTrigger=PropertyChanged}" />
+                        Text="{Binding SearchKeyword, UpdateSourceTrigger=PropertyChanged, Delay=100}" />
                     <ListBox
                         x:Name="companyListBox"
                         Width="200"
@@ -219,7 +219,7 @@
                         BorderBrush="DimGray"
                         BorderThickness="2"
                         IsHitTestVisible="True"
-                        ItemsSource="{Binding FilteredCompanies}">
+                        ItemsSource="{Binding ItemsSource}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDoubleClick">
                                 <prism:InvokeCommandAction Command="{Binding ConfirmCompanySelectionCommand}" CommandParameter="{Binding ElementName=companyListBox, Path=SelectedItem}" />

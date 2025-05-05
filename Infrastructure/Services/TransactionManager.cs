@@ -5,7 +5,6 @@ using Serilog;
 using SharedProject.Models;
 using SharedProject.ViewModels;
 using SharedProject.Views;
-using System.Globalization;
 using System.Windows;
 using ValidationComponent.Transactions;
 
@@ -108,12 +107,12 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
 
     public async Task<bool> TryAddTransaction(TransactionEventViewModel transactionVM)
     {
-        Transaction transaction = await FillNewTransactionProperties(transactionVM);
-
-        if (!await ValidateNewTransactionProperties(transaction)) return false;
-
         try
         {
+            if (!await ValidateNewTransactionProperties(transactionVM)) return false;
+
+            Transaction transaction = await FillNewTransactionProperties(transactionVM);
+
             if (transaction.AvgSellPrice != null)
             {
                 await SetClosingProperties(transaction);
@@ -170,11 +169,10 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         return false;
     }
 
-    private async Task<bool> ValidateNewTransactionProperties(Transaction transaction)
+    private async Task<bool> ValidateNewTransactionProperties(TransactionEventViewModel transaction)
     {
         var validator = new AddTransactionValidator();
         var results = validator.Validate(transaction);
-
         if (!results.IsValid)
         {
             var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
@@ -184,7 +182,9 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
                 DialogText = validationErrors
             };
 
+            await Task.Delay(100);
             dialog.ShowDialog();
+            await Task.Delay(100);
             return false;
         }
 
@@ -247,28 +247,18 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
 
     private async Task<Transaction> FillNewTransactionProperties(TransactionEventViewModel transactionVM)
     {
-        Transaction transaction = new()
+        return new Transaction()
         {
             CompanyName = transactionVM.SelectedCompanyName,
-            EntryDate = DateTimeManager.ParseEntryDate(transactionVM.EntryDate),
-            EntryPrice = decimal.TryParse(
-            transactionVM.EntryPrice.Replace(" ", "").Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                                     .Replace(",", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator),
-            NumberStyles.Any,
-            CultureInfo.CurrentCulture,
-            out var entryPrice)
-            ? entryPrice
-            : 0,
-            NumberOfShares = int.TryParse(transactionVM.NumberOfShares.Where(x => !char.IsWhiteSpace(x)).ToArray(), out var numberOfShares) ? numberOfShares : 0,
-            PositionSize = decimal.TryParse(transactionVM.PositionSize.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out decimal positionSize) ? positionSize : 0,
-            InformationLink = transactionVM.InformationLink.Trim(),
-            AvgSellPrice = decimal.TryParse(transactionVM.AvgSellPrice.Replace(".", ",").Where(x => !char.IsWhiteSpace(x))
-                  .ToArray(), out var avgSellPrice) ? avgSellPrice : (decimal?)null,
-            InitialDescription = transactionVM.InitialDescription.Trim(),
-            Description = transactionVM.Description.Trim()
+            EntryDate = DateTime.Parse(transactionVM.EntryDate),
+            EntryPrice = decimal.Parse(transactionVM.EntryPrice.Replace(" ", "")),
+            NumberOfShares = int.Parse(transactionVM.NumberOfShares.Replace(" ", "")),
+            PositionSize = decimal.Parse(transactionVM.PositionSize.Replace(" ", "")),
+            InformationLink = transactionVM.InformationLink?.Trim(),
+            AvgSellPrice = string.IsNullOrEmpty(transactionVM.AvgSellPrice) ?
+                null : decimal.Parse(transactionVM.AvgSellPrice.Replace(" ", "")),
+            InitialDescription = transactionVM.InitialDescription?.Trim(),
+            Description = transactionVM.Description?.Trim()
         };
-
-        return transaction;
     }
 }

@@ -2,7 +2,4 @@
 
 namespace Infrastructure.Events;
 
-public class DailyDataAddedEvent : PubSubEvent<DailyData>
-{
-
-}
+public class DailyDataAddedEvent : PubSubEvent<DailyData>;

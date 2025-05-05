@@ -1,28 +1,61 @@
-﻿<mah:MetroContentControl x:Class="EventTracker.MVVM.Views.EventsMainMenuView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:prism="http://prismlibrary.com/"        
-             mc:Ignorable="d"
-             d:DesignHeight="900" d:DesignWidth="1500">
-        
+﻿<mah:MetroContentControl
+    x:Class="EventTracker.MVVM.Views.EventsMainMenuView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    d:DesignHeight="900"
+    d:DesignWidth="1500"
+    mc:Ignorable="d">
+
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
-            Command="{Binding NavigateToAddEventCommand}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="Dodaj zdarzenie" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconPhosphorIcons Kind="CalendarPlusBold" Width="50" Height="50" Margin="25,0,0,0"/>
+        <Button
+            Width="auto"
+            Height="auto"
+            Margin="5"
+            Padding="10"
+            Command="{Binding NavigateToAddEventCommand}"
+            Style="{StaticResource BigButtonStyle}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Text="Dodaj zdarzenie" />
+                <iconPacks:PackIconPhosphorIcons
+                    Width="50"
+                    Height="50"
+                    Margin="25,0,0,0"
+                    Kind="CalendarPlusBold" />
             </StackPanel>
         </Button>
 
-        <Button Style="{StaticResource BigButtonStyle}" Width="auto" Height="auto" Margin="5" Padding="10"
-     Command="{Binding NavigateToEventsOverviewMenuCommand}">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="Przegląd zdarzeń" VerticalAlignment="Center" FontSize="16"/>
-                <iconPacks:PackIconMaterial Kind="BriefcaseEyeOutline" Width="50" Height="50" Margin="15,0,0,0" HorizontalAlignment="Right"/>
+        <Button
+            Width="auto"
+            Height="auto"
+            Margin="5"
+            Padding="10"
+            Command="{Binding NavigateToEventsOverviewMenuCommand}"
+            Style="{StaticResource BigButtonStyle}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Text="Przegląd zdarzeń" />
+                <iconPacks:PackIconMaterial
+                    Width="50"
+                    Height="50"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Right"
+                    Kind="BriefcaseEyeOutline" />
             </StackPanel>
         </Button>
     </StackPanel>

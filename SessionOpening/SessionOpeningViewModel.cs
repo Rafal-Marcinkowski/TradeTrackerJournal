@@ -1,7 +1,7 @@
 ﻿using DataAccess.Data;
-using Infrastructure.DataFilters;
 using Serilog;
 using SharedProject.Models;
+using SharedProject.ViewModels;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -9,10 +9,9 @@ using System.Windows.Input;
 
 namespace SessionOpening;
 
-public class SessionOpeningViewModel : BindableBase
+public class SessionOpeningViewModel : BaseListViewModel<Company>
 {
     private readonly ICompanyData companyData;
-    private ObservableCollection<Company> companies;
 
     private string selectedCompanyName;
     public string SelectedCompanyName
@@ -21,27 +20,6 @@ public class SessionOpeningViewModel : BindableBase
         set => SetProperty(ref selectedCompanyName, value);
     }
 
-    private ObservableCollection<Company> filteredCompanies;
-    public ObservableCollection<Company> FilteredCompanies
-    {
-        get => filteredCompanies;
-        set
-        {
-            SetProperty(ref filteredCompanies, value);
-        }
-    }
-
-
-    private string searchBoxText;
-    public string SearchBoxText
-    {
-        get => searchBoxText;
-        set
-        {
-            SetProperty(ref searchBoxText, value);
-            FilterCompanies();
-        }
-    }
     private string newItemText = string.Empty;
     public string NewItemText
     {
@@ -67,7 +45,12 @@ public class SessionOpeningViewModel : BindableBase
         OpeningCompanies = [];
         OpeningItems = [];
         this.companyData = companyData;
-        GetAllCompanies();
+        _ = GetAllCompanies();
+    }
+
+    protected override void OnCollectionFiltered()
+    {
+        ItemsSource = [.. ItemsSource.OrderBy(q => q.CompanyName)];
     }
 
     public Visibility Vis
@@ -84,18 +67,12 @@ public class SessionOpeningViewModel : BindableBase
     public ObservableCollection<OpeningItem> OpeningItems { get; set; }
     public ObservableCollection<OpeningCompany> OpeningCompanies { get; set; }
 
-    private void FilterCompanies()
-    {
-        FilteredCompanies = ObservableCollectionFilter.FilterCompaniesViaTextBoxText(companies, SearchBoxText);
-    }
-
     private async Task GetAllCompanies()
     {
         try
         {
             var companyList = await companyData.GetAllCompaniesAsync();
-            companies = new ObservableCollection<Company>(companyList.OrderByDescending(q => q.TransactionCount));
-            FilteredCompanies = new ObservableCollection<Company>(companies);
+            ItemsSource = [.. companyList.OrderByDescending(q => q.TransactionCount)];
         }
         catch (Exception ex)
         {
@@ -103,10 +80,7 @@ public class SessionOpeningViewModel : BindableBase
         }
     }
 
-    public ICommand AddNewItemCommand => new DelegateCommand(() =>
-    {
-        IsNewItemBeingAdded = !IsNewItemBeingAdded;
-    });
+    public ICommand AddNewItemCommand => new DelegateCommand(() => IsNewItemBeingAdded = !IsNewItemBeingAdded);
 
     public ICommand ConfirmNewItemCommand => new DelegateCommand(() =>
     {
@@ -141,34 +115,32 @@ public class SessionOpeningViewModel : BindableBase
 
     public ICommand LinkCommand => new DelegateCommand<OpeningItem>((item) =>
     {
-        if (item is not null)
+        if (item is null) return;
+
+        foreach (var text in item.Text.Split(" "))
         {
-            foreach (var text in item.Text.Split(" "))
+            var url = text;
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
             {
-                var url = text;
-                if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                Process.Start(new ProcessStartInfo
                 {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = url,
-                        UseShellExecute = true
-                    });
-                }
+                    FileName = url,
+                    UseShellExecute = true
+                });
             }
         }
     });
 
     public ICommand ConfirmCompanySelectionCommand => new DelegateCommand<Company>((item) =>
     {
-        if (item is not null)
-        {
-            OpeningCompany openingCompany = new()
-            {
-                CompanyName = item.CompanyName
-            };
+        if (item is null) return;
 
-            OpeningCompanies.Add(openingCompany);
-            SearchBoxText = string.Empty;
-        }
+        OpeningCompany openingCompany = new()
+        {
+            CompanyName = item.CompanyName
+        };
+
+        OpeningCompanies.Add(openingCompany);
+        SearchKeyword = string.Empty;
     });
 }
