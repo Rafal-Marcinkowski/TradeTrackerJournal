@@ -153,13 +153,6 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
             var company = await companyData.GetCompanyAsync(transaction.CompanyID);
             company.TransactionCount++;
             await companyData.UpdateCompanyAsync(company.ID, transaction.CompanyName, company.TransactionCount, company.EventCount);
-            //var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == company.ID);
-
-            //if (updatedCompany != null)
-            //{
-            //    updatedCompany.TransactionCount = company.TransactionCount;    odswiezanie UI po dodaniu?
-            //}
-
             await transactionData.UpdateTransactionAsync(transaction);
             transaction.ID = await transactionData.GetID(transaction);
             eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);

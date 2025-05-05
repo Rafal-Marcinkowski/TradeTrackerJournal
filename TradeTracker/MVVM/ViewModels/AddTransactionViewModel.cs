@@ -22,6 +22,7 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
         this.facade = facade;
         this.dialogCoordinator = dialogCoordinator;
         facade.EventAggregator.GetEvent<TransactionAddedEvent>().Subscribe(_ => ClearFieldsCommand.Execute(null));
+        facade.EventAggregator.GetEvent<TransactionAddedEvent>().Subscribe(async (transaction) => await UpdateUI(transaction.CompanyID));
         _ = GetAllCompanies();
     }
 
@@ -42,6 +43,16 @@ public class AddTransactionViewModel : BaseListViewModel<Company>
         {
             MessageBox.Show($"Error loading companies: {ex.Message}");
             Log.Error(ex, "Error loading companies.");
+        }
+    }
+
+    private async Task UpdateUI(int companyId)
+    {
+        var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == companyId);
+
+        if (updatedCompany != null)
+        {
+            updatedCompany.TransactionCount++;
         }
     }
 

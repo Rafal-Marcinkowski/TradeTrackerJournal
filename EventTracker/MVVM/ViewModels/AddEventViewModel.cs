@@ -18,6 +18,7 @@ public class AddEventViewModel : BaseListViewModel<Company>
         this.dialogCoordinator = dialogCoordinator;
 
         this.facade.EventAggregator.GetEvent<EventAddedEvent>().Subscribe(_ => ClearFieldsCommand.Execute(null));
+        this.facade.EventAggregator.GetEvent<EventAddedEvent>().Subscribe(async (ev) => await UpdateUI(ev.CompanyID));
 
         _ = GetAllCompanies();
     }
@@ -43,6 +44,15 @@ public class AddEventViewModel : BaseListViewModel<Company>
         {
             MessageBox.Show($"Error loading companies: {ex.Message}");
             Log.Error(ex, "Error loading companies.");
+        }
+    }
+
+    private async Task UpdateUI(int companyId)
+    {
+        var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == companyId);
+        if (updatedCompany != null)
+        {
+            updatedCompany.EventCount++;
         }
     }
 

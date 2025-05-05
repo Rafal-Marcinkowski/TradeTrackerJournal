@@ -71,13 +71,6 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
             var company = await companyData.GetCompanyAsync(e.CompanyID);
             company.EventCount++;
             await companyData.UpdateCompanyAsync(company.ID, e.CompanyName, company.TransactionCount, company.EventCount);
-            //var updatedCompany = ItemsSource.FirstOrDefault(c => c.ID == company.ID);
-
-            //if (updatedCompany != null)       update UI po dodaniu?
-            //{
-            //    updatedCompany.EventCount = company.EventCount;
-            //}
-
             await eventData.UpdateEventAsync(e);
             e.ID = await eventData.GetID(e);
             eventAggregator.GetEvent<EventAddedEvent>().Publish(e);
@@ -126,23 +119,21 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
 
     private async Task<Event> FillNewEventProperties(TransactionEventViewModel ev)
     {
-        Event e = new()
+        return new Event
         {
             CompanyName = ev.SelectedCompanyName,
             EntryDate = DateTimeManager.ParseEntryDate(ev.EntryDate),
             EntryPrice = decimal.TryParse(
-            ev.EntryPrice.Replace(" ", "").Replace(",", "."),
-            NumberStyles.Any,
-            CultureInfo.InvariantCulture,
-            out var entryPrice)
-            ? entryPrice
-            : 0,
+             ev.EntryPrice.Replace(" ", "").Replace(",", "."),
+             NumberStyles.Any,
+             CultureInfo.InvariantCulture,
+             out var entryPrice)
+             ? entryPrice
+             : 0,
             InformationLink = ev.InformationLink.Trim(),
             InitialDescription = ev.InitialDescription.Trim(),
             Description = ev.Description.Trim(),
         };
-
-        return e;
     }
 
     public async Task<IEnumerable<Event>> GetEventsForCompany(int companyId)
