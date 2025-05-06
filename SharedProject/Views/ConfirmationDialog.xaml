@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     Title=""
-    Width="350"
-    Height="225"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock

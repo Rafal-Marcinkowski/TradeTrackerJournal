@@ -19,13 +19,14 @@ public partial class ConfirmationDialog : MetroWindow
     public ConfirmationDialog()
     {
         InitializeComponent();
-        Top = Application.Current.MainWindow.Top + 400;
-        Left = Application.Current.MainWindow.Left + 700;
         FontSize = 14;
         FontWeight = FontWeights.DemiBold;
         HorizontalAlignment = HorizontalAlignment.Center;
         VerticalAlignment = VerticalAlignment.Center;
         DataContext = this;
+        this.Owner = Application.Current.MainWindow;
+        this.MinHeight = 225;
+        this.MinWidth = 350;
     }
 
     private void YesButton_Click(object sender, RoutedEventArgs e)

@@ -8,6 +8,7 @@
     xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
     Title=""
     SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

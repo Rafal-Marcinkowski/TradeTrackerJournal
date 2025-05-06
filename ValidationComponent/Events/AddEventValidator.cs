@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using SharedProject.Models;
+using System.Text;
 
 namespace ValidationComponent.Events;
 
@@ -31,5 +33,33 @@ public class AddEventValidator : AbstractValidator<Event>
     private bool BeAValidUrl(string url)
     {
         return Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+    }
+
+    public static string BuildGroupedValidationMessage(IEnumerable<ValidationFailure> failures)
+    {
+        var grouped = failures.GroupBy(f =>
+        {
+            var name = f.PropertyName;
+
+            if (name == "CompanyName") return "🏢 Spółka";
+            if (name == "EntryDate") return "📅 Data wejścia";
+            if (name == "EntryPrice") return "💰 Cena wejścia";
+            if (name == "InformationLink") return "🔗 Link";
+            return "❓ Inne";
+        });
+
+        var sb = new StringBuilder();
+        foreach (var group in grouped)
+        {
+            sb.AppendLine(group.Key + ":");
+            foreach (var error in group)
+            {
+                if (!string.IsNullOrWhiteSpace(error.ErrorMessage))
+                    sb.AppendLine($"• {error.ErrorMessage}");
+            }
+            sb.AppendLine();
+        }
+
+        return sb.ToString().Trim();
     }
 }

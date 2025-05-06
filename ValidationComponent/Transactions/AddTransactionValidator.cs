@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using SharedProject.Extensions;
 using SharedProject.ViewModels;
 using System.Globalization;
+using System.Text;
 
 namespace ValidationComponent.Transactions;
 
@@ -14,175 +16,113 @@ public class AddTransactionValidator : AbstractValidator<TransactionEventViewMod
 
         RuleFor(x => x.EntryDate)
             .NotEmpty().WithMessage("Data wejścia jest wymagana")
-            .Must(BeValidDateTimeFormat).WithMessage("Nieprawidłowy format daty")
+            .Must(date => DateTime.TryParse(date, out _)).WithMessage("Nieprawidłowy format daty")
             .Must(BeWithinTradingHours).WithMessage("Transakcja musi być między 9:00 a 17:05")
-            .Must(BeNotFutureDate).WithMessage("Data nie może być z przyszłości");
+            .Must(date => DateTime.TryParse(date, out var d) && d <= DateTime.Now).WithMessage("Data nie może być z przyszłości");
 
         RuleFor(x => x.EntryPrice)
             .NotEmpty().WithMessage("Cena wejścia jest wymagana")
-            .Must(BeValidDecimal).WithMessage("Nieprawidłowy format ceny")
-            .Must((_, price) =>
-            {
-                try
-                {
-                    return decimal.Parse(price.CleanNumberInput(), CultureInfo.InvariantCulture) > 0;
-                }
-                catch
-                {
-                    return false;
-                }
-            }).WithMessage("Cena musi być większa od 0");
+            .Must(p => p.TryParseCleanDecimal(out _)).WithMessage("Nieprawidłowy format ceny")
+            .Must(p => p.TryParseCleanDecimal(out var v) && v > 0).WithMessage("Cena musi być większa od 0");
 
         RuleFor(x => x.NumberOfShares)
             .NotEmpty().WithMessage("Ilość akcji jest wymagana")
-            .Must(BeValidInteger).WithMessage("Nieprawidłowa ilość akcji (tylko liczby całkowite)")
-            .Must((_, shares) =>
-            {
-                try
-                {
-                    var cleaned = shares.CleanNumberInput();
-                    if (string.IsNullOrEmpty(cleaned)) return false;
-                    return int.Parse(cleaned, CultureInfo.InvariantCulture) > 0;
-                }
-                catch
-                {
-                    return false;
-                }
-            }).WithMessage("Ilość akcji musi być większa od 0");
+            .Must(n => int.TryParse(n, NumberStyles.None, CultureInfo.InvariantCulture, out _)).WithMessage("Nieprawidłowa ilość akcji (tylko liczby całkowite)")
+            .Must(n => int.TryParse(n, NumberStyles.None, CultureInfo.InvariantCulture, out var v) && v > 0).WithMessage("Ilość akcji musi być większa od 0");
 
         RuleFor(x => x.PositionSize)
-     .NotEmpty().WithMessage("Wielkość pozycji jest wymagana")
-     .Must(BeValidDecimal).WithMessage("Nieprawidłowy format wielkości pozycji")
-     .Must((_, size) => SafeDecimalParse(size) > 0)
-     .WithMessage("Wielkość pozycji musi być większa od 0")
-     .Must((_, size) => SafeDecimalParse(size) <= 100000000)
-     .WithMessage("Wielkość pozycji nie może przekraczać 100 000 000 \n");
+            .NotEmpty().WithMessage("Wielkość pozycji jest wymagana")
+            .Must(p => p.TryParseCleanDecimal(out _)).WithMessage("Nieprawidłowy format wielkości pozycji")
+            .Must(p => p.TryParseCleanDecimal(out var v) && v > 0).WithMessage("Wielkość pozycji musi być większa od 0");
 
         RuleFor(x => x.AvgSellPrice)
-            .Must(BeValidDecimalOrEmpty).WithMessage("Nieprawidłowy format ceny sprzedaży")
-            .When(x => !string.IsNullOrWhiteSpace(x.AvgSellPrice))
-            .Must((_, price) => SafeDecimalParse(price) > 0)
-            .WithMessage("Cena sprzedaży musi być większa od 0")
-            .When(x => !string.IsNullOrWhiteSpace(x.AvgSellPrice));
+            .Must(p => string.IsNullOrWhiteSpace(p) || p.TryParseCleanDecimal(out _)).WithMessage("Nieprawidłowy format ceny sprzedaży")
+            .Must(p => string.IsNullOrWhiteSpace(p) || (p.TryParseCleanDecimal(out var v) && v > 0)).WithMessage("Cena sprzedaży musi być większa od 0");
 
         RuleFor(x => x)
             .Must(x =>
             {
-                try
-                {
-                    var entryPrice = SafeDecimalParse(x.EntryPrice);
-                    var numberOfShares = SafeIntegerParse(x.NumberOfShares);
-                    var positionSize = SafeDecimalParse(x.PositionSize);
-                    return Math.Abs((entryPrice * numberOfShares) - positionSize) < 100m;
-                }
-                catch
-                {
-                    return false;
-                }
+                return x.EntryPrice.TryParseCleanDecimal(out var entryPrice)
+                    && int.TryParse(x.NumberOfShares, NumberStyles.None, CultureInfo.InvariantCulture, out var numberOfShares)
+                    && x.PositionSize.TryParseCleanDecimal(out var positionSize)
+                    && Math.Abs((entryPrice * numberOfShares) - positionSize) < 100m;
             })
-            .WithMessage(x =>
-            {
-                try
-                {
-                    var entryPrice = SafeDecimalParse(x.EntryPrice);
-                    var numberOfShares = SafeIntegerParse(x.NumberOfShares);
-                    return $"Niespójność danych: Cena ({x.EntryPrice}) × Ilość ({x.NumberOfShares}) = {entryPrice * numberOfShares}, a pozycja: {x.PositionSize}";
-                }
-                catch
-                {
-                    return "Niespójność danych: nieprawidłowe wartości liczbowe";
-                }
-            });
+          .WithMessage(x =>
+          {
+              if (!int.TryParse(x.NumberOfShares, NumberStyles.None, CultureInfo.InvariantCulture, out var numberOfShares))
+                  return "";
+              if (!x.EntryPrice.TryParseCleanDecimal(out var entryPrice))
+                  return "";
+              if (!x.PositionSize.TryParseCleanDecimal(out var positionSize))
+                  return "";
+
+              var calculated = entryPrice * numberOfShares;
+              return $"Niespójność danych: Cena ({x.EntryPrice}) × Ilość ({x.NumberOfShares}) = {calculated}, a pozycja: {x.PositionSize}";
+          });
+
+        RuleFor(x => x.InformationLink)
+           .Must(BeAValidUrl)
+           .When(x => !string.IsNullOrEmpty(x.InformationLink))
+           .WithMessage("Niepoprawny format URL");
 
         RuleFor(x => x.InitialDescription)
-            .MaximumLength(2000).WithMessage("Opis początkowy nie może przekraczać 2000 znaków");
+                .MaximumLength(250)
+                .When(x => !string.IsNullOrEmpty(x.InitialDescription))
+                .WithMessage("Tytuł nie może przekraczać 250 znaków");
 
         RuleFor(x => x.Description)
-            .MaximumLength(2000).WithMessage("Opis nie może przekraczać 2000 znaków");
-    }
-
-    private decimal SafeDecimalParse(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input)) return 0m;
-
-        try
-        {
-            var cleaned = input.CleanNumberInput();
-            return decimal.Parse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture);
-        }
-
-        catch
-        {
-            return 0m;
-        }
-    }
-
-    private int SafeIntegerParse(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input)) return 0;
-
-        try
-        {
-            var cleaned = input.CleanNumberInput(isInteger: true);
-            return int.Parse(cleaned, NumberStyles.Integer, CultureInfo.InvariantCulture);
-        }
-
-        catch
-        {
-            return 0;
-        }
-    }
-
-    private bool BeValidDateTimeFormat(string date)
-    {
-        return DateTime.TryParse(date, out _);
+                .MaximumLength(2000)
+                .When(x => !string.IsNullOrEmpty(x.Description))
+                .WithMessage("Opis nie może przekraczać 2000 znaków");
     }
 
     private bool BeWithinTradingHours(string date)
     {
-        if (DateTime.TryParse(date, out DateTime parsedDate))
+        if (DateTime.TryParse(date, out var parsedDate))
         {
             var time = parsedDate.TimeOfDay;
             return time >= TimeSpan.FromHours(9) && time <= TimeSpan.FromHours(17).Add(TimeSpan.FromMinutes(5));
         }
-
         return false;
     }
 
-    private bool BeNotFutureDate(string date)
+    private bool BeAValidUrl(string url)
     {
-        if (DateTime.TryParse(date, out DateTime parsedDate))
-        {
-            return parsedDate <= DateTime.Now;
-        }
-
-        return false;
+        return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps) &&
+               uri.Host.Contains('.');
     }
 
-    private bool BeValidDecimal(string number)
+    public static string BuildGroupedValidationMessage(IEnumerable<ValidationFailure> failures)
     {
-        return decimal.TryParse(number.CleanNumberInput(), NumberStyles.Any, CultureInfo.InvariantCulture, out _);
-    }
-
-    private bool BeValidInteger(string number)
-    {
-        if (string.IsNullOrWhiteSpace(number))
-            return false;
-
-        try
+        var grouped = failures.GroupBy(f =>
         {
-            var cleaned = number.CleanNumberInput();
-            return int.TryParse(cleaned, NumberStyles.Integer, CultureInfo.InvariantCulture, out _);
+            var name = f.PropertyName;
+
+            if (name == "SelectedCompanyName") return "🏢 Spółka";
+            if (name == "EntryDate") return "📅 Data";
+            if (name == "EntryPrice" || name == "PositionSize" || name == "AvgSellPrice") return "💰 Cena/Wielkość pozycji";
+            if (name == "NumberOfShares") return "📦 Wolumen";
+            if (name == "InformationLink") return "🔗 Link";
+            if (name == "InitialDescription") return "🏷️ Tytuł";
+            if (name == "Description") return "📝 Opis";
+            if (string.IsNullOrWhiteSpace(name)) return "⚠️ Spójność danych";
+
+            return "❓ Inne";
+        });
+
+        var sb = new StringBuilder();
+        foreach (var group in grouped)
+        {
+            sb.AppendLine(group.Key + ":");
+            foreach (var error in group)
+            {
+                if (!string.IsNullOrWhiteSpace(error.ErrorMessage))
+                    sb.AppendLine($"• {error.ErrorMessage}");
+            }
+            sb.AppendLine();
         }
 
-        catch
-        {
-            return false;
-        }
-    }
-
-    private bool BeValidDecimalOrEmpty(string number)
-    {
-        return string.IsNullOrWhiteSpace(number) || BeValidDecimal(number);
+        return sb.ToString().Trim();
     }
 }

@@ -103,11 +103,11 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
 
         if (!results.IsValid)
         {
-            var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+            var groupedValidationErrors = AddEventValidator.BuildGroupedValidationMessage(results.Errors);
 
             var dialog = new ErrorDialog()
             {
-                DialogText = validationErrors
+                DialogText = groupedValidationErrors
             };
 
             dialog.ShowDialog();

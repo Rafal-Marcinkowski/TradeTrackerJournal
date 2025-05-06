@@ -169,7 +169,7 @@
                     VerticalAlignment="Top"
                     Controls:TextBoxHelper.Watermark="Link do informacji"
                     Style="{StaticResource CustomTextBoxStyle}"
-                    Text="{Binding TransactionInformationLink, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding Transaction.InformationLink, UpdateSourceTrigger=PropertyChanged}" />
             </StackPanel>
 
             <StackPanel Margin="10" VerticalAlignment="Center">

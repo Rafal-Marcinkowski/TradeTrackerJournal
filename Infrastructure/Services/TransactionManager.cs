@@ -5,6 +5,7 @@ using Serilog;
 using SharedProject.Models;
 using SharedProject.ViewModels;
 using SharedProject.Views;
+using System.Globalization;
 using System.Windows;
 using ValidationComponent.Transactions;
 
@@ -137,12 +138,14 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         var dialog = new ConfirmationDialog()
         {
             DialogText = $"Czy dodać transakcję? \n" +
-                  $"{transaction.CompanyName}\n" +
-                  $"{transaction.EntryDate}\n" +
-                  $"Cena kupna: {transaction.EntryPrice}\n" +
-                  $"Ilość akcji: {transaction.NumberOfShares}\n" +
-                  $"Wielkość pozycji: {transaction.PositionSize}\n" +
-                  $"{(transaction.AvgSellPrice != null ? $"Cena sprzedaży: {transaction.AvgSellPrice.ToString().Replace(',', '.')}" : string.Empty)}"
+                   $"{transaction.CompanyName}\n" +
+                   $"{transaction.EntryDate}\n" +
+                   $"Cena kupna: {transaction.EntryPrice.ToString(CultureInfo.InvariantCulture)}\n" +
+                   $"Ilość akcji: {transaction.NumberOfShares}\n" +
+                   $"Wielkość pozycji: {transaction.PositionSize.ToString(CultureInfo.InvariantCulture)}\n" +
+                   $"{(transaction.AvgSellPrice != null
+                       ? $"Cena sprzedaży: {transaction.AvgSellPrice.Value.ToString(CultureInfo.InvariantCulture)}"
+                       : string.Empty)}"
         };
 
         dialog.ShowDialog();
@@ -168,16 +171,14 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         var results = validator.Validate(transaction);
         if (!results.IsValid)
         {
-            var validationErrors = string.Join("\n", results.Errors.Select(e => e.ErrorMessage));
+            var groupedValidationErrors = AddTransactionValidator.BuildGroupedValidationMessage(results.Errors);
 
             var dialog = new ErrorDialog()
             {
-                DialogText = validationErrors
+                DialogText = groupedValidationErrors
             };
 
-            await Task.Delay(100);
             dialog.ShowDialog();
-            await Task.Delay(100);
             return false;
         }
 
@@ -244,12 +245,12 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         {
             CompanyName = transactionVM.SelectedCompanyName,
             EntryDate = DateTime.Parse(transactionVM.EntryDate),
-            EntryPrice = decimal.Parse(transactionVM.EntryPrice.Replace(" ", "")),
-            NumberOfShares = int.Parse(transactionVM.NumberOfShares.Replace(" ", "")),
-            PositionSize = decimal.Parse(transactionVM.PositionSize.Replace(" ", "")),
+            EntryPrice = decimal.Parse(transactionVM.EntryPrice.Replace(',', '.'), CultureInfo.InvariantCulture),
+            NumberOfShares = int.Parse(transactionVM.NumberOfShares),
+            PositionSize = decimal.Parse(transactionVM.PositionSize.Replace(',', '.'), CultureInfo.InvariantCulture),
             InformationLink = transactionVM.InformationLink?.Trim(),
             AvgSellPrice = string.IsNullOrEmpty(transactionVM.AvgSellPrice) ?
-                null : decimal.Parse(transactionVM.AvgSellPrice.Replace(" ", "")),
+                null : decimal.Parse(transactionVM.AvgSellPrice.Replace(',', '.'), CultureInfo.InvariantCulture),
             InitialDescription = transactionVM.InitialDescription?.Trim(),
             Description = transactionVM.Description?.Trim()
         };
