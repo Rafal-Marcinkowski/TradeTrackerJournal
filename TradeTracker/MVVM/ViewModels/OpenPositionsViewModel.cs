@@ -15,7 +15,7 @@ public class OpenPositionsViewModel : BindableBase
     public OpenPositionsViewModel(ITradeTrackerFacade facade)
     {
         this.facade = facade;
-        facade.EventAggregator.GetEvent<TransactionClosedEvent>().Subscribe(async (transaction) => await HandleTransactionClosed(transaction));
+        this.facade.EventAggregator.GetEvent<TransactionClosedEvent>().Subscribe(async (transaction) => await HandleTransactionClosed(transaction));
         _ = LoadTransactionsAsync();
     }
 

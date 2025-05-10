@@ -79,6 +79,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
                              .AddHours(DateTime.Now.Hour)
                              .AddMinutes(DateTime.Now.Minute);
                 await transactionData.UpdateTransactionAsync(transaction);
+                eventAggregator.GetEvent<TransactionClosedEvent>().Publish(transaction);
             }
         }
     }

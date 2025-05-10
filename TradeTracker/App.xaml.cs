@@ -29,7 +29,7 @@ public partial class App : PrismApplication
         Task.Run(async () =>
         {
             await Task.Delay(3000);
-            DailyTracker dailyTradeTracker = Container.Resolve<DailyTracker>();
+            IDailyTracker dailyTradeTracker = Container.Resolve<IDailyTracker>();
             _ = dailyTradeTracker.StartTracker();
         });
 
@@ -53,7 +53,7 @@ public partial class App : PrismApplication
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());
 
-        containerRegistry.RegisterSingleton<DailyTracker>();
+        containerRegistry.RegisterSingleton<IDailyTracker, DailyTracker>();
         containerRegistry.RegisterInstance(Log.Logger);
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICommentData, CommentData>();
@@ -75,7 +75,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
 
         containerRegistry.RegisterSingleton<ICommentManager, CommentManager>();
-        containerRegistry.RegisterSingleton<ViewManager>();
+        containerRegistry.RegisterSingleton<IViewManager, ViewManager>();
         containerRegistry.RegisterSingleton<ITransactionManager, TransactionManager>();
         containerRegistry.RegisterSingleton<IEventManager, Infrastructure.Services.EventManager>();
         containerRegistry.RegisterSingleton<ICompanyManager, CompanyManager>();

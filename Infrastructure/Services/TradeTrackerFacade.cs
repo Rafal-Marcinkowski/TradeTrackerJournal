@@ -10,7 +10,7 @@ public class TradeTrackerFacade(
     ICommentManager commentManager,
     IEventAggregator eventAggregator,
     IDailyDataProvider dailyDataProvider,
-    ViewManager viewManager) : ITradeTrackerFacade
+    IViewManager viewManager) : ITradeTrackerFacade
 {
     public ITransactionManager TransactionManager { get; } = transactionManager;
     public IEventManager EventManager { get; } = eventManager;
@@ -18,5 +18,5 @@ public class TradeTrackerFacade(
     public ICommentManager CommentManager { get; } = commentManager;
     public IEventAggregator EventAggregator { get; } = eventAggregator;
     public IDailyDataProvider DailyDataProvider { get; } = dailyDataProvider;
-    public ViewManager ViewManager { get; } = viewManager;
+    public IViewManager ViewManager { get; } = viewManager;
 }

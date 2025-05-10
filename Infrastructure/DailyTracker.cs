@@ -2,13 +2,14 @@
 using Infrastructure.Calculations;
 using Infrastructure.Events;
 using Infrastructure.GetDataFromHtml;
+using Infrastructure.Interfaces;
 using Serilog;
 using SharedProject.Interfaces;
 using SharedProject.Models;
 
 namespace Infrastructure;
 
-public class DailyTracker
+public class DailyTracker : IDailyTracker
 {
     private readonly ITransactionData transactionData;
     private readonly IDailyDataProvider dailyDataProvider;
@@ -24,18 +25,12 @@ public class DailyTracker
         this.dailyDataProvider = dailyDataProvider;
         this.eventAggregator = eventAggregator;
 
-        this.eventAggregator.GetEvent<TransactionAddedEvent>().Subscribe(async transaction =>
-        {
-            await OnTrackableAdded(transaction);
-        });
+        this.eventAggregator.GetEvent<TransactionAddedEvent>().Subscribe(async transaction => await OnTrackableAdded(transaction));
 
-        this.eventAggregator.GetEvent<EventAddedEvent>().Subscribe(async e =>
-        {
-            await OnTrackableAdded(e);
-        });
+        this.eventAggregator.GetEvent<EventAddedEvent>().Subscribe(async e => await OnTrackableAdded(e));
     }
 
-    private async Task OnTrackableAdded(ITrackable trackable)
+    public async Task OnTrackableAdded(ITrackable trackable)
     {
         if (!isTrackerWorking)
         {

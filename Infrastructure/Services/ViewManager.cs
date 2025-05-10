@@ -1,6 +1,8 @@
-﻿namespace Infrastructure.Services;
+﻿using Infrastructure.Interfaces;
 
-public class ViewManager(IRegionManager regionManager)
+namespace Infrastructure.Services;
+
+public class ViewManager(IRegionManager regionManager) : IViewManager
 {
     private const string MainRegionName = "MainRegion";
 
