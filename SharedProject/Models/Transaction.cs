@@ -73,7 +73,14 @@ public class Transaction : BindableBase, ITrackable, IDetailable, ILinkable, ICo
     public decimal PositionSize { get; set; }
     public int Duration { get; set; }
     public bool IsClosed { get; set; }
-    public bool IsTracking { get; set; }
+
+    private bool isTracking;
+    public bool IsTracking
+    {
+        get => isTracking;
+        set => SetProperty(ref isTracking, value);
+    }
+
     public string? InformationLink { get; set; }
 
     public string? InitialDescription { get; set; }
