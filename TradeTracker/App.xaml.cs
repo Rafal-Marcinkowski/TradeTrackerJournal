@@ -2,6 +2,8 @@
 using DataAccess.DBAccess;
 using EventTracker.MVVM.ViewModels;
 using EventTracker.MVVM.Views;
+using HotStockTracker.MVVM.ViewModels;
+using HotStockTracker.MVVM.Views;
 using Infrastructure;
 using Infrastructure.Interfaces;
 using Infrastructure.Logging;
@@ -73,6 +75,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<OpenPositionsViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
         containerRegistry.RegisterSingleton<SessionOpeningViewModel>();
+        containerRegistry.RegisterSingleton<HotStockOverviewViewModel>();
 
         containerRegistry.RegisterSingleton<ICommentManager, CommentManager>();
         containerRegistry.RegisterSingleton<IViewManager, ViewManager>();
@@ -81,6 +84,7 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<ICompanyManager, CompanyManager>();
         containerRegistry.RegisterSingleton<ITradeTrackerFacade, TradeTrackerFacade>();
 
+        containerRegistry.RegisterForNavigation<HotStockOverviewView>();
         containerRegistry.RegisterForNavigation<TransactionsJournalMenuView>();
         containerRegistry.RegisterForNavigation<EventsMainMenuView>();
         containerRegistry.RegisterForNavigation<AddEventView>();

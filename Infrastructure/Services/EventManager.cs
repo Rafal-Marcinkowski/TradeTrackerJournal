@@ -122,7 +122,7 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
         return new Event
         {
             CompanyName = ev.SelectedCompanyName,
-            EntryDate = DateTimeManager.ParseEntryDate(ev.EntryDate),
+            EntryDate = DateTimeManager.ParseEntryDate(ev.EntryDate.Replace(";", ":")),
             EntryPrice = decimal.TryParse(
              ev.EntryPrice.Replace(" ", "").Replace(",", "."),
              NumberStyles.Any,

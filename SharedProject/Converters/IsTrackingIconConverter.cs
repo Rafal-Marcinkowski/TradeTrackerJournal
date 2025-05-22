@@ -11,7 +11,7 @@ public class IsTrackingToIconConverter : IValueConverter
         bool isTracking = value is bool b && b;
         return isTracking
             ? PackIconGameIconsKind.VelociraptorTracks
-            : PackIconGameIconsKind.CheckMark;
+            : PackIconGameIconsKind.CrossMark;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;

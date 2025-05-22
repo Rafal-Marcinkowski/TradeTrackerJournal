@@ -1,4 +1,5 @@
 ﻿using EventTracker.MVVM.Views;
+using HotStockTracker.MVVM.Views;
 using Infrastructure.Services;
 using SessionOpening;
 using System.Windows.Input;
@@ -13,4 +14,6 @@ public class MainWindowViewModel(ViewManager viewManager) : BindableBase
     public ICommand NavigateToTransactionsCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(TransactionsJournalMenuView)));
 
     public ICommand NavigateToSessionOpeningCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(SessionOpeningView)));
+
+    public ICommand NavigateToHotStockCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(HotStockOverviewView)));
 }

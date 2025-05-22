@@ -74,7 +74,13 @@ public class Event : BindableBase, ITrackable, IDetailable, ILinkable, ICommenta
     public DateTime EntryDate { get; set; }
     public decimal EntryPrice { get; set; }
 
-    public bool IsTracking { get; set; }
+    private bool isTracking;
+    public bool IsTracking
+    {
+        get => isTracking;
+        set => SetProperty(ref isTracking, value);
+    }
+
     public string? InformationLink { get; set; }
 
     public string? InitialDescription { get; set; }

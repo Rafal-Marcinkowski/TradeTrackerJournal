@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\HotStockTracker\HotStockTracker.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\EventTracker\EventTracker.csproj" />
     <ProjectReference Include="..\SessionOpening\SessionOpening.csproj" />

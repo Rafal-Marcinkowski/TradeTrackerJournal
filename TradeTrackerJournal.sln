@@ -21,6 +21,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "TradeTrackerJournal_DB", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{4CF5A0E5-7748-4F05-BCBA-16B7DAA1E66A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotStockTracker", "HotStockTracker\HotStockTracker.csproj", "{58DA987E-6A83-4558-A6DD-C7A024A4525C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +147,18 @@ Global
 		{4CF5A0E5-7748-4F05-BCBA-16B7DAA1E66A}.Release|x64.Build.0 = Release|Any CPU
 		{4CF5A0E5-7748-4F05-BCBA-16B7DAA1E66A}.Release|x86.ActiveCfg = Release|Any CPU
 		{4CF5A0E5-7748-4F05-BCBA-16B7DAA1E66A}.Release|x86.Build.0 = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|x64.Build.0 = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Debug|x86.Build.0 = Debug|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|x64.ActiveCfg = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|x64.Build.0 = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|x86.ActiveCfg = Release|Any CPU
+		{58DA987E-6A83-4558-A6DD-C7A024A4525C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -14,7 +14,7 @@ public class AddTransactionValidator : AbstractValidator<TransactionEventViewMod
         RuleFor(x => x.SelectedCompanyName)
             .NotEmpty().WithMessage("Wybierz spółkę");
 
-        RuleFor(x => x.EntryDate)
+        RuleFor(x => x.EntryDate.Replace(";", ":"))
             .NotEmpty().WithMessage("Data wejścia jest wymagana")
             .Must(date => DateTime.TryParse(date, out _)).WithMessage("Nieprawidłowy format daty")
             .Must(BeWithinTradingHours).WithMessage("Transakcja musi być między 9:00 a 17:05")
