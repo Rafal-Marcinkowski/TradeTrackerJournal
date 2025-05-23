@@ -59,4 +59,23 @@ public class DownloadPageSource
             return ("BiznesRadarServerError", url);
         }
     }
+
+    public async static Task<string> DownloadHtmlFromUrlAsync(string url)
+    {
+        try
+        {
+            using var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
+
+            var response = await httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var html = await response.Content.ReadAsStringAsync();
+            return html;
+        }
+        catch (Exception ex)
+        {
+            return $"ERROR: {ex.Message}";
+        }
+    }
 }
