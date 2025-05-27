@@ -75,7 +75,7 @@
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="DemiBold"
-                                Text="Tytuł: " />
+                                Text="Tytuł:" />
                             <TextBlock
                                 Margin="5,1,0,0"
                                 VerticalAlignment="Center"
@@ -101,7 +101,7 @@
                             <TextBlock
                                 FontSize="13"
                                 FontWeight="DemiBold"
-                                Text="Komentarz zamykający: "
+                                Text="Komentarz zamykający:"
                                 Visibility="{Binding ClosingDescription, Converter={StaticResource StringToVisibilityConverter}}" />
                             <TextBlock
                                 Margin="5,1,0,0"

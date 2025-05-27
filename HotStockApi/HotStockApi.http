@@ -1,0 +1,4 @@
+@HotStockApi_HostAddress = http://localhost:5153
+
+GET {{HotStockApi_HostAddress}}/api/HotStockDay
+Accept: application/json
