@@ -1,5 +1,6 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
+using EFCore.Data;
 using EventTracker.MVVM.ViewModels;
 using EventTracker.MVVM.Views;
 using HotStockTracker.MVVM.ViewModels;
@@ -9,6 +10,7 @@ using Infrastructure.Interfaces;
 using Infrastructure.Logging;
 using Infrastructure.Services;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using SessionOpening;
@@ -51,6 +53,13 @@ public partial class App : PrismApplication
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.RegisterSingleton<AppDbContext>(() =>
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseSqlServer(Container.Resolve<IConfiguration>().GetConnectionString("HotStockEFCore_DBConnectionString"));
+            return new AppDbContext(optionsBuilder.Options);
+        });
+
         containerRegistry.RegisterInstance<IConfiguration>(new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build());

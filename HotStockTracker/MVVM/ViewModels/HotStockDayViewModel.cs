@@ -10,9 +10,15 @@ public class HotStockDayViewModel : BindableBase
     public DateTime Date { get; set; }
     public ObservableCollection<HotStockItem> TopGainers { get; set; }
     public ObservableCollection<HotStockItem> TopLosers { get; set; }
-    public string Summary { get; set; }
 
-    private bool _isEditMode;
+    private string summary = string.Empty;
+    public string Summary
+    {
+        get => summary;
+        set => SetProperty(ref summary, value);
+    }
+
+    private bool _isEditMode = false;
     public bool IsEditMode
     {
         get => _isEditMode;
@@ -33,8 +39,9 @@ public class HotStockDayViewModel : BindableBase
     public ICommand ToggleEditCommand => new RelayCommand(() =>
     {
         IsEditMode = !IsEditMode;
-        if (!IsEditMode)
+        if (IsEditMode)
         {
+
         }
     });
 }

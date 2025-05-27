@@ -22,8 +22,8 @@ public class HotStockOverviewViewModel : BindableBase
         File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\plik", html);
         HotStockParser parser = new();
         var records = await parser.ParseHotStocks(html);
-        var topGainsers = records.Take(10).ToList();
-        var topLosers = records.TakeLast(10).ToList();
+        var topGainsers = records.Take(10).ToList().OrderByDescending(q => q.ChangePercent);
+        var topLosers = records.TakeLast(10).ToList().OrderBy(q => q.ChangePercent);
 
         var dayitem = new HotStockDayViewModel
         {
