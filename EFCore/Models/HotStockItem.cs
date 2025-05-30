@@ -3,7 +3,7 @@
 public class HotStockItem
 {
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public decimal Change { get; set; }
     public decimal ChangePercent { get; set; }
@@ -11,7 +11,6 @@ public class HotStockItem
     public decimal Turnover { get; set; }
     public decimal TurnoverMedian { get; set; }
     public decimal TurnoverDynamicsPercent { get; set; }
-
     public int HotStockDayId { get; set; }
-    public HotStockDay HotStockDay { get; set; }
+    public HotStockDay? HotStockDay { get; set; }
 }

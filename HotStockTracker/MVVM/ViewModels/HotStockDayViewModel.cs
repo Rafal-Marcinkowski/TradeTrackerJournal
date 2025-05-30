@@ -8,8 +8,11 @@ namespace HotStockTracker.MVVM.ViewModels;
 public class HotStockDayViewModel : BindableBase
 {
     public DateTime Date { get; set; }
-    public ObservableCollection<HotStockItem> TopGainers { get; set; }
-    public ObservableCollection<HotStockItem> TopLosers { get; set; }
+
+    public ICollection<HotStockItemDto> HotStockItems { get; set; } = [];
+
+    public ObservableCollection<HotStockItemDto> TopGainers { get; set; } = [];
+    public ObservableCollection<HotStockItemDto> TopLosers { get; set; } = [];
 
     private string summary = string.Empty;
     public string Summary
@@ -18,16 +21,25 @@ public class HotStockDayViewModel : BindableBase
         set => SetProperty(ref summary, value);
     }
 
-    private bool _isEditMode = false;
+    private bool _isEditMode;
     public bool IsEditMode
     {
         get => _isEditMode;
-        set => SetProperty(ref _isEditMode, value);
+        set
+        {
+            if (SetProperty(ref _isEditMode, value))
+                RaisePropertyChanged(nameof(IsNotEditMode));
+        }
     }
 
     public bool IsNotEditMode => !IsEditMode;
 
-    public string EditButtonText => IsEditMode ? "Zapisz" : "Edytuj";
+    private string _editButtonText = "Edytuj";
+    public string EditButtonText
+    {
+        get => _editButtonText;
+        set => SetProperty(ref _editButtonText, value);
+    }
 
     private bool _isSummaryExpanded = true;
     public bool IsSummaryExpanded
@@ -39,9 +51,6 @@ public class HotStockDayViewModel : BindableBase
     public ICommand ToggleEditCommand => new RelayCommand(() =>
     {
         IsEditMode = !IsEditMode;
-        if (IsEditMode)
-        {
-
-        }
+        EditButtonText = IsEditMode ? "Zapisz" : "Edytuj";
     });
 }

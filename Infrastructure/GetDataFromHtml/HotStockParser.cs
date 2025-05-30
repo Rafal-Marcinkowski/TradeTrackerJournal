@@ -6,12 +6,12 @@ namespace Infrastructure.GetDataFromHtml;
 
 public class HotStockParser
 {
-    public async Task<List<HotStockItem>> ParseHotStocks(string html)
+    public async Task<List<HotStockItemDto>> ParseHotStocks(string html)
     {
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
 
-        var hotStocks = new List<HotStockItem>();
+        var hotStocks = new List<HotStockItemDto>();
 
         var rows = doc.DocumentNode.SelectNodes("//tr[contains(@class, 'hot-row')]");
         if (rows == null) return hotStocks;
@@ -23,7 +23,7 @@ public class HotStockParser
 
             try
             {
-                var stock = new HotStockItem
+                var stock = new HotStockItemDto
                 {
                     Name = CleanText(cells[0].InnerText),
 

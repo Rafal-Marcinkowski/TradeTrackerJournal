@@ -20,6 +20,7 @@
 
         <ScrollViewer
             Grid.Row="0"
+            x:Name="DayItemsScrollViewer"
             Padding="5"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Disabled">
@@ -79,7 +80,7 @@
                                         <DataGridTextColumn
                                             Width="Auto"
                                             MinWidth="70"
-                                            Binding="{Binding Volume}"
+                                            Binding="{Binding Turnover}"
                                             Header="Obrót" />
                                         <DataGridTextColumn
                                             Width="Auto"
@@ -113,7 +114,7 @@
                                         <DataGridTextColumn
                                             Width="Auto"
                                             MinWidth="70"
-                                            Binding="{Binding Volume}"
+                                            Binding="{Binding Turnover}"
                                             Header="Obrót" />
                                         <DataGridTextColumn
                                             Width="Auto"

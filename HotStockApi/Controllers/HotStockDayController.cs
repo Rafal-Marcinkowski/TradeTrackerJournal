@@ -1,5 +1,7 @@
 ﻿using EFCore.Data;
 using EFCore.Models;
+using HotStockTracker;
+using HotStockTracker.MVVM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,25 +9,26 @@ namespace HotStockApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HotStockDayController : ControllerBase
+public class HotStockDayController(AppDbContext context) : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public HotStockDayController(AppDbContext context)
-    {
-        _context = context;
-    }
-
     [HttpGet]
-    public async Task<IEnumerable<HotStockDay>> GetAll()
+    public async Task<IEnumerable<HotStockDayViewModel>> GetAll()
     {
-        return await _context.HotStockDays.Include(d => d.HotStockItems).ToListAsync();
+        var days = await context.HotStockDays.Include(d => d.HotStockItems).ToListAsync();
+        return days.Select(d => d.ToViewModel());
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Add(HotStockDay day)
+    [HttpPost("day")]
+    public async Task<ActionResult<HotStockDay>> PostDay(HotStockDay day)
     {
-        _context.HotStockDays.Add(day);
-        await _context.SaveChangesAsync();
+        foreach (var item in day.HotStockItems)
+        {
+            item.HotStockDay = day;
+        }
+
+        context.HotStockDays.Add(day);
+        await context.SaveChangesAsync();
+
         return CreatedAtAction(nameof(GetAll), new { id = day.Id }, day);
     }
 }

@@ -1,40 +1,29 @@
-﻿using Infrastructure.DownloadHtmlData;
-using Infrastructure.GetDataFromHtml;
-using SharedProject.Models;
+﻿using HotStockTracker.Services;
 using System.Collections.ObjectModel;
-using System.IO;
 
 namespace HotStockTracker.MVVM.ViewModels;
 
 public class HotStockOverviewViewModel : BindableBase
 {
+    private readonly HotStockTrackerFacade facade;
 
     public ObservableCollection<HotStockDayViewModel> DayItems { get; set; } = [];
 
-    public HotStockOverviewViewModel()
+    public HotStockOverviewViewModel(HotStockTrackerFacade facade)
     {
-        _ = DownloadData();
+        this.facade = facade;
+        _ = LoadDataAsync();
     }
 
-    public async Task DownloadData()
+    private async Task LoadDataAsync()
     {
-        var html = await DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/dynamika-obrotow/4,2");
-        File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\plik", html);
-        HotStockParser parser = new();
-        var records = await parser.ParseHotStocks(html);
-        var topGainsers = records.Take(10).ToList().OrderByDescending(q => q.ChangePercent);
-        var topLosers = records.TakeLast(10).ToList().OrderBy(q => q.ChangePercent);
+        await facade.HotStockDayManager.AddNewDayIfMissingAsync();
 
-        var dayitem = new HotStockDayViewModel
+        var latestDays = await facade.HotStockDayManager.GetLatestDaysAsync();
+        DayItems.Clear();
+        foreach (var day in latestDays)
         {
-            TopGainers = new ObservableCollection<HotStockItem>(topGainsers),
-            TopLosers = new ObservableCollection<HotStockItem>(topLosers)
-        };
-
-        DayItems.Add(dayitem);
-        DayItems.Add(dayitem);
-        DayItems.Add(dayitem);
-        DayItems.Add(dayitem);
-        DayItems.Add(dayitem);
+            DayItems.Add(day);
+        }
     }
 }
