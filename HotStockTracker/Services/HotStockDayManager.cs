@@ -1,5 +1,6 @@
 ﻿using Infrastructure.DownloadHtmlData;
 using Infrastructure.Interfaces;
+using Infrastructure.Services;
 using SharedProject.Models;
 using System.Diagnostics;
 
@@ -30,36 +31,27 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         try
         {
             var now = DateTime.Now;
-            var today = DateTime.Today;
 
-            var startTime = today.AddHours(17).AddMinutes(6);
-            var endTime = today.AddDays(1).AddHours(8).AddMinutes(59);
-
-            Debug.WriteLine($"Current time: {now:HH:mm}");
-            Debug.WriteLine($"Time window: {startTime:HH:mm} - {endTime:HH:mm}");
-
-            if (now < startTime || now > endTime)
+            if (!DateTimeManager.IsWithinTradingTimeWindow(now, out var targetDate))
             {
                 Debug.WriteLine("Outside allowed time window (17:06–8:59). Skipping.");
                 return false;
             }
 
+            Debug.WriteLine($"Using date: {targetDate:yyyy-MM-dd}");
 
             var existingDays = await apiClient.GetHotStockDaysAsync();
-            Debug.WriteLine($"Existing days count: {existingDays.Count}");
-
-            if (existingDays.Any(d => d.Date.Date == today.Date))
+            if (existingDays.Any(d => d.Date.Date == targetDate))
             {
-                Debug.WriteLine("Day already exists, skipping");
+                Debug.WriteLine($"Day {targetDate:yyyy-MM-dd} already exists, skipping");
                 return false;
             }
 
-            Debug.WriteLine("Creating new day data...");
-            var newDay = await FetchAndCreateDayDataAsync(today);
+            Debug.WriteLine($"Creating new day data for {targetDate:yyyy-MM-dd}...");
+            var newDay = await FetchAndCreateDayDataAsync(targetDate);
 
-            Debug.WriteLine("Sending new day to API...");
             var result = await apiClient.AddHotStockDayAsync(newDay);
-            Debug.WriteLine($"Day added with items: {result?.Items.Count}");
+            Debug.WriteLine($"Day added with {newDay.Items.Count}");
 
             return true;
         }

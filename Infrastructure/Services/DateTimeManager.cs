@@ -51,4 +51,26 @@ public static class DateTimeManager
 
         return new DateTime(1900, 1, 1, 0, 0, 0);
     }
+
+    public static bool IsWithinTradingTimeWindow(DateTime now, out DateTime targetDate)
+    {
+        var today = now.Date;
+        var startTime = today.AddHours(17).AddMinutes(6);
+        var endTime = today.AddHours(8).AddMinutes(59);
+
+        if (now >= startTime)
+        {
+            targetDate = today;
+            return true;
+        }
+
+        if (now <= endTime)
+        {
+            targetDate = today.AddDays(-1);
+            return true;
+        }
+
+        targetDate = DateTime.MinValue;
+        return false;
+    }
 }
