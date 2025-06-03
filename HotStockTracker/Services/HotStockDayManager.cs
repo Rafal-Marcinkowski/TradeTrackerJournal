@@ -29,7 +29,22 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
     {
         try
         {
+            var now = DateTime.Now;
             var today = DateTime.Today;
+
+            var startTime = today.AddHours(17).AddMinutes(6);
+            var endTime = today.AddDays(1).AddHours(8).AddMinutes(59);
+
+            Debug.WriteLine($"Current time: {now:HH:mm}");
+            Debug.WriteLine($"Time window: {startTime:HH:mm} - {endTime:HH:mm}");
+
+            if (now < startTime || now > endTime)
+            {
+                Debug.WriteLine("Outside allowed time window (17:06–8:59). Skipping.");
+                return false;
+            }
+
+
             var existingDays = await apiClient.GetHotStockDaysAsync();
             Debug.WriteLine($"Existing days count: {existingDays.Count}");
 
@@ -70,17 +85,7 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
             Date = date,
             Summary = string.Empty,
             IsSummaryExpanded = true,
-            Items = selected.ConvertAll(r => new HotStockItemDto
-            {
-                Name = r.Name,
-                Price = r.Price,
-                Change = r.Change,
-                ChangePercent = r.ChangePercent,
-                Volume = r.Volume,
-                Turnover = r.Turnover,
-                TurnoverMedian = r.TurnoverMedian,
-                TurnoverDynamicsPercent = r.TurnoverDynamicsPercent
-            })
+            Items = selected
         };
     }
 }

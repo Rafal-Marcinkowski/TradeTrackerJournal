@@ -11,6 +11,8 @@ public class HotStockTrackerModule : IModule
     public void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.RegisterSingleton<HotStockOverviewViewModel>();
+        containerRegistry.RegisterSingleton<HotStockDayManager>();
+        containerRegistry.RegisterSingleton<HotStockTrackerFacade>();
         containerRegistry.Register<HotStockApiClient>();
 
         containerRegistry.RegisterForNavigation<HotStockOverviewView>();

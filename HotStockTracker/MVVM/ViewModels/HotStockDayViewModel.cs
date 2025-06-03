@@ -1,12 +1,29 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
+using HotStockTracker.Services;
 using SharedProject.Models;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace HotStockTracker.MVVM.ViewModels;
 
 public class HotStockDayViewModel : BindableBase
 {
+    public HotStockDayViewModel(HotStockApiClient hotStockApiClient)
+    {
+        this.hotStockApiClient = hotStockApiClient;
+    }
+
+    public HotStockDayViewModel(HotStockDayDto dto, HotStockApiClient hotStockApiClient)
+    {
+        this.hotStockApiClient = hotStockApiClient;
+        Date = dto.Date;
+        Summary = dto.Summary;
+        IsSummaryExpanded = dto.IsSummaryExpanded;
+        HotStockItems = new ObservableCollection<HotStockItemViewModel>(
+            dto.Items.Select(i => new HotStockItemViewModel(i)));
+    }
+
     private DateTime _date;
     public DateTime Date
     {
@@ -37,8 +54,9 @@ public class HotStockDayViewModel : BindableBase
         {
             if (SetProperty(ref _isEditMode, value))
             {
-                RaisePropertyChanged(nameof(IsNotEditMode));
                 EditButtonText = value ? "Zapisz" : "Edytuj";
+                RaisePropertyChanged(nameof(IsNotEditMode));
+                RaisePropertyChanged(nameof(EditButtonText));
             }
         }
     }
@@ -47,31 +65,40 @@ public class HotStockDayViewModel : BindableBase
     public string EditButtonText { get; private set; } = "Edytuj";
 
     private bool _isSummaryExpanded = true;
+    private readonly HotStockApiClient hotStockApiClient;
+
     public bool IsSummaryExpanded
     {
         get => _isSummaryExpanded;
         set => SetProperty(ref _isSummaryExpanded, value);
     }
 
-    public ICommand ToggleEditCommand { get; }
+    public ICommand ToggleEditCommand => new RelayCommand(async () =>
+        {
+            IsEditMode = !IsEditMode;
+            if (!IsEditMode)
+            {
+                await SaveSummaryAsync();
+            }
+        });
 
-    public HotStockDayViewModel()
+    private async Task SaveSummaryAsync()
     {
-        ToggleEditCommand = new RelayCommand(() => IsEditMode = !IsEditMode);
-    }
-
-    public HotStockDayViewModel(HotStockDayDto dto)
-    {
-        Date = dto.Date;
-        Summary = dto.Summary;
-        IsSummaryExpanded = dto.IsSummaryExpanded;
-        HotStockItems = new ObservableCollection<HotStockItemViewModel>(
-            dto.Items.Select(i => new HotStockItemViewModel(i)));
+        try
+        {
+            var dto = ToDto();
+            await hotStockApiClient.UpdateDaySummaryAsync(dto);
+            Debug.WriteLine("Summary saved.");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to save summary: {ex.Message}");
+        }
     }
 
     public HotStockDayDto ToDto() => new()
     {
-        Date = Date,
+        Date = Date.Date,
         Summary = Summary,
         IsSummaryExpanded = IsSummaryExpanded,
         Items = [.. HotStockItems.Select(i => i.ToDto())]

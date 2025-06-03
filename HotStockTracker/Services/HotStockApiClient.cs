@@ -56,4 +56,13 @@ public class HotStockApiClient
         return await response.Content.ReadFromJsonAsync<HotStockDayDto>(_jsonOptions)
             ?? throw new InvalidOperationException("Failed to deserialize response");
     }
+
+    public async Task UpdateDaySummaryAsync(HotStockDayDto dto)
+    {
+        var dateStr = dto.Date.ToString("yyyy-MM-dd");
+        var response = await _http.PutAsJsonAsync($"api/HotStockDay/{dateStr}", dto, _jsonOptions);
+        Debug.WriteLine($"PUT to: api/HotStockDay/{dateStr}");
+        Debug.WriteLine($"Status: {response.StatusCode}");
+        response.EnsureSuccessStatusCode();
+    }
 }

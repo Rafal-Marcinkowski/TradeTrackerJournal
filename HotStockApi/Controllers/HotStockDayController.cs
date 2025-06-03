@@ -53,4 +53,39 @@ public class HotStockDayController(AppDbContext context, IMapper mapper) : Contr
 
         return CreatedAtAction(nameof(GetDays), new { id = day.Id }, day);
     }
+
+    [HttpPut("{date}")]
+    public async Task<IActionResult> UpdateDay(string date, [FromBody] HotStockDayDto dayDto)
+    {
+        if (!DateTime.TryParse(date, out var targetDate))
+        {
+            return BadRequest("Invalid date format. Use YYYY-MM-DD");
+        }
+
+        targetDate = targetDate.Date;
+
+        var existingDay = await context.HotStockDays
+            .FirstOrDefaultAsync(d => d.Date.Date == targetDate);
+
+        if (existingDay == null)
+        {
+            Console.WriteLine($"Day not found for date: {targetDate:yyyy-MM-dd}");
+            return NotFound();
+        }
+
+        existingDay.Summary = dayDto.Summary;
+        existingDay.IsSummaryExpanded = dayDto.IsSummaryExpanded;
+
+        try
+        {
+            await context.SaveChangesAsync();
+            Console.WriteLine($"Successfully updated day: {targetDate:yyyy-MM-dd}");
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating day: {ex}");
+            return StatusCode(500, "Internal server error");
+        }
+    }
 }

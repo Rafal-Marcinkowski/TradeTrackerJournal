@@ -19,8 +19,8 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer
-            Grid.Row="0"
             x:Name="DayItemsScrollViewer"
+            Grid.Row="0"
             Padding="5"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Disabled">
@@ -52,8 +52,8 @@
                                     Margin="0,0,0,5"
                                     HorizontalAlignment="Center"
                                     FontSize="14"
-                                    Foreground="White"
                                     FontWeight="DemiBold"
+                                    Foreground="White"
                                     Text="{Binding Date, StringFormat='dd.MM.yyyy'}" />
 
                                 <DataGrid
@@ -147,7 +147,7 @@
 
                                         <TextBox
                                             MinHeight="60"
-                                            mah:TextBoxHelper.Watermark="Wpisz podsumowanie..."
+                                            mah:TextBoxHelper.Watermark="Wpisz podsumowanie dnia..."
                                             AcceptsReturn="True"
                                             FontSize="10.2"
                                             Text="{Binding Summary, UpdateSourceTrigger=PropertyChanged}"
@@ -155,9 +155,9 @@
                                             Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                         <Button
-                                            Width="25"
+                                            Width="35"
                                             Height="25"
-                                            Margin="0,5,0,0"
+                                            Margin="0,0,0,0"
                                             HorizontalAlignment="Right"
                                             Command="{Binding ToggleEditCommand}"
                                             Content="{Binding EditButtonText}"
