@@ -7,18 +7,26 @@ namespace HotStockTracker.MVVM.ViewModels;
 
 public class HotStockDayViewModel : BindableBase
 {
-    public DateTime Date { get; set; }
+    private DateTime _date;
+    public DateTime Date
+    {
+        get => _date;
+        set => SetProperty(ref _date, value);
+    }
 
-    public ICollection<HotStockItemDto> HotStockItems { get; set; } = [];
+    public ObservableCollection<HotStockItemViewModel> HotStockItems { get; set; }
 
-    public ObservableCollection<HotStockItemDto> TopGainers { get; set; } = [];
-    public ObservableCollection<HotStockItemDto> TopLosers { get; set; } = [];
+    public ObservableCollection<HotStockItemViewModel> TopGainers =>
+        new(HotStockItems.OrderByDescending(i => i.ChangePercent).Take(10));
 
-    private string summary = string.Empty;
+    public ObservableCollection<HotStockItemViewModel> TopLosers =>
+        new(HotStockItems.OrderBy(i => i.ChangePercent).Take(10));
+
+    private string _summary = string.Empty;
     public string Summary
     {
-        get => summary;
-        set => SetProperty(ref summary, value);
+        get => _summary;
+        set => SetProperty(ref _summary, value);
     }
 
     private bool _isEditMode;
@@ -28,18 +36,15 @@ public class HotStockDayViewModel : BindableBase
         set
         {
             if (SetProperty(ref _isEditMode, value))
+            {
                 RaisePropertyChanged(nameof(IsNotEditMode));
+                EditButtonText = value ? "Zapisz" : "Edytuj";
+            }
         }
     }
 
     public bool IsNotEditMode => !IsEditMode;
-
-    private string _editButtonText = "Edytuj";
-    public string EditButtonText
-    {
-        get => _editButtonText;
-        set => SetProperty(ref _editButtonText, value);
-    }
+    public string EditButtonText { get; private set; } = "Edytuj";
 
     private bool _isSummaryExpanded = true;
     public bool IsSummaryExpanded
@@ -48,9 +53,27 @@ public class HotStockDayViewModel : BindableBase
         set => SetProperty(ref _isSummaryExpanded, value);
     }
 
-    public ICommand ToggleEditCommand => new RelayCommand(() =>
+    public ICommand ToggleEditCommand { get; }
+
+    public HotStockDayViewModel()
     {
-        IsEditMode = !IsEditMode;
-        EditButtonText = IsEditMode ? "Zapisz" : "Edytuj";
-    });
+        ToggleEditCommand = new RelayCommand(() => IsEditMode = !IsEditMode);
+    }
+
+    public HotStockDayViewModel(HotStockDayDto dto)
+    {
+        Date = dto.Date;
+        Summary = dto.Summary;
+        IsSummaryExpanded = dto.IsSummaryExpanded;
+        HotStockItems = new ObservableCollection<HotStockItemViewModel>(
+            dto.Items.Select(i => new HotStockItemViewModel(i)));
+    }
+
+    public HotStockDayDto ToDto() => new()
+    {
+        Date = Date,
+        Summary = Summary,
+        IsSummaryExpanded = IsSummaryExpanded,
+        Items = [.. HotStockItems.Select(i => i.ToDto())]
+    };
 }

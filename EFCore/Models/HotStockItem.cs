@@ -1,4 +1,6 @@
-﻿namespace EFCore.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace EFCore.Models;
 
 public class HotStockItem
 {
@@ -11,6 +13,9 @@ public class HotStockItem
     public decimal Turnover { get; set; }
     public decimal TurnoverMedian { get; set; }
     public decimal TurnoverDynamicsPercent { get; set; }
+
     public int HotStockDayId { get; set; }
+
+    [JsonIgnore]
     public HotStockDay? HotStockDay { get; set; }
 }

@@ -1,37 +1,76 @@
-﻿using EFCore.Models;
-using HotStockTracker.MVVM.ViewModels;
-using Infrastructure.DownloadHtmlData;
-using Infrastructure.GetDataFromHtml;
+﻿using Infrastructure.DownloadHtmlData;
+using Infrastructure.Interfaces;
+using SharedProject.Models;
+using System.Diagnostics;
 
 namespace HotStockTracker.Services;
 
-public class HotStockDayManager(HotStockApiClient apiClient)
+public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htmlParser)
 {
-    public async Task<List<HotStockDayViewModel>> GetLatestDaysAsync(int count = 5)
+    public async Task<List<HotStockDayDto>> GetLatestDaysAsync(int count = 5)
     {
-        var days = await apiClient.GetHotStockDaysAsync();
-        return [.. days.OrderByDescending(d => d.Date).Take(count)];
+        try
+        {
+            var days = await apiClient.GetHotStockDaysAsync();
+            Debug.WriteLine($"Retrieved {days.Count} days from API with");
+
+            return [.. days
+                .OrderByDescending(d => d.Date)
+                .Take(count)];
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception in GetLatestDaysAsync: {ex}");
+            return [];
+        }
     }
 
-    public async Task<bool> HasDataForDateAsync(DateTime date)
+    public async Task<bool> AddNewDayIfMissingAsync()
     {
-        var days = await apiClient.GetHotStockDaysAsync();
-        return days.Any(d => d.Date == date);
+        try
+        {
+            var today = DateTime.Today;
+            var existingDays = await apiClient.GetHotStockDaysAsync();
+            Debug.WriteLine($"Existing days count: {existingDays.Count}");
+
+            if (existingDays.Any(d => d.Date.Date == today.Date))
+            {
+                Debug.WriteLine("Day already exists, skipping");
+                return false;
+            }
+
+            Debug.WriteLine("Creating new day data...");
+            var newDay = await FetchAndCreateDayDataAsync(today);
+
+            Debug.WriteLine("Sending new day to API...");
+            var result = await apiClient.AddHotStockDayAsync(newDay);
+            Debug.WriteLine($"Day added with items: {result?.Items.Count}");
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error in AddNewDayIfMissingAsync: {ex}");
+            return false;
+        }
     }
 
-    public async Task AddNewDayIfMissingAsync()
+    private async Task<HotStockDayDto> FetchAndCreateDayDataAsync(DateTime date)
     {
-        var today = DateTime.Today;
-        if (await HasDataForDateAsync(today))
-            return;
-
         var html = await DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/dynamika-obrotow/4,2");
-        var records = await new HotStockParser().ParseHotStocks(html);
+        var records = await htmlParser.ParseHotStocks(html);
 
         var topGainers = records.OrderByDescending(r => r.ChangePercent).Take(10);
         var topLosers = records.OrderBy(r => r.ChangePercent).Take(10);
-        var allItems = topGainers.Concat(topLosers)
-            .Select(r => new HotStockItem
+
+        var selected = topGainers.Concat(topLosers).ToList();
+
+        return new HotStockDayDto
+        {
+            Date = date,
+            Summary = string.Empty,
+            IsSummaryExpanded = true,
+            Items = selected.ConvertAll(r => new HotStockItemDto
             {
                 Name = r.Name,
                 Price = r.Price,
@@ -41,16 +80,7 @@ public class HotStockDayManager(HotStockApiClient apiClient)
                 Turnover = r.Turnover,
                 TurnoverMedian = r.TurnoverMedian,
                 TurnoverDynamicsPercent = r.TurnoverDynamicsPercent
-            }).ToList();
-
-        var newDay = new HotStockDay
-        {
-            Date = today,
-            Summary = "",
-            IsSummaryExpanded = true,
-            HotStockItems = allItems
+            })
         };
-
-        await apiClient.AddFullHotStockDayAsync(newDay);
     }
 }

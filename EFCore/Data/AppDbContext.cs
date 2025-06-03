@@ -10,10 +10,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<HotStockDay>()
-           .HasMany(d => d.HotStockItems)
-           .WithOne(i => i.HotStockDay!)
-           .HasForeignKey(i => i.HotStockDayId)
-           .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<HotStockItem>()
+            .HasOne(i => i.HotStockDay)
+            .WithMany(d => d.HotStockItems)
+            .HasForeignKey(i => i.HotStockDayId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

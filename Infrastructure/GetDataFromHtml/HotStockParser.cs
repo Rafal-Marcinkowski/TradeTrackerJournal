@@ -1,10 +1,11 @@
 ﻿using HtmlAgilityPack;
+using Infrastructure.Interfaces;
 using SharedProject.Models;
 using System.Globalization;
 
 namespace Infrastructure.GetDataFromHtml;
 
-public class HotStockParser
+public class HotStockParser : IHotStockParser
 {
     public async Task<List<HotStockItemDto>> ParseHotStocks(string html)
     {

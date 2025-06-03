@@ -1,34 +1,56 @@
-﻿using EFCore.Data;
+﻿using AutoMapper;
+using EFCore.Data;
 using EFCore.Models;
-using HotStockTracker;
-using HotStockTracker.MVVM.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SharedProject.Models;
+using System.Diagnostics;
 
 namespace HotStockApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HotStockDayController(AppDbContext context) : ControllerBase
+public class HotStockDayController(AppDbContext context, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<IEnumerable<HotStockDayViewModel>> GetAll()
+    public async Task<ActionResult<IEnumerable<HotStockDayDto>>> GetDays()
     {
-        var days = await context.HotStockDays.Include(d => d.HotStockItems).ToListAsync();
-        return days.Select(d => d.ToViewModel());
-    }
+        var days = await context.HotStockDays
+            .AsNoTracking()
+            .Include(d => d.HotStockItems)
+            .OrderByDescending(d => d.Date)
+            .Take(5)
+            .ToListAsync();
 
-    [HttpPost("day")]
-    public async Task<ActionResult<HotStockDay>> PostDay(HotStockDay day)
-    {
-        foreach (var item in day.HotStockItems)
+        foreach (var day in days)
         {
-            item.HotStockDay = day;
+            Debug.WriteLine($"Day {day.Date} has {day.HotStockItems?.Count ?? 0} items in DB");
         }
 
+        return Ok(mapper.Map<List<HotStockDayDto>>(days));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<HotStockDay>> PostDay(HotStockDayDto dayDto)
+    {
+        Debug.WriteLine("POST method entered");
+        if (dayDto == null)
+        {
+            Debug.WriteLine("dayDto is null!");
+            return BadRequest("Invalid payload");
+        }
+        var day = new HotStockDay
+        {
+            Date = dayDto.Date,
+            Summary = dayDto.Summary,
+            IsSummaryExpanded = dayDto.IsSummaryExpanded,
+            HotStockItems = mapper.Map<List<HotStockItem>>(dayDto.Items)
+        };
+
         context.HotStockDays.Add(day);
+        Debug.WriteLine($"Day has {day.HotStockItems.Count} items.");
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetAll), new { id = day.Id }, day);
+        return CreatedAtAction(nameof(GetDays), new { id = day.Id }, day);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using DataAccess.Data;
 using DataAccess.DBAccess;
+using Infrastructure.GetDataFromHtml;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 using MahApps.Metro.Controls.Dialogs;
@@ -13,6 +14,7 @@ public class InfrastructureModule : IModule
     public void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.RegisterSingleton<IDailyTracker, DailyTracker>();
+        containerRegistry.RegisterSingleton<IHotStockParser, HotStockParser>();
         containerRegistry.RegisterSingleton<ITransactionData, TransactionData>();
         containerRegistry.RegisterSingleton<ICommentData, CommentData>();
         containerRegistry.RegisterSingleton<IEventData, EventData>();

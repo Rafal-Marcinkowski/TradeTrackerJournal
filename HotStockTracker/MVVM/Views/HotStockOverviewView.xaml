@@ -24,7 +24,7 @@
             Padding="5"
             HorizontalScrollBarVisibility="Auto"
             VerticalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding DayItems}">
+            <ItemsControl ItemsSource="{Binding Days}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />

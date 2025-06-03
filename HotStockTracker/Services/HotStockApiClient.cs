@@ -1,25 +1,59 @@
-﻿using EFCore.Models;
-using HotStockTracker.MVVM.ViewModels;
-using System.Collections.ObjectModel;
+﻿using SharedProject.Models;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace HotStockTracker.Services;
 
-public class HotStockApiClient(HttpClient http)
+public class HotStockApiClient
 {
-    public async Task<ObservableCollection<HotStockDayViewModel>> GetHotStockDaysAsync()
+    private readonly HttpClient _http;
+    private readonly JsonSerializerOptions _jsonOptions;
+
+    public HotStockApiClient(HttpClient http)
     {
-        var response = await http.GetFromJsonAsync<List<HotStockDayViewModel>>("http://localhost:5153/api/HotStockDay");
-        return new ObservableCollection<HotStockDayViewModel>(response ?? []);
+        _http = http;
+        _http.BaseAddress = new Uri("http://localhost:5153/");
+        _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        };
     }
 
-    public async Task<int> AddFullHotStockDayAsync(HotStockDay dayWithItems)
+    public async Task<List<HotStockDayDto>> GetHotStockDaysAsync()
     {
-        var result = await http.PostAsJsonAsync("http://localhost:5153/api/HotStockDay/day", dayWithItems);
-        result.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await _http.GetAsync("api/HotStockDay");
 
-        var created = await result.Content.ReadFromJsonAsync<HotStockDay>();
-        return created?.Id ?? 0;
+            if (!response.IsSuccessStatusCode)
+            {
+                Debug.WriteLine($"API Error: {response.StatusCode}");
+                return [];
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"API Response: {content}");
+
+            var result = JsonSerializer.Deserialize<List<HotStockDayDto>>(content, _jsonOptions);
+            return result ?? [];
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception in GetHotStockDaysAsync: {ex}");
+            return [];
+        }
+    }
+
+    public async Task<HotStockDayDto> AddHotStockDayAsync(HotStockDayDto dayDto)
+    {
+        var response = await _http.PostAsJsonAsync("api/HotStockDay", dayDto, _jsonOptions);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<HotStockDayDto>(_jsonOptions)
+            ?? throw new InvalidOperationException("Failed to deserialize response");
     }
 }

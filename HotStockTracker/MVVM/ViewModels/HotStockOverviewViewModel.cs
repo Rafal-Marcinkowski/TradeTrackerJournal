@@ -1,29 +1,63 @@
 ﻿using HotStockTracker.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows;
 
 namespace HotStockTracker.MVVM.ViewModels;
 
 public class HotStockOverviewViewModel : BindableBase
 {
-    private readonly HotStockTrackerFacade facade;
+    private readonly HotStockDayManager _dayManager;
+    private bool _isLoading;
 
-    public ObservableCollection<HotStockDayViewModel> DayItems { get; set; } = [];
-
-    public HotStockOverviewViewModel(HotStockTrackerFacade facade)
+    public ObservableCollection<HotStockDayViewModel> Days { get; set; }
+    public bool IsLoading
     {
-        this.facade = facade;
+        get => _isLoading;
+        set => SetProperty(ref _isLoading, value);
+    }
+
+    public HotStockOverviewViewModel(HotStockDayManager dayManager)
+    {
+        _dayManager = dayManager;
+        Days = [];
         _ = LoadDataAsync();
     }
 
     private async Task LoadDataAsync()
     {
-        await facade.HotStockDayManager.AddNewDayIfMissingAsync();
+        if (IsLoading) return;
 
-        var latestDays = await facade.HotStockDayManager.GetLatestDaysAsync();
-        DayItems.Clear();
-        foreach (var day in latestDays)
+        IsLoading = true;
+        try
         {
-            DayItems.Add(day);
+            Debug.WriteLine("Starting data loading...");
+
+            var wasAdded = await _dayManager.AddNewDayIfMissingAsync();
+            Debug.WriteLine($"AddNewDayIfMissingAsync result: {wasAdded}");
+
+            var latestDays = await _dayManager.GetLatestDaysAsync();
+            Debug.WriteLine($"Retrieved {latestDays.Count} days");
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                Days.Clear();
+                foreach (var dayDto in latestDays)
+                {
+                    var dayVm = new HotStockDayViewModel(dayDto);
+                    Debug.WriteLine($"Adding day with {dayVm.HotStockItems.Count} items");
+                    Days.Add(dayVm);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error in LoadDataAsync: {ex}");
+        }
+        finally
+        {
+            IsLoading = false;
+            Debug.WriteLine("Data loading completed");
         }
     }
 }
