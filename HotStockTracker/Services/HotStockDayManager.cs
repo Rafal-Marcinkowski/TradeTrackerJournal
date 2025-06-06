@@ -13,11 +13,7 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         try
         {
             var days = await apiClient.GetHotStockDaysAsync();
-            Debug.WriteLine($"Retrieved {days.Count} days from API with");
-
-            return [.. days
-                .OrderByDescending(d => d.Date)
-                .Take(count)];
+            return [.. days.OrderByDescending(d => d.Date).Take(count)];
         }
         catch (Exception ex)
         {
@@ -38,21 +34,24 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
                 return false;
             }
 
-            Debug.WriteLine($"Using date: {targetDate:yyyy-MM-dd}");
-
             var existingDays = await apiClient.GetHotStockDaysAsync();
             if (existingDays.Any(d => d.Date.Date == targetDate))
-            {
-                Debug.WriteLine($"Day {targetDate:yyyy-MM-dd} already exists, skipping");
                 return false;
-            }
 
-            Debug.WriteLine($"Creating new day data for {targetDate:yyyy-MM-dd}...");
-            var newDay = await FetchAndCreateDayDataAsync(targetDate);
+            var gpwHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/akcje_gpw,4,2");
+            var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
+
+            await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
+
+            var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
+            var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
+
+            var allStocks = gpwStocks.Concat(ncStocks).ToList();
+
+            var newDay = await CreateHotStockDayDto(targetDate, allStocks);
 
             var result = await apiClient.AddHotStockDayAsync(newDay);
-            Debug.WriteLine($"Day added with {newDay.Items.Count}");
-
+            Debug.WriteLine($"Day added with {newDay.HotStockItems.Count} stocks.");
             return true;
         }
         catch (Exception ex)
@@ -62,22 +61,64 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         }
     }
 
-    private async Task<HotStockDayDto> FetchAndCreateDayDataAsync(DateTime date)
+    private async Task<HotStockDayDto> CreateHotStockDayDto(DateTime date, List<HotStockItemDto> stocks)
     {
-        var html = await DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/dynamika-obrotow/4,2");
-        var records = await htmlParser.ParseHotStocks(html);
-
-        var topGainers = records.OrderByDescending(r => r.ChangePercent).Take(10);
-        var topLosers = records.OrderBy(r => r.ChangePercent).Take(10);
-
-        var selected = topGainers.Concat(topLosers).ToList();
+        var items = await GetTopMovers(stocks);
 
         return new HotStockDayDto
         {
             Date = date,
             Summary = string.Empty,
+            OpeningComment = string.Empty,
             IsSummaryExpanded = true,
-            Items = selected
+            HotStockItems = items
         };
+    }
+
+    private async Task<List<HotStockItemDto>> GetTopMovers(List<HotStockItemDto> stocks)
+    {
+        decimal ParseChange(string changeStr)
+        {
+            if (string.IsNullOrWhiteSpace(changeStr))
+                return 0m;
+
+            var cleaned = changeStr
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace("%", "")
+                .Replace("+", "")
+                .Replace(",", ".")
+                .Trim();
+
+            if (decimal.TryParse(cleaned, System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out var val))
+                return val;
+
+            return 0m;
+        }
+
+        bool IsValidTurnover(string turnoverStr)
+        {
+            return decimal.TryParse(
+                turnoverStr.Replace(" ", "").Replace(",", "."),
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var val
+            ) && val >= 10000m;
+        }
+
+        var validStocks = stocks.Where(s => IsValidTurnover(s.Turnover)).ToList();
+
+        var gainers = validStocks
+            .Where(s => s.ChangePercent.Contains("+"))
+            .OrderByDescending(s => ParseChange(s.ChangePercent))
+            .Take(10);
+
+        var losers = validStocks
+            .Where(s => s.ChangePercent.Contains("-"))
+            .OrderBy(s => ParseChange(s.ChangePercent))
+            .Take(10);
+
+        return [.. gainers, .. losers];
     }
 }

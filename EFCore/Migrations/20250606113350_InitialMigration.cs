@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EFCore.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,6 +19,7 @@ namespace EFCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OpeningComment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsSummaryExpanded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -33,13 +34,16 @@ namespace EFCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Change = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ChangePercent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Volume = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Turnover = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TurnoverMedian = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TurnoverDynamicsPercent = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Market = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Change = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChangePercent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReferencePrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OpenPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MinPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaxPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Volume = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Turnover = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HotStockDayId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -11,7 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers()
 .AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-builder.Services.AddAutoMapper(typeof(HotStockProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(HotStockMappingProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

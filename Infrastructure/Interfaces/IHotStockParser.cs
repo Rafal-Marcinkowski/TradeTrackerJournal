@@ -3,5 +3,5 @@
 namespace Infrastructure.Interfaces;
 public interface IHotStockParser
 {
-    Task<List<HotStockItemDto>> ParseHotStocks(string html);
+    List<HotStockItemDto> Parse(string html, string market);
 }

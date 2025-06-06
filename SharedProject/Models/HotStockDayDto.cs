@@ -3,7 +3,9 @@
 public class HotStockDayDto
 {
     public DateTime Date { get; set; }
-    public string Summary { get; set; } = string.Empty;
+    public string Summary { get; set; }
+    public string OpeningComment { get; set; }
     public bool IsSummaryExpanded { get; set; }
-    public List<HotStockItemDto> Items { get; set; } = [];
+
+    public List<HotStockItemDto> HotStockItems { get; set; }
 }

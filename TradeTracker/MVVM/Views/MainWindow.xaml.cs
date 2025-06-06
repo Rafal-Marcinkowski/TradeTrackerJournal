@@ -5,7 +5,7 @@ public partial class MainWindow
     public MainWindow()
     {
         InitializeComponent();
-        Left = 0;
-        Top = 200;
+        Left = 285;
+        Top = 150;
     }
 }
