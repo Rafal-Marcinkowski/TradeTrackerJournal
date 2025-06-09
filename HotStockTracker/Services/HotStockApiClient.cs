@@ -48,21 +48,54 @@ public class HotStockApiClient
         }
     }
 
-    public async Task<HotStockDayDto> AddHotStockDayAsync(HotStockDayDto dayDto)
+    public async Task<bool> AddHotStockDayAsync(HotStockDayDto dayDto)
     {
-        var response = await _http.PostAsJsonAsync("api/HotStockDay", dayDto, _jsonOptions);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await _http.PostAsJsonAsync("api/HotStockDay", dayDto, _jsonOptions);
 
-        return await response.Content.ReadFromJsonAsync<HotStockDayDto>(_jsonOptions)
-            ?? throw new InvalidOperationException("Failed to deserialize response");
+            Debug.WriteLine($"POST to: api/HotStockDay");
+            Debug.WriteLine($"Status: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response: {errorContent}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception in AddHotStockDayAsync: {ex}");
+            return false;
+        }
     }
 
-    public async Task UpdateDaySummaryAsync(HotStockDayDto dto)
+    public async Task<bool> UpdateHotStockDayAsync(HotStockDayDto dto)
     {
-        var dateStr = dto.Date.ToString("yyyy-MM-dd");
-        var response = await _http.PutAsJsonAsync($"api/HotStockDay/{dateStr}", dto, _jsonOptions);
-        Debug.WriteLine($"PUT to: api/HotStockDay/{dateStr}");
-        Debug.WriteLine($"Status: {response.StatusCode}");
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var dateStr = dto.Date.ToString("yyyy-MM-dd");
+            var response = await _http.PutAsJsonAsync($"api/HotStockDay/{dateStr}", dto, _jsonOptions);
+
+            Debug.WriteLine($"PUT to: api/HotStockDay/{dateStr}");
+            Debug.WriteLine($"Status: {response.StatusCode}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"Error response: {errorContent}");
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Exception in UpdateDay: {ex}");
+            return false;
+        }
     }
 }

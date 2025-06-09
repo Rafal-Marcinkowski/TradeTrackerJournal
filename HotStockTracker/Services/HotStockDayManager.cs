@@ -8,12 +8,12 @@ namespace HotStockTracker.Services;
 
 public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htmlParser)
 {
-    public async Task<List<HotStockDayDto>> GetLatestDaysAsync(int count = 5)
+    public async Task<List<HotStockDayDto>> GetLatestDaysAsync(int count = 10)
     {
         try
         {
             var days = await apiClient.GetHotStockDaysAsync();
-            return [.. days.OrderByDescending(d => d.Date).Take(count)];
+            return [.. days.OrderBy(d => d.Date).Take(count)];
         }
         catch (Exception ex)
         {
@@ -22,57 +22,92 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         }
     }
 
-    public async Task<bool> AddNewDayIfMissingAsync()
+    public async Task<bool> CheckAndUpdateDaysAsync()
     {
         try
         {
             var now = DateTime.Now;
-
-            if (!DateTimeManager.IsWithinTradingTimeWindow(now, out var targetDate))
+            if (!DateTimeManager.ShouldCheckForData(now, out var targetDate))
             {
-                Debug.WriteLine("Outside allowed time window (17:06–8:59). Skipping.");
-                return false;
+                return await EnsureDayExistsAsync(targetDate);
             }
 
             var existingDays = await apiClient.GetHotStockDaysAsync();
-            if (existingDays.Any(d => d.Date.Date == targetDate))
+            var existingDay = existingDays.FirstOrDefault(d => d.Date.Date == targetDate.Date);
+
+            if (existingDay != null)
+            {
+                if (existingDay.HotStockItems == null || existingDay.HotStockItems.Count == 0)
+                {
+                    return await UpdateDayWithDataAsync(existingDay);
+                }
                 return false;
+            }
 
-            var gpwHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/akcje_gpw,4,2");
-            var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
-
-            await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
-
-            var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
-            var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
-
-            var allStocks = gpwStocks.Concat(ncStocks).ToList();
-
-            var newDay = await CreateHotStockDayDto(targetDate, allStocks);
-
-            var result = await apiClient.AddHotStockDayAsync(newDay);
-            Debug.WriteLine($"Day added with {newDay.HotStockItems.Count} stocks.");
-            return true;
+            return await AddNewDayWithDataAsync(targetDate);
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error in AddNewDayIfMissingAsync: {ex}");
+            Debug.WriteLine($"Error in CheckAndUpdateDaysAsync: {ex}");
             return false;
         }
     }
 
-    private async Task<HotStockDayDto> CreateHotStockDayDto(DateTime date, List<HotStockItemDto> stocks)
+    private async Task<bool> EnsureDayExistsAsync(DateTime date)
     {
-        var items = await GetTopMovers(stocks);
+        var existingDays = await apiClient.GetHotStockDaysAsync();
+        if (existingDays.Any(d => d.Date.Date == date.Date))
+            return true;
 
-        return new HotStockDayDto
+        var emptyDay = new HotStockDayDto
         {
             Date = date,
             Summary = string.Empty,
             OpeningComment = string.Empty,
             IsSummaryExpanded = true,
-            HotStockItems = items
+            HotStockItems = []
         };
+
+        return await apiClient.AddHotStockDayAsync(emptyDay);
+    }
+
+    private async Task<bool> UpdateDayWithDataAsync(HotStockDayDto existingDay)
+    {
+        var gpwHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/akcje_gpw,4,2");
+        var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
+
+        await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
+
+        var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
+        var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
+
+        var allStocks = gpwStocks.Concat(ncStocks).ToList();
+        existingDay.HotStockItems = await GetTopMovers(allStocks);
+
+        return await apiClient.UpdateHotStockDayAsync(existingDay);
+    }
+
+    private async Task<bool> AddNewDayWithDataAsync(DateTime date)
+    {
+        var gpwHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/akcje_gpw,4,2");
+        var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
+
+        await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
+
+        var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
+        var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
+
+        var allStocks = gpwStocks.Concat(ncStocks).ToList();
+        var newDay = new HotStockDayDto
+        {
+            Date = date,
+            Summary = string.Empty,
+            OpeningComment = string.Empty,
+            IsSummaryExpanded = true,
+            HotStockItems = await GetTopMovers(allStocks)
+        };
+
+        return await apiClient.AddHotStockDayAsync(newDay);
     }
 
     private async Task<List<HotStockItemDto>> GetTopMovers(List<HotStockItemDto> stocks)

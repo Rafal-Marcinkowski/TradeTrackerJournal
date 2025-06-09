@@ -1,7 +1,6 @@
 ﻿using HotStockTracker.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Windows;
 
 namespace HotStockTracker.MVVM.ViewModels;
 
@@ -35,22 +34,19 @@ public class HotStockOverviewViewModel : BindableBase
         {
             Debug.WriteLine("Starting data loading...");
 
-            var wasAdded = await facade.HotStockDayManager.AddNewDayIfMissingAsync();
+            var wasAdded = await facade.HotStockDayManager.CheckAndUpdateDaysAsync();
             Debug.WriteLine($"AddNewDayIfMissingAsync result: {wasAdded}");
 
             var latestDays = await facade.HotStockDayManager.GetLatestDaysAsync();
             Debug.WriteLine($"Retrieved {latestDays.Count} days");
 
-            await Application.Current.Dispatcher.InvokeAsync(() =>
+            Days.Clear();
+            foreach (var dayDto in latestDays)
             {
-                Days.Clear();
-                foreach (var dayDto in latestDays)
-                {
-                    var dayVm = new HotStockDayViewModel(dayDto, hotStockApiClient);
-                    Debug.WriteLine($"Adding day with {dayVm.HotStockItems.Count} items");
-                    Days.Add(dayVm);
-                }
-            });
+                var dayVm = new HotStockDayViewModel(dayDto, hotStockApiClient);
+                Debug.WriteLine($"Adding day with {dayVm.HotStockItems.Count} items");
+                Days.Add(dayVm);
+            }
         }
         catch (Exception ex)
         {

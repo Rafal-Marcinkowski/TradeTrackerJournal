@@ -15,6 +15,9 @@ builder.Services.AddAutoMapper(typeof(HotStockMappingProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Host.UseWindowsService();
+builder.WebHost.UseUrls("http://localhost:5153");
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

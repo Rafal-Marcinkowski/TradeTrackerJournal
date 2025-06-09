@@ -7,17 +7,12 @@ using System.Windows.Input;
 
 public class HotStockDayViewModel : BindableBase
 {
-    private readonly HotStockApiClient hotStockApiClient;
-
-    private string summary;
-    private bool isSummaryExpanded;
-    private bool isEditMode;
-
     public HotStockDayViewModel(HotStockDayDto dto, HotStockApiClient hotStockApiClient)
     {
         this.hotStockApiClient = hotStockApiClient;
         Date = dto.Date;
         Summary = dto.Summary;
+        OpeningComment = dto.OpeningComment;
         IsSummaryExpanded = dto.IsSummaryExpanded;
         HotStockItems = new ObservableCollection<HotStockItemViewModel>(
             dto.HotStockItems.Select(i => new HotStockItemViewModel(i)));
@@ -29,17 +24,6 @@ public class HotStockDayViewModel : BindableBase
         };
     }
 
-    public string OpeningComment { get; set; }
-    public bool IsOpeningCommentEditMode { get; set; }
-    public bool IsSummaryEditMode { get; set; }
-    public string OpeningCommentEditButtonText => IsOpeningCommentEditMode ? "Zapisz" : "Edytuj";
-    public string SummaryEditButtonText => IsSummaryEditMode ? "Zapisz" : "Edytuj";
-
-    public ICommand ToggleOpeningCommentEditCommand { get; }
-    public ICommand ToggleSummaryEditCommand { get; }
-
-    public DateTime Date { get; }
-
     public ObservableCollection<HotStockItemViewModel> HotStockItems { get; }
 
     public ObservableCollection<HotStockItemViewModel> TopGainers =>
@@ -48,52 +32,84 @@ public class HotStockDayViewModel : BindableBase
     public ObservableCollection<HotStockItemViewModel> TopLosers =>
         new(HotStockItems.Where(i => i.Change.StartsWith("-")));
 
+    private readonly HotStockApiClient hotStockApiClient;
+
+    private string openingComment;
+    public string OpeningComment
+    {
+        get => openingComment;
+        set => SetProperty(ref openingComment, value);
+    }
+
+    private bool isOpeningCommentEditMode = false;
+    public bool IsOpeningCommentEditMode
+    {
+        get => isOpeningCommentEditMode;
+        set
+        {
+            if (SetProperty(ref isOpeningCommentEditMode, value))
+            {
+                RaisePropertyChanged(nameof(OpeningCommentEditButtonText));
+            }
+        }
+    }
+
+    private bool isSummaryEditMode = false;
+    public bool IsSummaryEditMode
+    {
+        get => isSummaryEditMode;
+        set
+        {
+            if (SetProperty(ref isSummaryEditMode, value))
+            {
+                RaisePropertyChanged(nameof(SummaryEditButtonText));
+            }
+        }
+    }
+
+    private string summary;
     public string Summary
     {
         get => summary;
         set => SetProperty(ref summary, value);
     }
 
+    private bool isSummaryExpanded;
     public bool IsSummaryExpanded
     {
         get => isSummaryExpanded;
         set => SetProperty(ref isSummaryExpanded, value);
     }
 
-    public bool IsEditMode
+    public DateTime Date { get; }
+    public string OpeningCommentEditButtonText => IsOpeningCommentEditMode ? "Zapisz" : "Edytuj";
+    public string SummaryEditButtonText => IsSummaryEditMode ? "Zapisz" : "Edytuj";
+
+    public ICommand ToggleOpeningCommentEditCommand => new RelayCommand(async () =>
     {
-        get => isEditMode;
-        set
-        {
-            if (SetProperty(ref isEditMode, value))
-            {
-                RaisePropertyChanged(nameof(IsNotEditMode));
-                RaisePropertyChanged(nameof(EditButtonText));
-            }
-        }
-    }
-
-    public bool IsNotEditMode => !IsEditMode;
-
-    public string EditButtonText => IsEditMode ? "Zapisz" : "Edytuj";
-
-    public ICommand ToggleEditCommand => new RelayCommand(async () =>
-    {
-        IsEditMode = !IsEditMode;
-        if (!IsEditMode)
-            await SaveSummaryAsync();
+        IsOpeningCommentEditMode = !IsOpeningCommentEditMode;
+        if (!IsOpeningCommentEditMode)
+            await UpdateDayAsync();
     });
 
-    private async Task SaveSummaryAsync()
+    public ICommand ToggleSummaryEditCommand => new RelayCommand(async () =>
+    {
+        IsSummaryEditMode = !IsSummaryEditMode;
+        if (!IsSummaryEditMode)
+            await UpdateDayAsync();
+    });
+
+    private async Task UpdateDayAsync()
     {
         var dto = ToDto();
-        await hotStockApiClient.UpdateDaySummaryAsync(dto);
+        await hotStockApiClient.UpdateHotStockDayAsync(dto);
     }
 
     public HotStockDayDto ToDto() => new()
     {
         Date = Date.Date,
         Summary = Summary,
+        OpeningComment = OpeningComment,
         IsSummaryExpanded = IsSummaryExpanded,
         HotStockItems = [.. HotStockItems.Select(i => i.ToDto())]
     };

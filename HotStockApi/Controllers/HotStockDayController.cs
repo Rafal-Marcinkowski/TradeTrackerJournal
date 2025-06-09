@@ -4,6 +4,7 @@ using EFCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SharedProject.Models;
+using System.Globalization;
 
 namespace HotStockApi.Controllers;
 
@@ -40,19 +41,33 @@ public class HotStockDayController(AppDbContext context, IMapper mapper) : Contr
     [HttpPut("{date}")]
     public async Task<IActionResult> UpdateDay(string date, [FromBody] HotStockDayDto dayDto)
     {
-        if (!DateTime.TryParse(date, out var targetDate))
-            return BadRequest("Invalid date format. Use YYYY-MM-DD");
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        var existingDay = await context.HotStockDays
-            .FirstOrDefaultAsync(d => d.Date.Date == targetDate.Date);
+            if (!DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                DateTimeStyles.None, out var targetDate))
+            {
+                return BadRequest("Invalid date format. Use YYYY-MM-DD");
+            }
 
-        if (existingDay == null)
-            return NotFound();
+            var existingDay = await context.HotStockDays
+                .FirstOrDefaultAsync(d => d.Date.Date == targetDate.Date);
 
-        existingDay.Summary = dayDto.Summary;
-        existingDay.IsSummaryExpanded = dayDto.IsSummaryExpanded;
+            if (existingDay == null)
+                return NotFound($"Day with date {date} not found");
 
-        await context.SaveChangesAsync();
-        return NoContent();
+            existingDay.Summary = dayDto.Summary;
+            existingDay.OpeningComment = dayDto.OpeningComment;
+            existingDay.IsSummaryExpanded = dayDto.IsSummaryExpanded;
+
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "An error occurred while updating the day summary");
+        }
     }
 }

@@ -18,13 +18,13 @@
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter" />
         <Conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
         <Style BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
-            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontSize" Value="12" />
             <Setter Property="Margin" Value="5" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="TextWrapping" Value="Wrap" />
@@ -39,13 +39,15 @@
     </mah:MetroContentControl.Resources>
 
     <Grid>
-        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer
+            HorizontalScrollBarVisibility="Disabled"
+            Loaded="ScrollViewer_Loaded"
+            VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Days}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border
                             Width="500"
-                            Margin="10"
                             Padding="15"
                             Background="{DynamicResource MaterialDesignCardBackground}"
                             BorderThickness="1"
@@ -150,21 +152,19 @@
 
                                 <Expander
                                     Grid.Row="3"
-                                    Height="auto"
                                     Padding="0"
                                     Header="PODSUMOWANIE SESJI"
                                     IsExpanded="{Binding IsSummaryExpanded}"
                                     Style="{StaticResource MahApps.Styles.Expander}">
-                                    <Grid Margin="0,0,0,0">
+                                    <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="10" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
                                         <Border
                                             Grid.Row="0"
-                                            Padding="15"
+                                            Padding="5"
                                             Background="{DynamicResource MaterialDesignPaper}"
                                             BorderBrush="{DynamicResource MaterialDesignDivider}"
                                             BorderThickness="1"
@@ -175,29 +175,31 @@
                                                     <RowDefinition Height="auto" />
                                                 </Grid.RowDefinitions>
 
-                                                <StackPanel
-                                                    Grid.Row="0"
-                                                    Margin="0,0,0,10"
-                                                    Orientation="Horizontal">
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        FontFamily="Segoe UI Semibold"
+                                                        FontSize="14"
+                                                        Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                                                        Text="KOMENTARZ OTWARCIA:" />
+
                                                     <Button
-                                                        Margin="5,0,0,0"
+                                                        Grid.Column="1"
                                                         Padding="8,2"
                                                         HorizontalAlignment="Right"
                                                         Command="{Binding ToggleOpeningCommentEditCommand}"
                                                         Content="{Binding OpeningCommentEditButtonText}"
                                                         FontSize="12"
                                                         Style="{StaticResource MahApps.Styles.Button.Chromeless}" />
-                                                    <TextBlock
-                                                        FontFamily="Segoe UI Semibold"
-                                                        FontSize="14"
-                                                        Foreground="{DynamicResource MahApps.Brushes.Accent}"
-                                                        Text="KOMENTARZ OTWARCIA:" />
-
-                                                </StackPanel>
+                                                </Grid>
 
                                                 <TextBox
                                                     Grid.Row="1"
-                                                    MaxHeight="120"
                                                     AcceptsReturn="True"
                                                     Style="{StaticResource MahApps.Styles.TextBox}"
                                                     Text="{Binding OpeningComment, Mode=TwoWay}"
@@ -207,7 +209,6 @@
 
                                                 <TextBlock
                                                     Grid.Row="1"
-                                                    FontSize="14"
                                                     Text="{Binding OpeningComment}"
                                                     TextWrapping="Wrap"
                                                     Visibility="{Binding IsOpeningCommentEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
@@ -216,7 +217,7 @@
 
                                         <Border
                                             Grid.Row="2"
-                                            Padding="15"
+                                            Padding="5"
                                             Background="{DynamicResource MaterialDesignPaper}"
                                             BorderBrush="{DynamicResource MaterialDesignDivider}"
                                             BorderThickness="1"
@@ -227,29 +228,30 @@
                                                     <RowDefinition Height="Auto" />
                                                 </Grid.RowDefinitions>
 
-                                                <StackPanel
-                                                    Grid.Row="0"
-                                                    Margin="0,0,0,10"
-                                                    Orientation="Horizontal">
-                                                    <Button
-                                                        Margin="5,0,0,0"
-                                                        Padding="8,2"
-                                                        HorizontalAlignment="Right"
-                                                        Command="{Binding ToggleSummaryEditCommand}"
-                                                        Content="{Binding SummaryEditButtonText}"
-                                                        FontSize="12"
-                                                        Style="{StaticResource MahApps.Styles.Button.Chromeless}" />
+                                                <Grid Grid.Row="0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
                                                     <TextBlock
+                                                        Grid.Column="0"
                                                         FontFamily="Segoe UI Semibold"
                                                         FontSize="14"
                                                         Foreground="{DynamicResource MahApps.Brushes.Accent}"
                                                         Text="PODSUMOWANIE:" />
 
-                                                </StackPanel>
+                                                    <Button
+                                                        Grid.Column="1"
+                                                        Padding="8,2"
+                                                        Command="{Binding ToggleSummaryEditCommand}"
+                                                        Content="{Binding SummaryEditButtonText}"
+                                                        FontSize="12"
+                                                        Style="{StaticResource MahApps.Styles.Button.Chromeless}" />
+                                                </Grid>
 
                                                 <TextBox
                                                     Grid.Row="1"
-                                                    MaxHeight="200"
                                                     AcceptsReturn="True"
                                                     Style="{StaticResource MahApps.Styles.TextBox}"
                                                     Text="{Binding Summary, Mode=TwoWay}"
@@ -259,7 +261,6 @@
 
                                                 <TextBlock
                                                     Grid.Row="1"
-                                                    FontSize="14"
                                                     Text="{Binding Summary}"
                                                     TextWrapping="Wrap"
                                                     Visibility="{Binding IsSummaryEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
