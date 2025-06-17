@@ -8,7 +8,7 @@
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,
     @EntryMedianTurnover INT,
-    @Description NVARCHAR(2000) = NULL
+    @Description NVARCHAR(4000) = NULL
 AS
 BEGIN
     UPDATE [dbo].[Events]

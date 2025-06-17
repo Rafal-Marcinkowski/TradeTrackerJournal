@@ -13,7 +13,7 @@
     @ClosingDescription NVARCHAR(250),
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,
-    @Description NVARCHAR(2000) = NULL
+    @Description NVARCHAR(4000) = NULL
 AS
 BEGIN
     INSERT INTO [dbo].[Transactions] (

@@ -52,14 +52,65 @@ public static class DateTimeManager
         return new DateTime(1900, 1, 1, 0, 0, 0);
     }
 
+    public static void ShouldCheckForData(DateTime now, out DateTime today, out DateTime previousWorkDay)
+    {
+        today = now.Date;
+        previousWorkDay = DateTime.MinValue;
+
+        if (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday)
+        {
+            if (now.DayOfWeek == DayOfWeek.Sunday ||
+                (now.DayOfWeek == DayOfWeek.Saturday && now.TimeOfDay < TimeSpan.FromHours(9)))
+            {
+                previousWorkDay = GetLastFriday(now);
+            }
+            return;
+        }
+
+        var tradingEndTime = today.AddHours(17).AddMinutes(5);
+        var tradingStartTime = today.AddHours(9);
+
+        if (now < tradingStartTime)
+        {
+            previousWorkDay = GetPreviousWorkDay(now);
+        }
+    }
+
+    public static bool ShouldUpdateToday(DateTime now)
+    {
+        if (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday)
+            return false;
+
+        var today = now.Date;
+        var tradingEndTime = today.AddHours(17).AddMinutes(5);
+
+        return now >= tradingEndTime;
+    }
+
+    private static DateTime GetLastFriday(DateTime date)
+    {
+        var friday = date.AddDays(-(int)date.DayOfWeek - 2);
+        if (friday.DayOfWeek != DayOfWeek.Friday)
+            friday = friday.AddDays(-7);
+        return friday.Date;
+    }
+
+    private static DateTime GetPreviousWorkDay(DateTime date)
+    {
+        var previousDay = date.AddDays(-1);
+        while (previousDay.DayOfWeek == DayOfWeek.Saturday || previousDay.DayOfWeek == DayOfWeek.Sunday)
+        {
+            previousDay = previousDay.AddDays(-1);
+        }
+        return previousDay.Date;
+    }
+
     public static bool ShouldCheckForData(DateTime now, out DateTime targetDate)
     {
         targetDate = DateTime.MinValue;
 
-        // Ignoruj weekendy (sobota i niedziela)
         if (now.DayOfWeek == DayOfWeek.Saturday || now.DayOfWeek == DayOfWeek.Sunday)
         {
-            // Jeśli to weekend, sprawdzamy tylko piątek
             if (now.DayOfWeek == DayOfWeek.Sunday ||
                 (now.DayOfWeek == DayOfWeek.Saturday && now.TimeOfDay < TimeSpan.FromHours(9)))
             {
@@ -70,24 +121,21 @@ public static class DateTimeManager
         }
 
         var today = now.Date;
-        var tradingEndTime = today.AddHours(17).AddMinutes(5); // 17:05
-        var tradingStartTime = today.AddHours(9); // 09:00
+        var tradingEndTime = today.AddHours(17).AddMinutes(5);
+        var tradingStartTime = today.AddHours(9);
 
-        // Godziny 09:00-17:04 - tylko sprawdź czy dzień istnieje
         if (now >= tradingStartTime && now < tradingEndTime)
         {
             targetDate = today;
-            return false; // tylko sprawdź istnienie dnia
+            return false;
         }
 
-        // Godziny 17:05-23:59 - uzupełnij dzisiejszy dzień
         if (now >= tradingEndTime)
         {
             targetDate = today;
             return true;
         }
 
-        // Godziny 00:00-08:59 - uzupełnij wczorajszy dzień (roboczy)
         if (now < tradingStartTime)
         {
             targetDate = GetPreviousWorkDay(now);
@@ -95,27 +143,6 @@ public static class DateTimeManager
         }
 
         return false;
-    }
-
-    private static DateTime GetLastFriday(DateTime date)
-    {
-        var friday = date.AddDays(-1);
-        while (friday.DayOfWeek != DayOfWeek.Friday)
-        {
-            friday = friday.AddDays(-1);
-        }
-        return friday.Date;
-    }
-
-    private static DateTime GetPreviousWorkDay(DateTime date)
-    {
-        var previousDay = date.AddDays(-1);
-        while (previousDay.DayOfWeek == DayOfWeek.Saturday ||
-               previousDay.DayOfWeek == DayOfWeek.Sunday)
-        {
-            previousDay = previousDay.AddDays(-1);
-        }
-        return previousDay.Date;
     }
 
     public static bool IsWithinTradingTimeWindow(DateTime now, out DateTime targetDate)

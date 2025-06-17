@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using SharedProject.Models;
 using System.Globalization;
 
-namespace HotStockApi.Controllers;
+namespace TTJApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HotStockDayController(AppDbContext context, IMapper mapper) : ControllerBase
+public class HotStockDayController(AppDbContext context, IMapper mapper, ILogger<HotStockDayController> logger) : ControllerBase
 {
     [HttpGet]
     public async Task<ActionResult<IEnumerable<HotStockDayDto>>> GetDays()
@@ -19,7 +19,7 @@ public class HotStockDayController(AppDbContext context, IMapper mapper) : Contr
             .AsNoTracking()
             .Include(d => d.HotStockItems)
             .OrderByDescending(d => d.Date)
-            .Take(5)
+            .Take(10)
             .ToListAsync();
 
         return Ok(mapper.Map<List<HotStockDayDto>>(days));
@@ -41,8 +41,12 @@ public class HotStockDayController(AppDbContext context, IMapper mapper) : Contr
     [HttpPut("{date}")]
     public async Task<IActionResult> UpdateDay(string date, [FromBody] HotStockDayDto dayDto)
     {
+        using var transaction = await context.Database.BeginTransactionAsync();
+
         try
         {
+            logger.LogInformation($"[UpdateDay] Received {dayDto.HotStockItems?.Count} items for {date}");
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -53,20 +57,35 @@ public class HotStockDayController(AppDbContext context, IMapper mapper) : Contr
             }
 
             var existingDay = await context.HotStockDays
+                .Include(d => d.HotStockItems)
                 .FirstOrDefaultAsync(d => d.Date.Date == targetDate.Date);
 
             if (existingDay == null)
                 return NotFound($"Day with date {date} not found");
 
+            if (existingDay.HotStockItems.Count == 0)
+            {
+                var newItems = mapper.Map<List<HotStockItem>>(dayDto.HotStockItems);
+
+                foreach (var item in newItems)
+                    item.HotStockDayId = existingDay.Id;
+
+                await context.HotStockItems.AddRangeAsync(newItems);
+            }
+
             existingDay.Summary = dayDto.Summary;
             existingDay.OpeningComment = dayDto.OpeningComment;
             existingDay.IsSummaryExpanded = dayDto.IsSummaryExpanded;
-
             await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            logger.LogInformation($"[UpdateDay] Updated {dayDto.HotStockItems?.Count} items for {date}");
             return NoContent();
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
+            logger.LogError(ex, $"[UpdateDay] Exception occurred for {date}");
             return StatusCode(500, "An error occurred while updating the day summary");
         }
     }

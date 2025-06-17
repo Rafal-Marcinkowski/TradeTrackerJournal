@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250606170628_AttrLengthMigration")]
-    partial class AttrLengthMigration
+    [Migration("20250617110930_NotepadMigration")]
+    partial class NotepadMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,33 @@ namespace EFCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EFCore.Models.CompanySummary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("NotepadCompanyItemId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotepadCompanyItemId")
+                        .IsUnique();
+
+                    b.ToTable("CompanySummaries");
+                });
 
             modelBuilder.Entity("EFCore.Models.HotStockDay", b =>
                 {
@@ -127,6 +154,66 @@ namespace EFCore.Migrations
                     b.ToTable("HotStockItems");
                 });
 
+            modelBuilder.Entity("EFCore.Models.Note", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("NotepadCompanyItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NotepadCompanyItemId");
+
+                    b.ToTable("CompanyNotes");
+                });
+
+            modelBuilder.Entity("EFCore.Models.NotepadCompanyItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CompanyItems");
+                });
+
+            modelBuilder.Entity("EFCore.Models.CompanySummary", b =>
+                {
+                    b.HasOne("EFCore.Models.NotepadCompanyItem", "NotepadCompanyItem")
+                        .WithOne("Summary")
+                        .HasForeignKey("EFCore.Models.CompanySummary", "NotepadCompanyItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NotepadCompanyItem");
+                });
+
             modelBuilder.Entity("EFCore.Models.HotStockItem", b =>
                 {
                     b.HasOne("EFCore.Models.HotStockDay", "HotStockDay")
@@ -138,9 +225,27 @@ namespace EFCore.Migrations
                     b.Navigation("HotStockDay");
                 });
 
+            modelBuilder.Entity("EFCore.Models.Note", b =>
+                {
+                    b.HasOne("EFCore.Models.NotepadCompanyItem", "NotepadCompanyItem")
+                        .WithMany("Notes")
+                        .HasForeignKey("NotepadCompanyItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NotepadCompanyItem");
+                });
+
             modelBuilder.Entity("EFCore.Models.HotStockDay", b =>
                 {
                     b.Navigation("HotStockItems");
+                });
+
+            modelBuilder.Entity("EFCore.Models.NotepadCompanyItem", b =>
+                {
+                    b.Navigation("Notes");
+
+                    b.Navigation("Summary");
                 });
 #pragma warning restore 612, 618
         }

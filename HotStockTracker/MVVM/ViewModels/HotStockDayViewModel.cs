@@ -7,7 +7,7 @@ using System.Windows.Input;
 
 public class HotStockDayViewModel : BindableBase
 {
-    public HotStockDayViewModel(HotStockDayDto dto, HotStockApiClient hotStockApiClient)
+    public HotStockDayViewModel(HotStockDayDto dto, TTJApiClient hotStockApiClient)
     {
         this.hotStockApiClient = hotStockApiClient;
         Date = dto.Date;
@@ -32,7 +32,7 @@ public class HotStockDayViewModel : BindableBase
     public ObservableCollection<HotStockItemViewModel> TopLosers =>
         new(HotStockItems.Where(i => i.Change.StartsWith("-")));
 
-    private readonly HotStockApiClient hotStockApiClient;
+    private readonly TTJApiClient hotStockApiClient;
 
     private string openingComment;
     public string OpeningComment

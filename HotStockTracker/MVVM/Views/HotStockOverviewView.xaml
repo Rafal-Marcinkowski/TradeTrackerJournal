@@ -40,14 +40,14 @@
 
     <Grid>
         <ScrollViewer
-            HorizontalScrollBarVisibility="Disabled"
+            HorizontalScrollBarVisibility="auto"
             Loaded="ScrollViewer_Loaded"
             VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Days}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border
-                            Width="500"
+                            Width="475"
                             Padding="15"
                             Background="{DynamicResource MaterialDesignCardBackground}"
                             BorderThickness="1"

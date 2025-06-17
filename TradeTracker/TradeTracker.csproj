@@ -58,6 +58,7 @@
     <ProjectReference Include="..\EventTracker\EventTracker.csproj" />
     <ProjectReference Include="..\SessionOpening\SessionOpening.csproj" />
     <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+    <ProjectReference Include="..\StockNotepad\StockNotepad.csproj" />
     <ProjectReference Include="..\ValidationComponent\ValidationComponent.csproj" />
   </ItemGroup>
 

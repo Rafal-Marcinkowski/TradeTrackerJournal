@@ -71,9 +71,9 @@ public class AddTransactionValidator : AbstractValidator<TransactionEventViewMod
                 .WithMessage("Tytuł nie może przekraczać 250 znaków");
 
         RuleFor(x => x.Description)
-                .MaximumLength(2000)
+                .MaximumLength(4000)
                 .When(x => !string.IsNullOrEmpty(x.Description))
-                .WithMessage("Opis nie może przekraczać 2000 znaków");
+                .WithMessage("Opis nie może przekraczać 4000 znaków");
     }
 
     private bool BeWithinTradingHours(string date)

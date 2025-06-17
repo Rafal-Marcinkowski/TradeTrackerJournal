@@ -7,7 +7,7 @@ namespace HotStockTracker.MVVM.ViewModels;
 public class HotStockOverviewViewModel : BindableBase
 {
     private readonly HotStockTrackerFacade facade;
-    private readonly HotStockApiClient hotStockApiClient;
+    private readonly TTJApiClient hotStockApiClient;
     private bool _isLoading;
 
     public ObservableCollection<HotStockDayViewModel> Days { get; set; }
@@ -17,7 +17,7 @@ public class HotStockOverviewViewModel : BindableBase
         set => SetProperty(ref _isLoading, value);
     }
 
-    public HotStockOverviewViewModel(HotStockTrackerFacade facade, HotStockApiClient hotStockApiClient)
+    public HotStockOverviewViewModel(HotStockTrackerFacade facade, TTJApiClient hotStockApiClient)
     {
         this.facade = facade;
         this.hotStockApiClient = hotStockApiClient;

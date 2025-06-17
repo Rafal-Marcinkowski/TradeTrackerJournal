@@ -65,6 +65,7 @@ public class DownloadPageSource
         try
         {
             using var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(15);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0");
 
             var response = await httpClient.GetAsync(url);

@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace HotStockTracker.Services;
 
-public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htmlParser)
+public class HotStockDayManager(TTJApiClient apiClient, IHotStockParser htmlParser)
 {
     public async Task<List<HotStockDayDto>> GetLatestDaysAsync(int count = 10)
     {
@@ -27,30 +27,60 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         try
         {
             var now = DateTime.Now;
-            if (!DateTimeManager.ShouldCheckForData(now, out var targetDate))
-            {
-                return await EnsureDayExistsAsync(targetDate);
-            }
+            DateTimeManager.ShouldCheckForData(now, out var today, out var previousWorkDay);
 
-            var existingDays = await apiClient.GetHotStockDaysAsync();
-            var existingDay = existingDays.FirstOrDefault(d => d.Date.Date == targetDate.Date);
-
-            if (existingDay != null)
+            var todayExists = await EnsureDayExistsAsync(today);
+            if (!todayExists)
             {
-                if (existingDay.HotStockItems == null || existingDay.HotStockItems.Count == 0)
-                {
-                    return await UpdateDayWithDataAsync(existingDay);
-                }
+                Debug.WriteLine($"Failed to ensure today ({today:yyyy-MM-dd}) exists");
                 return false;
             }
 
-            return await AddNewDayWithDataAsync(targetDate);
+            if (DateTimeManager.ShouldUpdateToday(now))
+            {
+                var todayUpdated = await CheckAndUpdateSingleDayAsync(today);
+                if (!todayUpdated)
+                {
+                    Debug.WriteLine($"Failed to update today ({today:yyyy-MM-dd})");
+                    return false;
+                }
+            }
+
+            if (previousWorkDay != DateTime.MinValue)
+            {
+                var previousDayUpdated = await CheckAndUpdateSingleDayAsync(previousWorkDay);
+                if (!previousDayUpdated)
+                {
+                    Debug.WriteLine($"Failed to update previous work day ({previousWorkDay:yyyy-MM-dd})");
+                    return false;
+                }
+            }
+
+            return true;
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Error in CheckAndUpdateDaysAsync: {ex}");
             return false;
         }
+    }
+
+    private async Task<bool> CheckAndUpdateSingleDayAsync(DateTime date)
+    {
+        var existingDays = await apiClient.GetHotStockDaysAsync();
+        var existingDay = existingDays.FirstOrDefault(d => d.Date.Date == date.Date);
+
+        if (existingDay == null)
+        {
+            return await AddNewDayWithDataAsync(date);
+        }
+
+        if (existingDay.HotStockItems == null || existingDay.HotStockItems.Count == 0)
+        {
+            return await UpdateDayWithDataAsync(existingDay);
+        }
+
+        return true;
     }
 
     private async Task<bool> EnsureDayExistsAsync(DateTime date)
@@ -78,8 +108,8 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
 
         await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
 
-        var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
-        var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
+        var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW", existingDay.Date.Date);
+        var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect", existingDay.Date.Date);
 
         var allStocks = gpwStocks.Concat(ncStocks).ToList();
         existingDay.HotStockItems = await GetTopMovers(allStocks);
@@ -93,6 +123,7 @@ public class HotStockDayManager(HotStockApiClient apiClient, IHotStockParser htm
         var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
 
         await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
+        //File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\gpw.html", ncHtmlTask.Result);
 
         var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
         var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");

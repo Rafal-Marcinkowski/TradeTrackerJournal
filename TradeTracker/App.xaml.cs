@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using SessionOpening.Module;
+using StockNotepad.Module;
 using System.Windows;
 using TradeTracker.Module;
 using TradeTracker.MVVM.Views;
@@ -54,6 +55,7 @@ public partial class App : PrismApplication
         moduleCatalog.AddModule<EventTrackerModule>();
         moduleCatalog.AddModule<SessionOpeningModule>();
         moduleCatalog.AddModule<HotStockTrackerModule>();
+        moduleCatalog.AddModule<StockNotepadModule>();
     }
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)

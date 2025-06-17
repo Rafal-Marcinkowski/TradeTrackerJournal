@@ -18,8 +18,8 @@ namespace EFCore.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Summary = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OpeningComment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Summary = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    OpeningComment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     IsSummaryExpanded = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -33,17 +33,17 @@ namespace EFCore.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Market = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Change = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ChangePercent = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReferencePrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OpenPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MinPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MaxPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Volume = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Turnover = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Market = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Price = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Change = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    ChangePercent = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    ReferencePrice = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    OpenPrice = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    MinPrice = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    MaxPrice = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Volume = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Turnover = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     HotStockDayId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

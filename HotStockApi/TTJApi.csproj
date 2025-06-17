@@ -20,6 +20,7 @@
     <ProjectReference Include="..\EFCore\EFCore.csproj" />
     <ProjectReference Include="..\HotStockTracker\HotStockTracker.csproj" />
     <ProjectReference Include="..\SharedProject\SharedProject.csproj" />
+    <ProjectReference Include="..\StockNotepad\StockNotepad.csproj" />
   </ItemGroup>
 
 </Project>

@@ -22,6 +22,16 @@ public class AddEventValidator : AbstractValidator<Event>
         RuleFor(x => x.InformationLink)
             .Must(BeAValidUrl).WithMessage("Wklej poprawny link")
             .When(x => !string.IsNullOrEmpty(x.InformationLink));
+
+        RuleFor(x => x.InitialDescription)
+                .MaximumLength(250)
+                .When(x => !string.IsNullOrEmpty(x.InitialDescription))
+                .WithMessage("Tytuł nie może przekraczać 250 znaków");
+
+        RuleFor(x => x.Description)
+                .MaximumLength(4000)
+                .When(x => !string.IsNullOrEmpty(x.Description))
+                .WithMessage("Opis nie może przekraczać 4000 znaków");
     }
 
     private bool BeAValidTime(DateTime entryDate)

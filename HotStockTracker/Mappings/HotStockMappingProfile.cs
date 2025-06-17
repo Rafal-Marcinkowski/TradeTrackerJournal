@@ -10,9 +10,13 @@ public class HotStockMappingProfile : Profile
     {
         CreateMap<HotStockDay, HotStockDayDto>()
             .ForMember(dest => dest.HotStockItems, opt => opt.MapFrom(src => src.HotStockItems))
-            .ReverseMap();
+            .ReverseMap()
+            .ForMember(dest => dest.HotStockItems, opt => opt.Ignore());
 
-        CreateMap<HotStockItem, HotStockItemDto>().ReverseMap();
+        CreateMap<HotStockItem, HotStockItemDto>()
+            .ReverseMap()
+            .ForMember(dest => dest.HotStockDay, opt => opt.Ignore())
+            .ForMember(dest => dest.HotStockDayId, opt => opt.Ignore());
 
         CreateMap<HotStockDayDto, HotStockDayViewModel>();
     }

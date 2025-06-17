@@ -9,5 +9,5 @@
     [InformationLink] NVARCHAR(250) NULL, 
     [IsTracking] BIT NOT NULL, 
     [EntryMedianTurnover] INT NOT NULL,
-    [Description] NVARCHAR(2000) NULL
+    [Description] NVARCHAR(4000) NULL
 )

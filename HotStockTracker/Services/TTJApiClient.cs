@@ -7,12 +7,12 @@ using System.Text.Json.Serialization;
 
 namespace HotStockTracker.Services;
 
-public class HotStockApiClient
+public class TTJApiClient
 {
     private readonly HttpClient _http;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public HotStockApiClient(HttpClient http)
+    public TTJApiClient(HttpClient http)
     {
         _http = http;
         _http.BaseAddress = new Uri("http://localhost:5153/");
@@ -78,6 +78,8 @@ public class HotStockApiClient
         try
         {
             var dateStr = dto.Date.ToString("yyyy-MM-dd");
+            Debug.WriteLine($"Updating HotStockDay for date: {dateStr}");
+            Debug.WriteLine($"Items: {dto.HotStockItems?.Count}");
             var response = await _http.PutAsJsonAsync($"api/HotStockDay/{dateStr}", dto, _jsonOptions);
 
             Debug.WriteLine($"PUT to: api/HotStockDay/{dateStr}");

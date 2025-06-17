@@ -153,7 +153,10 @@
                                                     Command="{Binding DataContext.Commands.EditCommentCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
                                                     CommandParameter="{Binding}"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}">
-                                                    <iconPacks:Material Kind="PencilOutline" Width="10" Height="10"/>
+                                                    <iconPacks:Material
+                                                        Width="10"
+                                                        Height="10"
+                                                        Kind="PencilOutline" />
                                                 </Button>
                                                 <Button
                                                     Width="25"
@@ -164,7 +167,10 @@
                                                     Command="{Binding DataContext.Commands.ConfirmCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
                                                     CommandParameter="{Binding}"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
-                                                    <iconPacks:Material Kind="CheckOutline" Width="10" Height="10"/>
+                                                    <iconPacks:Material
+                                                        Width="10"
+                                                        Height="10"
+                                                        Kind="CheckOutline" />
                                                 </Button>
                                                 <Button
                                                     Width="25"
@@ -175,7 +181,10 @@
                                                     Command="{Binding DataContext.Commands.DiscardCommentChangesCommand, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroContentControl}}}"
                                                     CommandParameter="{Binding}"
                                                     Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=false}">
-                                                    <iconPacks:Material Kind="Cancel" Width="10" Height="10"/>
+                                                    <iconPacks:Material
+                                                        Width="10"
+                                                        Height="10"
+                                                        Kind="Cancel" />
                                                 </Button>
                                                 <Button
                                                     Width="25"
@@ -190,7 +199,10 @@
                                                             <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" />
                                                         </MultiBinding>
                                                     </Button.CommandParameter>
-                                                    <iconPacks:Material Kind="DeleteOutline" Width="10" Height="10"/>
+                                                    <iconPacks:Material
+                                                        Width="10"
+                                                        Height="10"
+                                                        Kind="DeleteOutline" />
                                                 </Button>
                                             </StackPanel>
 

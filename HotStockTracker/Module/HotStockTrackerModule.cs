@@ -13,7 +13,7 @@ public class HotStockTrackerModule : IModule
         containerRegistry.RegisterSingleton<HotStockOverviewViewModel>();
         containerRegistry.RegisterSingleton<HotStockDayManager>();
         containerRegistry.RegisterSingleton<HotStockTrackerFacade>();
-        containerRegistry.Register<HotStockApiClient>();
+        containerRegistry.Register<TTJApiClient>();
 
         containerRegistry.RegisterForNavigation<HotStockOverviewView>();
     }
