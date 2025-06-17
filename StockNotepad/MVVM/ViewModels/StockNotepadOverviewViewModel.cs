@@ -64,92 +64,92 @@ public class StockNotepadOverviewViewModel : BindableBase, INavigationAware
         IsEditingSummary = false;
     });
 
-    public ICommand AddNewNoteCommand => new DelegateCommand(() =>
-    {
-        var newNote = new NoteDto
-        {
-            Title = "Nowa notatka",
-            Content = "",
-            CreatedAt = DateTime.Now,
-            IsEditing = true
-        };
-        SelectedCompanyItem.Notes.Add(newNote);
-    });
-
-    //public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note =>
+    //public ICommand AddNewNoteCommand => new DelegateCommand(() =>
     //{
-    //    note.IsEditing = true;
-    //    note.BackupTitle = note.Title;
-    //    note.BackupContent = note.Content;
+    //    var newNote = new NoteDto
+    //    {
+    //        Title = "Nowa notatka",
+    //        Content = "",
+    //        CreatedAt = DateTime.Now,
+    //        IsEditing = true
+    //    };
+    //    SelectedCompanyItem.Notes.Add(newNote);
     //});
 
-    //public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(note =>
+    ////public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note =>
+    ////{
+    ////    note.IsEditing = true;
+    ////    note.BackupTitle = note.Title;
+    ////    note.BackupContent = note.Content;
+    ////});
+
+    ////public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(note =>
+    ////{
+    ////    note.IsEditing = false;
+    ////});
+
+    ////public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
+    ////{
+    ////    note.Title = note.BackupTitle;
+    ////    note.Content = note.BackupContent;
+    ////    note.IsEditing = false;
+    ////});
+
+    //public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(note =>
     //{
-    //    note.IsEditing = false;
+    //    SelectedCompanyItem.Notes.Remove(note);
     //});
 
-    //public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
+
+
+    //private void CancelEditSummary()
     //{
-    //    note.Title = note.BackupTitle;
-    //    note.Content = note.BackupContent;
-    //    note.IsEditing = false;
-    //});
-
-    public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(note =>
-    {
-        SelectedCompanyItem.Notes.Remove(note);
-    });
-
-
-
-    private void CancelEditSummary()
-    {
-        SelectedCompanyItem.Summary.Content = _summaryBackup;
-        IsEditingSummary = false;
-    }
-
-    // Włącz edycję: zachowaj backup treści
-    private void ToggleEditSummary()
-    {
-        _summaryBackup = SelectedCompanyItem.Summary.Content;
-        IsEditingSummary = true;
-    }
-
-    // Notatki:
-
-    private void AddNewNote()
-    {
-        var newNote = new NoteDto
-        {
-            Title = "Nowa notatka",
-            Content = "",
-            CreatedAt = DateTime.Now,
-            IsEditing = true
-        };
-        SelectedCompanyItem.Notes.Add(newNote);
-    }
-
-    //private void EditNote(NoteDto note)
-    //{
-    //    note.IsEditing = true;
-    //    note.BackupTitle = note.Title;
-    //    note.BackupContent = note.Content;
+    //    SelectedCompanyItem.Summary.Content = _summaryBackup;
+    //    IsEditingSummary = false;
     //}
 
-    //private void SaveNote(NoteDto note)
+    //// Włącz edycję: zachowaj backup treści
+    //private void ToggleEditSummary()
     //{
-    //    note.IsEditing = false;
+    //    _summaryBackup = SelectedCompanyItem.Summary.Content;
+    //    IsEditingSummary = true;
     //}
 
-    //private void CancelEditNote(NoteDto note)
+    //// Notatki:
+
+    //private void AddNewNote()
     //{
-    //    note.Title = note.BackupTitle;
-    //    note.Content = note.BackupContent;
-    //    note.IsEditing = false;
+    //    var newNote = new NoteDto
+    //    {
+    //        Title = "Nowa notatka",
+    //        Content = "",
+    //        CreatedAt = DateTime.Now,
+    //        IsEditing = true
+    //    };
+    //    SelectedCompanyItem.Notes.Add(newNote);
     //}
 
-    private void DeleteNote(NoteDto note)
-    {
-        SelectedCompanyItem.Notes.Remove(note);
-    }
+    ////private void EditNote(NoteDto note)
+    ////{
+    ////    note.IsEditing = true;
+    ////    note.BackupTitle = note.Title;
+    ////    note.BackupContent = note.Content;
+    ////}
+
+    ////private void SaveNote(NoteDto note)
+    ////{
+    ////    note.IsEditing = false;
+    ////}
+
+    ////private void CancelEditNote(NoteDto note)
+    ////{
+    ////    note.Title = note.BackupTitle;
+    ////    note.Content = note.BackupContent;
+    ////    note.IsEditing = false;
+    ////}
+
+    //private void DeleteNote(NoteDto note)
+    //{
+    //    SelectedCompanyItem.Notes.Remove(note);
+    //}
 }

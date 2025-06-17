@@ -10,7 +10,6 @@ public class NotepadCompanyItem
     [MaxLength(35)]
     public string CompanyName { get; set; } = string.Empty;
 
-    [JsonIgnore]
     public CompanySummary? Summary { get; set; }
 
     [JsonIgnore]
