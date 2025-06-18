@@ -62,7 +62,7 @@ public class HotStockParser : IHotStockParser
 
                 var rawTime = timeCell.InnerText.Trim();
 
-                if (!TryParsePolishDate(rawTime, out DateTime parsedDate))
+                if (!TryParsePolishDate(rawTime, date, out DateTime parsedDate))
                     continue;
 
                 if (parsedDate.Date != date.Date)
@@ -89,9 +89,16 @@ public class HotStockParser : IHotStockParser
 
         return result;
     }
-    private static bool TryParsePolishDate(string input, out DateTime date)
+    private static bool TryParsePolishDate(string input, DateTime referenceDate, out DateTime result)
     {
         var culture = new CultureInfo("pl-PL");
-        return DateTime.TryParseExact(input, "d MMM HH:mm", culture, DateTimeStyles.None, out date);
+
+        if (TimeSpan.TryParseExact(input, "hh\\:mm", culture, out TimeSpan time))
+        {
+            result = referenceDate.Date.Add(time);
+            return true;
+        }
+
+        return DateTime.TryParseExact(input, "d MMM HH:mm", culture, DateTimeStyles.None, out result);
     }
 }
