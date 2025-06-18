@@ -1,10 +1,18 @@
 ﻿namespace StockNotepad.MVVM.Models;
 
-public class CompanySummaryDto
+public class CompanySummaryDto : BindableBase
 {
-    public string Content { get; set; } = string.Empty;
+    private string content = string.Empty;
+    public string Content
+    {
+        get => content;
+        set => SetProperty(ref content, value);
+    }
 
-    public DateTime UpdatedAt { get; set; }
-
-    public bool IsEditing { get; set; } = false;
+    private DateTime updatedAt;
+    public DateTime UpdatedAt
+    {
+        get => updatedAt;
+        set => SetProperty(ref updatedAt, value);
+    }
 }

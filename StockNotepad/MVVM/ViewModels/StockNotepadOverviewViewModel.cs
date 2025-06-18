@@ -1,19 +1,13 @@
-﻿using StockNotepad.MVVM.Models;
+﻿using SharedProject.Extensions;
+using StockNotepad.MVVM.Models;
 using StockNotepad.Services;
 using System.Windows.Input;
 
 namespace StockNotepad.MVVM.ViewModels;
 
-public class StockNotepadOverviewViewModel : BindableBase, INavigationAware
+public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBase, INavigationAware
 {
-    public StockNotepadOverviewViewModel(TTJApiClient apiClient)
-    {
-        this.apiClient = apiClient;
-    }
-
-    private string _summaryBackup;
-    private readonly TTJApiClient apiClient;
-
+    private string _summaryBackup = string.Empty;
     private NotepadCompanyItemDto? selectedCompanyItem;
     public NotepadCompanyItemDto? SelectedCompanyItem
     {
@@ -27,19 +21,15 @@ public class StockNotepadOverviewViewModel : BindableBase, INavigationAware
             && param is string companyName)
         {
             var allCompanies = await apiClient.GetNotepadCompanyItemsAsync();
-            //SelectedCompanyItem = allCompanies
-            //    .FirstOrDefault(x => x.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
-            SelectedCompanyItem = new()
-            {
-                CompanyName = companyName
-            };
+            SelectedCompanyItem = allCompanies
+                .FirstOrDefault(x => x.CompanyName.Equals(companyName, StringComparison.OrdinalIgnoreCase));
         }
     }
 
     public bool IsNavigationTarget(NavigationContext navigationContext) => true;
     public void OnNavigatedFrom(NavigationContext navigationContext) { }
 
-    private bool _isEditingSummary;
+    private bool _isEditingSummary = false;
     public bool IsEditingSummary
     {
         get => _isEditingSummary;
@@ -48,13 +38,24 @@ public class StockNotepadOverviewViewModel : BindableBase, INavigationAware
 
     public ICommand ToggleEditSummaryCommand => new DelegateCommand(() =>
     {
-        _summaryBackup = SelectedCompanyItem.Summary.Content;
-        IsEditingSummary = true;
+        IsEditingSummary = !IsEditingSummary;
+        if (IsEditingSummary)
+        {
+            _summaryBackup = SelectedCompanyItem.Summary.Content;
+        }
+        else
+        {
+            SelectedCompanyItem.Summary.Content = _summaryBackup;
+        }
     });
 
-    public ICommand SaveSummaryCommand => new DelegateCommand(() =>
+    public ICommand SaveSummaryCommand => new DelegateCommand(async () =>
     {
-        SelectedCompanyItem.Summary.UpdatedAt = DateTime.Now;
+        if (!_summaryBackup.Equals(SelectedCompanyItem.Summary.Content, StringComparison.Ordinal))
+        {
+            SelectedCompanyItem.Summary.UpdatedAt = DateTime.Now.TrimToSeconds();
+            await apiClient.UpdateSummaryAsync(SelectedCompanyItem.Id, SelectedCompanyItem.Summary);
+        }
         IsEditingSummary = false;
     });
 
@@ -99,21 +100,6 @@ public class StockNotepadOverviewViewModel : BindableBase, INavigationAware
     //{
     //    SelectedCompanyItem.Notes.Remove(note);
     //});
-
-
-
-    //private void CancelEditSummary()
-    //{
-    //    SelectedCompanyItem.Summary.Content = _summaryBackup;
-    //    IsEditingSummary = false;
-    //}
-
-    //// Włącz edycję: zachowaj backup treści
-    //private void ToggleEditSummary()
-    //{
-    //    _summaryBackup = SelectedCompanyItem.Summary.Content;
-    //    IsEditingSummary = true;
-    //}
 
     //// Notatki:
 

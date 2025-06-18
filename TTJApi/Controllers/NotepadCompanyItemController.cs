@@ -12,8 +12,7 @@ namespace TTJApi.Controllers;
 public class NotepadCompanyItemController(AppDbContext db, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-
-    public async Task<ActionResult<List<NotepadCompanyItemDto>>> Get()
+    public async Task<ActionResult<IEnumerable<NotepadCompanyItemDto>>> Get()
     {
         var entities = await db.CompanyItems
             .Include(x => x.Summary)
@@ -28,7 +27,8 @@ public class NotepadCompanyItemController(AppDbContext db, IMapper mapper) : Con
     public async Task<IActionResult> Post([FromBody] NotepadCompanyItemDto dto)
     {
         var entity = mapper.Map<NotepadCompanyItem>(dto);
-
+        if (entity.Summary != null)
+            entity.Summary.NotepadCompanyItem = entity;
         db.CompanyItems.Add(entity);
         await db.SaveChangesAsync();
         return Ok();

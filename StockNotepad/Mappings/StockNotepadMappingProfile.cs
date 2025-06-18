@@ -11,21 +11,19 @@ public class StockNotepadMappingProfile : Profile
     {
         CreateMap<NotepadCompanyItem, NotepadCompanyItemDto>()
             .ForMember(dest => dest.Summary, opt => opt.MapFrom(src => src.Summary))
+            .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
             .ReverseMap()
-            .ForMember(dest => dest.Notes, opt => opt.Ignore())
-            .AfterMap((dto, entity) =>
-            {
-                if (entity.Summary is not null)
-                    entity.Summary.NotepadCompanyItem = entity;
-            });
+            .ForMember(dest => dest.Notes, opt => opt.Ignore());
 
         CreateMap<CompanySummaryDto, CompanySummary>()
             .ForMember(dest => dest.NotepadCompanyItem, opt => opt.Ignore())
-            .ForMember(dest => dest.NotepadCompanyItemId, opt => opt.Ignore());
+            .ForMember(dest => dest.NotepadCompanyItemId, opt => opt.Ignore())
+            .ReverseMap();
 
         CreateMap<NoteDto, Note>()
             .ForMember(dest => dest.NotepadCompanyItem, opt => opt.Ignore())
-            .ForMember(dest => dest.NotepadCompanyItemId, opt => opt.Ignore());
+            .ForMember(dest => dest.NotepadCompanyItemId, opt => opt.Ignore())
+            .ReverseMap();
 
         CreateMap<NotepadCompanyItemDto, NotepadCompanyItemViewModel>().ReverseMap();
     }

@@ -37,9 +37,25 @@ public class TTJApiClient
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<bool> UpdateNotepadCompanyItemAsync(NotepadCompanyItemDto companyItemDto)
+    public async Task<bool> UpdateSummaryAsync(int id, CompanySummaryDto summaryDto)
     {
-        var response = await _http.PutAsJsonAsync("api/NotepadCompanyItem", companyItemDto, _jsonOptions);
+        var response = await _http.PutAsJsonAsync($"api/NotepadCompanyItem/{id}/summary", summaryDto, _jsonOptions);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<int?> AddNoteAsync(int companyItemId, NoteDto noteDto)
+    {
+        var response = await _http.PostAsJsonAsync($"api/NotepadCompanyItem/{companyItemId}/notes", noteDto, _jsonOptions);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        var stream = await response.Content.ReadAsStreamAsync();
+        return await JsonSerializer.DeserializeAsync<int>(stream, _jsonOptions);
+    }
+
+    public async Task<bool> UpdateNoteAsync(int noteId, NoteDto noteDto)
+    {
+        var response = await _http.PutAsJsonAsync($"/notes/{noteId}", noteDto, _jsonOptions);
         return response.IsSuccessStatusCode;
     }
 
@@ -49,3 +65,4 @@ public class TTJApiClient
         return response.IsSuccessStatusCode;
     }
 }
+
