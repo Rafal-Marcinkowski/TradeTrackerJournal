@@ -1,4 +1,6 @@
-﻿namespace StockNotepad.MVVM.Models;
+﻿using System.Collections.ObjectModel;
+
+namespace StockNotepad.MVVM.Models;
 
 public class NotepadCompanyItemDto
 {
@@ -8,5 +10,5 @@ public class NotepadCompanyItemDto
 
     public CompanySummaryDto? Summary { get; set; }
 
-    public List<NoteDto>? Notes { get; set; } = [];
+    public ObservableCollection<NoteDto>? Notes { get; set; } = [];
 }

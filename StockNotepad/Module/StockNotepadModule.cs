@@ -10,7 +10,7 @@ public class StockNotepadModule : IModule
     public void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.RegisterSingleton<StockNotepadOverviewViewModel>();
-        containerRegistry.RegisterSingleton<StockNotepadSelectCompanyViewModel>();
+        containerRegistry.Register<StockNotepadSelectCompanyViewModel>();
 
         containerRegistry.RegisterForNavigation<StockNotepadOverviewView>();
         containerRegistry.RegisterForNavigation<StockNotepadSelectCompanyView>();

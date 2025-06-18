@@ -65,41 +65,63 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBas
         IsEditingSummary = false;
     });
 
-    //public ICommand AddNewNoteCommand => new DelegateCommand(() =>
-    //{
-    //    var newNote = new NoteDto
-    //    {
-    //        Title = "Nowa notatka",
-    //        Content = "",
-    //        CreatedAt = DateTime.Now,
-    //        IsEditing = true
-    //    };
-    //    SelectedCompanyItem.Notes.Add(newNote);
-    //});
+    public ICommand AddNewNoteCommand => new DelegateCommand(() =>
+    {
+        var newNote = new NoteDto
+        {
+            Title = "Nowa notatka",
+            Content = "",
+            CreatedAt = DateTime.Now.TrimToSeconds(),
+            IsEditing = true
+        };
 
-    ////public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note =>
-    ////{
-    ////    note.IsEditing = true;
-    ////    note.BackupTitle = note.Title;
-    ////    note.BackupContent = note.Content;
-    ////});
+        SelectedCompanyItem.Notes.Add(newNote);
+    });
 
-    ////public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(note =>
-    ////{
-    ////    note.IsEditing = false;
-    ////});
+    public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note =>
+    {
+        note.IsEditing = !note.IsEditing;
+        if (note.IsEditing)
+        {
+            note.TitleBackup = note.Title;
+            note.ContentBackup = note.Content;
+        }
+        else
+        {
+            note.Title = note.TitleBackup;
+            note.Content = note.ContentBackup;
+        }
+    });
 
-    ////public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
-    ////{
-    ////    note.Title = note.BackupTitle;
-    ////    note.Content = note.BackupContent;
-    ////    note.IsEditing = false;
-    ////});
+    public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(async note =>
+    {
+        if (!note.TitleBackup.Equals(note.Title, StringComparison.Ordinal) ||
+            !note.ContentBackup.Equals(note.Content, StringComparison.Ordinal))
+        {
+            if (note.Id > 0)
+            {
+                await apiClient.UpdateNoteAsync(note.Id, note);
+            }
+            else
+            {
+                await apiClient.AddNoteAsync(SelectedCompanyItem.Id, note);
+            }
+        }
+        note.IsEditing = false;
+    });
 
-    //public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(note =>
-    //{
-    //    SelectedCompanyItem.Notes.Remove(note);
-    //});
+    public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
+    {
+        note.Title = note.TitleBackup;
+        note.Content = note.ContentBackup;
+        note.IsEditing = false;
+    });
+
+    public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(note =>
+    {
+        // czy na pewno diag
+        SelectedCompanyItem.Notes.Remove(note);
+    });
 
     //// Notatki:
 

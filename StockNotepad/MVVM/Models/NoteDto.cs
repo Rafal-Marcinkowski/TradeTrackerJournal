@@ -1,12 +1,33 @@
 ﻿namespace StockNotepad.MVVM.Models;
 
-public class NoteDto
+public class NoteDto : BindableBase
 {
-    public string Title { get; set; } = string.Empty;
+    public int Id { get; set; }
 
-    public string Content { get; set; } = string.Empty;
+    private string title = string.Empty;
+    public string Title
+    {
+        get => title;
+        set => SetProperty(ref title, value);
+    }
+
+
+    private string content = string.Empty;
+    public string Content
+    {
+        get => content;
+        set => SetProperty(ref content, value);
+    }
 
     public DateTime CreatedAt { get; set; }
 
-    public bool IsEditing { get; set; } = false;
+    private bool isEditing = false;
+    public bool IsEditing
+    {
+        get => isEditing;
+        set => SetProperty(ref isEditing, value);
+    }
+
+    public string TitleBackup = string.Empty;
+    public string ContentBackup = string.Empty;
 }
