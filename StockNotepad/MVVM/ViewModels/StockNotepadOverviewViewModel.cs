@@ -1,11 +1,12 @@
-﻿using SharedProject.Extensions;
+﻿using Infrastructure.Interfaces;
+using SharedProject.Extensions;
 using StockNotepad.MVVM.Models;
 using StockNotepad.Services;
 using System.Windows.Input;
 
 namespace StockNotepad.MVVM.ViewModels;
 
-public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBase, INavigationAware
+public class StockNotepadOverviewViewModel(TTJApiClient apiClient, ICompanyManager companyManager) : BindableBase, INavigationAware
 {
     private string _summaryBackup = string.Empty;
     private NotepadCompanyItemDto? selectedCompanyItem;
@@ -104,7 +105,10 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBas
             }
             else
             {
-                await apiClient.AddNoteAsync(SelectedCompanyItem.Id, note);
+                note.CreatedAt = DateTime.Now.TrimToSeconds();
+                int? id = await apiClient.AddNoteAsync(SelectedCompanyItem.Id, note);
+                note.Id = (int)id;
+                await companyManager.IncrementNoteCount(SelectedCompanyItem.CompanyName);
             }
         }
         note.IsEditing = false;
@@ -112,9 +116,16 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBas
 
     public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
     {
-        note.Title = note.TitleBackup;
-        note.Content = note.ContentBackup;
-        note.IsEditing = false;
+        if (note.Id == 0)
+        {
+            SelectedCompanyItem.Notes.Remove(note);
+        }
+        else
+        {
+            note.Title = note.TitleBackup;
+            note.Content = note.ContentBackup;
+            note.IsEditing = false;
+        }
     });
 
     public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(async note =>
@@ -124,6 +135,7 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBas
         if (note.Id > 0)
         {
             await apiClient.DeleteNoteAsync(note.Id);
+            await companyManager.DecrementNoteCount(SelectedCompanyItem.CompanyName);
         }
     });
 }

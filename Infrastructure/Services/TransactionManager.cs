@@ -29,7 +29,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         var company = await companyData.GetCompanyAsync(Transaction.CompanyID);
         company.TransactionCount++;
         await companyData.UpdateCompanyAsync(company.ID, Transaction.CompanyName,
-            company.TransactionCount, company.EventCount);
+            company.TransactionCount, company.EventCount, company.NoteCount);
 
         Transaction.ID = await transactionData.GetID(Transaction);
         eventAggregator.GetEvent<TransactionAddedEvent>().Publish(Transaction);
@@ -156,7 +156,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
             await transactionData.InsertTransactionAsync(transaction);
             var company = await companyData.GetCompanyAsync(transaction.CompanyID);
             company.TransactionCount++;
-            await companyData.UpdateCompanyAsync(company.ID, transaction.CompanyName, company.TransactionCount, company.EventCount);
+            await companyData.UpdateCompanyAsync(company.ID, transaction.CompanyName, company.TransactionCount, company.EventCount, company.NoteCount);
             await transactionData.UpdateTransactionAsync(transaction);
             transaction.ID = await transactionData.GetID(transaction);
             eventAggregator.GetEvent<TransactionAddedEvent>().Publish(transaction);

@@ -20,7 +20,7 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
         var company = await companyData.GetCompanyAsync(@event.CompanyID);
         company.EventCount++;
         await companyData.UpdateCompanyAsync(company.ID, @event.CompanyName,
-            company.TransactionCount, company.EventCount);
+            company.TransactionCount, company.EventCount, company.NoteCount);
 
         @event.ID = await eventData.GetID(@event);
         eventAggregator.GetEvent<EventAddedEvent>().Publish(@event);
@@ -70,7 +70,7 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
             await eventData.InsertEventAsync(e);
             var company = await companyData.GetCompanyAsync(e.CompanyID);
             company.EventCount++;
-            await companyData.UpdateCompanyAsync(company.ID, e.CompanyName, company.TransactionCount, company.EventCount);
+            await companyData.UpdateCompanyAsync(company.ID, e.CompanyName, company.TransactionCount, company.EventCount, company.NoteCount);
             await eventData.UpdateEventAsync(e);
             e.ID = await eventData.GetID(e);
             eventAggregator.GetEvent<EventAddedEvent>().Publish(e);

@@ -8,5 +8,5 @@ public interface ICompanyData
     Task<Company> GetCompanyAsync(int id);
     Task<int> GetCompanyID(string companyName);
     Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount);
-    Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount);
+    Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount, int noteCount);
 }

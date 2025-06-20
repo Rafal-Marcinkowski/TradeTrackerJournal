@@ -23,25 +23,12 @@ public class StockNotepadSelectCompanyViewModel : BaseListViewModel<Company>
     }
 
     protected override void OnCollectionFiltered()
-        => ItemsSource = [.. ItemsSource.OrderBy(q => q.CompanyName)];
+        => ItemsSource = [.. ItemsSource.OrderByDescending(q => q.NoteCount)];
 
     private async Task LoadCompaniesAsync()
     {
         ItemsSource = [.. await companyData.GetAllCompaniesAsync()];
-
-        //foreach (var item in ItemsSource)
-        //{
-        //    await apiClient.AddNotepadCompanyItemAsync(new NotepadCompanyItemDto
-        //    {
-        //        CompanyName = item.CompanyName,
-        //        Summary = new CompanySummaryDto
-        //        {
-        //            Content = $"Podsumowanie dla: {item.CompanyName}",
-        //            UpdatedAt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-        //                 DateTime.Now.Hour, DateTime.Now.Minute, 0),
-        //        },
-        //    }).ConfigureAwait(false);
-        //}
+        OnCollectionFiltered();
     }
 
     public ICommand ConfirmCompanySelectionCommand => new DelegateCommand<Company>((selectedCompany) =>

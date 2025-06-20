@@ -70,11 +70,22 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock
                                 Grid.Column="0"
                                 FontSize="12"
                                 FontWeight="DemiBold"
                                 Text="{Binding CompanyName}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="0,0,15,0"
+                                HorizontalAlignment="Right"
+                                FontSize="12"
+                                FontWeight="DemiBold"
+                                Text="{Binding NoteCount, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

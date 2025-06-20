@@ -21,9 +21,9 @@ public class CompanyData(ISQLDataAccess dBAccess) : ICompanyData
         await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount });
     }
 
-    public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount)
+    public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount, int noteCount)
     {
-        await dBAccess.SaveDataAsync("UpdateCompany", new { ID = id, CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount });
+        await dBAccess.SaveDataAsync("UpdateCompany", new { ID = id, CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount, NoteCount = noteCount });
     }
 
     public async Task DeleteCompanyAsync(int id)
