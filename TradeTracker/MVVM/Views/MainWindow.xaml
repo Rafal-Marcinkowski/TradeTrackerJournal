@@ -45,7 +45,7 @@
                         Margin="10"
                         VerticalAlignment="Center"
                         FontSize="20"
-                        Text="Dziennik transakcji" />
+                        Text="Transakcje" />
                 </StackPanel>
             </Button>
             <Button
@@ -67,7 +67,7 @@
                         Margin="10"
                         VerticalAlignment="Center"
                         FontSize="20"
-                        Text="Dziennik zdarzeń" />
+                        Text="Zdarzenia" />
                 </StackPanel>
             </Button>
 
@@ -86,11 +86,11 @@
                         Margin="10"
                         VerticalAlignment="Center"
                         FontSize="20"
-                        Text="Gorące spółki/trendy" />
-                    <iconPacks:PackIconWeatherIcons
+                        Text="Puls Rynku" />
+                    <iconPacks:PackIconGameIcons
                         Width="50"
                         Height="50"
-                        Kind="Hot" />
+                        Kind="BurningRoundShot" />
                 </StackPanel>
             </Button>
 
@@ -109,11 +109,11 @@
                         Margin="10"
                         VerticalAlignment="Center"
                         FontSize="20"
-                        Text="Notatki giełdowe" />
-                    <iconPacks:PackIconGameIcons
+                        Text="Notatnik" />
+                    <iconPacks:PackIconLucide
                         Width="50"
                         Height="50"
-                        Kind="Notebook" />
+                        Kind="NotebookPen" />
                 </StackPanel>
             </Button>
             <Button
@@ -132,10 +132,10 @@
                         VerticalAlignment="Center"
                         FontSize="20"
                         Text="Otwarcie sesji" />
-                    <iconPacks:PackIconGameIcons
+                    <iconPacks:PackIconRemixIcon
                         Width="50"
                         Height="50"
-                        Kind="OpenGate" />
+                        Kind="DoorOpenLine" />
                 </StackPanel>
             </Button>
         </StackPanel>

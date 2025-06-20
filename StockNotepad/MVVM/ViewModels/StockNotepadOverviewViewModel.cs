@@ -117,47 +117,13 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient) : BindableBas
         note.IsEditing = false;
     });
 
-    public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(note =>
+    public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(async note =>
     {
         // czy na pewno diag
-        SelectedCompanyItem.Notes.Remove(note);
+        SelectedCompanyItem?.Notes?.Remove(note);
+        if (note.Id > 0)
+        {
+            await apiClient.DeleteNoteAsync(note.Id);
+        }
     });
-
-    //// Notatki:
-
-    //private void AddNewNote()
-    //{
-    //    var newNote = new NoteDto
-    //    {
-    //        Title = "Nowa notatka",
-    //        Content = "",
-    //        CreatedAt = DateTime.Now,
-    //        IsEditing = true
-    //    };
-    //    SelectedCompanyItem.Notes.Add(newNote);
-    //}
-
-    ////private void EditNote(NoteDto note)
-    ////{
-    ////    note.IsEditing = true;
-    ////    note.BackupTitle = note.Title;
-    ////    note.BackupContent = note.Content;
-    ////}
-
-    ////private void SaveNote(NoteDto note)
-    ////{
-    ////    note.IsEditing = false;
-    ////}
-
-    ////private void CancelEditNote(NoteDto note)
-    ////{
-    ////    note.Title = note.BackupTitle;
-    ////    note.Content = note.BackupContent;
-    ////    note.IsEditing = false;
-    ////}
-
-    //private void DeleteNote(NoteDto note)
-    //{
-    //    SelectedCompanyItem.Notes.Remove(note);
-    //}
 }
