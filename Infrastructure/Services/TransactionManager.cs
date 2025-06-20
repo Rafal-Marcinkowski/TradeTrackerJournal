@@ -111,9 +111,9 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
     {
         try
         {
-            if (!await ValidateNewTransactionProperties(transactionVM)) return false;
-
             Transaction transaction = await FillNewTransactionProperties(transactionVM);
+
+            if (!await ValidateNewTransactionProperties(transaction)) return false;
 
             if (transaction.AvgSellPrice != null)
             {
@@ -166,7 +166,7 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         return false;
     }
 
-    private async Task<bool> ValidateNewTransactionProperties(TransactionEventViewModel transaction)
+    private async Task<bool> ValidateNewTransactionProperties(Transaction transaction)
     {
         var validator = new AddTransactionValidator();
         var results = validator.Validate(transaction);
@@ -245,13 +245,20 @@ public class TransactionManager(ITransactionData transactionData, ICompanyData c
         return new Transaction()
         {
             CompanyName = transactionVM.SelectedCompanyName,
-            EntryDate = DateTime.Parse(transactionVM.EntryDate),
-            EntryPrice = decimal.Parse(transactionVM.EntryPrice.Replace(',', '.'), CultureInfo.InvariantCulture),
-            NumberOfShares = int.Parse(transactionVM.NumberOfShares),
-            PositionSize = decimal.Parse(transactionVM.PositionSize.Replace(',', '.'), CultureInfo.InvariantCulture),
+            EntryDate = DateTimeManager.ParseEntryDate(transactionVM.EntryDate.Replace(";", ":")),
+            EntryPrice = decimal.TryParse(transactionVM.EntryPrice.Replace(",", "."), CultureInfo.InvariantCulture, out var ep)
+            ? ep : 0,
+
+            NumberOfShares = int.TryParse(transactionVM.NumberOfShares, out var shares)
+            ? shares : 0,
+
+            PositionSize = decimal.TryParse(transactionVM.PositionSize.Replace(",", "."), CultureInfo.InvariantCulture, out var ps)
+            ? ps : 0,
+
+            AvgSellPrice = string.IsNullOrWhiteSpace(transactionVM.AvgSellPrice)
+            ? null
+            : (decimal.TryParse(transactionVM.AvgSellPrice.Replace(",", "."), CultureInfo.InvariantCulture, out var asp) ? asp : null),
             InformationLink = transactionVM.InformationLink?.Trim(),
-            AvgSellPrice = string.IsNullOrEmpty(transactionVM.AvgSellPrice) ?
-                null : decimal.Parse(transactionVM.AvgSellPrice.Replace(',', '.'), CultureInfo.InvariantCulture),
             InitialDescription = transactionVM.InitialDescription?.Trim(),
             Description = transactionVM.Description?.Trim()
         };

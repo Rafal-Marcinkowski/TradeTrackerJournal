@@ -1,12 +1,12 @@
-﻿using Infrastructure.Interfaces;
-using SharedProject.Extensions;
+﻿using SharedProject.Extensions;
+using StockNotepad.Interfaces;
 using StockNotepad.MVVM.Models;
 using StockNotepad.Services;
 using System.Windows.Input;
 
 namespace StockNotepad.MVVM.ViewModels;
 
-public class StockNotepadOverviewViewModel(TTJApiClient apiClient, ICompanyManager companyManager) : BindableBase, INavigationAware
+public class StockNotepadOverviewViewModel(TTJApiClient apiClient, INoteManager noteManager) : BindableBase, INavigationAware
 {
     private string _summaryBackup = string.Empty;
     private NotepadCompanyItemDto? selectedCompanyItem;
@@ -79,40 +79,9 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient, ICompanyManag
         SelectedCompanyItem.Notes.Add(newNote);
     });
 
-    public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note =>
-    {
-        note.IsEditing = !note.IsEditing;
-        if (note.IsEditing)
-        {
-            note.TitleBackup = note.Title;
-            note.ContentBackup = note.Content;
-        }
-        else
-        {
-            note.Title = note.TitleBackup;
-            note.Content = note.ContentBackup;
-        }
-    });
+    public ICommand EditNoteCommand => new DelegateCommand<NoteDto>(note => noteManager.EditNote(note));
 
-    public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(async note =>
-    {
-        if (!note.TitleBackup.Equals(note.Title, StringComparison.Ordinal) ||
-            !note.ContentBackup.Equals(note.Content, StringComparison.Ordinal))
-        {
-            if (note.Id > 0)
-            {
-                await apiClient.UpdateNoteAsync(note.Id, note);
-            }
-            else
-            {
-                note.CreatedAt = DateTime.Now.TrimToSeconds();
-                int? id = await apiClient.AddNoteAsync(SelectedCompanyItem.Id, note);
-                note.Id = (int)id;
-                await companyManager.IncrementNoteCount(SelectedCompanyItem.CompanyName);
-            }
-        }
-        note.IsEditing = false;
-    });
+    public ICommand SaveNoteCommand => new DelegateCommand<NoteDto>(async note => await noteManager.SaveNote(note, SelectedCompanyItem.Id, SelectedCompanyItem.CompanyName));
 
     public ICommand CancelEditNoteCommand => new DelegateCommand<NoteDto>(note =>
     {
@@ -130,12 +99,14 @@ public class StockNotepadOverviewViewModel(TTJApiClient apiClient, ICompanyManag
 
     public ICommand DeleteNoteCommand => new DelegateCommand<NoteDto>(async note =>
     {
-        // czy na pewno diag
-        SelectedCompanyItem?.Notes?.Remove(note);
-        if (note.Id > 0)
+
+        if (note.Id == 0)
         {
-            await apiClient.DeleteNoteAsync(note.Id);
-            await companyManager.DecrementNoteCount(SelectedCompanyItem.CompanyName);
+            SelectedCompanyItem?.Notes?.Remove(note);
+            return;
         }
+
+        if (await noteManager.TryDeleteNote(note, SelectedCompanyItem.CompanyName))
+            SelectedCompanyItem?.Notes?.Remove(note);
     });
 }

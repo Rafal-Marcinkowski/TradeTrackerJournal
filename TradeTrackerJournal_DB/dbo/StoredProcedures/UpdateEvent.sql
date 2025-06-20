@@ -3,7 +3,7 @@
     @CompanyID INT,
     @CompanyName NVARCHAR(35),
     @EntryDate DATETIME,
-    @EntryPrice DECIMAL(12, 2) = NULL,
+    @EntryPrice DECIMAL(12, 3) = NULL,
     @InitialDescription NVARCHAR(250) = NULL,
     @InformationLink NVARCHAR(250) = NULL,
     @IsTracking BIT,

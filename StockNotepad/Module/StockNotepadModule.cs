@@ -1,5 +1,7 @@
-﻿using StockNotepad.MVVM.ViewModels;
+﻿using StockNotepad.Interfaces;
+using StockNotepad.MVVM.ViewModels;
 using StockNotepad.MVVM.Views;
+using StockNotepad.Services;
 
 namespace StockNotepad.Module;
 
@@ -11,6 +13,7 @@ public class StockNotepadModule : IModule
     {
         containerRegistry.RegisterSingleton<StockNotepadOverviewViewModel>();
         containerRegistry.Register<StockNotepadSelectCompanyViewModel>();
+        containerRegistry.Register<INoteManager, NoteManager>();
 
         containerRegistry.RegisterForNavigation<StockNotepadOverviewView>();
         containerRegistry.RegisterForNavigation<StockNotepadSelectCompanyView>();

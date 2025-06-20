@@ -60,7 +60,7 @@ public class EventManager(IEventData eventData, ICompanyData companyData, IEvent
             DialogText = $"Czy dodać zdarzenie? \n" +
                   $"{e.CompanyName}\n" +
                   $"{e.EntryDate}\n" +
-                  $"Początkowy kurs: {e.EntryPrice}\n"
+                  $"Początkowy kurs: {e.EntryPrice.ToString(CultureInfo.InvariantCulture)}\n"
         };
 
         dialog.ShowDialog();
