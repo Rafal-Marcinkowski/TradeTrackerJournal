@@ -18,6 +18,7 @@
         <Conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <Conv:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter" />
+        <Conv:SmartDecimalConverter x:Key="SmartDecimalConverter" />
         <Conv:CommentObjectMultiConverter x:Key="CommentObjectMultiConverter" />
         <Conv:VolumeToMillionConverter x:Key="VolumeToMillionConverter" />
         <Conv:VisibilityConverter x:Key="VisibilityConverter" />
@@ -473,13 +474,13 @@
                                                     Grid.Row="1"
                                                     Grid.ColumnSpan="2"
                                                     HorizontalAlignment="Center"
-                                                    Text="{Binding OpenPrice}" />
+                                                    Text="{Binding OpenPrice, Converter={StaticResource SmartDecimalConverter}}" />
 
                                                 <TextBlock
                                                     Grid.Row="4"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
-                                                    Text="{Binding ClosePrice}" />
+                                                    Text="{Binding ClosePrice, Converter={StaticResource SmartDecimalConverter}}" />
                                                 <TextBlock
                                                     Grid.Row="4"
                                                     Grid.Column="1"
@@ -503,13 +504,13 @@
                                                     Grid.Row="2"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Left"
-                                                    Text="{Binding MinPrice}" />
+                                                    Text="{Binding MinPrice, Converter={StaticResource SmartDecimalConverter}}" />
                                                 <TextBlock
                                                     Grid.Row="2"
                                                     Grid.Column="1"
                                                     Margin="10,0,0,0"
                                                     HorizontalAlignment="Right"
-                                                    Text="{Binding MaxPrice}" />
+                                                    Text="{Binding MaxPrice, Converter={StaticResource SmartDecimalConverter}}" />
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
