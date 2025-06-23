@@ -27,7 +27,7 @@ public class OpenPositionsViewModel : BindableBase
 
         if (decimal.TryParse(normalizedText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal avgSellPrice))
         {
-            avgSellPrice = Math.Round(avgSellPrice, 2);
+            avgSellPrice = Math.Round(avgSellPrice, 3);
             transaction.AvgSellPrice = avgSellPrice;
         }
 

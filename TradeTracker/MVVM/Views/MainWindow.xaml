@@ -2,7 +2,9 @@
     x:Class="TradeTracker.MVVM.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
@@ -15,6 +17,35 @@
     TitleCharacterCasing="Normal"
     TitleForeground="Black"
     mc:Ignorable="d">
+
+
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button x:Name="SettingsButton" ToolTip="Ustawienia">
+                <iconPacks:PackIconMaterial
+                    Width="20"
+                    Height="20"
+                    Kind="Cog" />
+
+                <Button.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding DataContext.NavigateToCompanyRenameCommand, RelativeSource={RelativeSource AncestorType=mah:MetroWindow}}" Header="Zmień nazwę spółki">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial
+                                    Width="16"
+                                    Height="16"
+                                    Kind="RenameBox" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+
+                    </ContextMenu>
+                </Button.ContextMenu>
+
+                
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

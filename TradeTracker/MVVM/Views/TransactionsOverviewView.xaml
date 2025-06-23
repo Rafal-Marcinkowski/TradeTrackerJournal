@@ -343,7 +343,7 @@
                                     <TextBlock
                                         VerticalAlignment="Bottom"
                                         FontWeight="DemiBold"
-                                        Text="{Binding EntryPrice}" />
+                                        Text="{Binding EntryPrice, Converter={StaticResource SmartDecimalConverter}}" />
 
                                 </StackPanel>
 

@@ -13,6 +13,11 @@
     d:DesignWidth="1675"
     mc:Ignorable="d">
 
+
+    <mah:MetroContentControl.Resources>
+        <Conv:SmartDecimalConverter x:Key="SmartDecimalConverter" />
+    </mah:MetroContentControl.Resources>
+
     <Grid Margin="0,15,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -96,7 +101,7 @@
 
                 <DataGridTextColumn
                     Width="*"
-                    Binding="{Binding EntryPrice}"
+                    Binding="{Binding EntryPrice, Converter={StaticResource SmartDecimalConverter}}"
                     Header="CENA WEJŚCIA"
                     HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
                     IsReadOnly="True">
@@ -111,7 +116,7 @@
 
                 <DataGridTextColumn
                     Width="*"
-                    Binding="{Binding PositionSize}"
+                    Binding="{Binding PositionSize, Converter={StaticResource SmartDecimalConverter}}"
                     Header="WIELKOŚĆ POZYCJI"
                     HeaderStyle="{StaticResource DataGridHeaderStyleTransactionsOverview}"
                     IsReadOnly="True">
