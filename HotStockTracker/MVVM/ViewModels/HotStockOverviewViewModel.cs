@@ -1,6 +1,8 @@
 ﻿using HotStockTracker.Services;
+using Infrastructure.DownloadHtmlData;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 
 namespace HotStockTracker.MVVM.ViewModels;
 
@@ -32,6 +34,12 @@ public class HotStockOverviewViewModel : BindableBase
         IsLoading = true;
         try
         {
+            var gpwHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/akcje_gpw,4,2");
+            var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
+
+            await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
+
+            File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\gpw", gpwHtmlTask.Result);
             Debug.WriteLine("Starting data loading...");
 
             var wasAdded = await facade.HotStockDayManager.CheckAndUpdateDaysAsync();

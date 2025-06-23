@@ -99,6 +99,13 @@ public class HotStockParser : IHotStockParser
             return true;
         }
 
-        return DateTime.TryParseExact(input, "d MMM HH:mm", culture, DateTimeStyles.None, out result);
+        if (DateTime.TryParseExact(input, "d MMM HH:mm", culture, DateTimeStyles.None, out DateTime parsed))
+        {
+            result = new DateTime(referenceDate.Year, parsed.Month, parsed.Day, parsed.Hour, parsed.Minute, 0);
+            return true;
+        }
+
+        result = default;
+        return false;
     }
 }

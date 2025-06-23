@@ -123,7 +123,6 @@ public class HotStockDayManager(TTJApiClient apiClient, IHotStockParser htmlPars
         var ncHtmlTask = DownloadPageSource.DownloadHtmlFromUrlAsync("https://www.biznesradar.pl/gielda/newconnect,4,2");
 
         await Task.WhenAll(gpwHtmlTask, ncHtmlTask);
-        //File.WriteAllText("C:\\Users\\rafal\\Desktop\\Pogromcy\\gpw.html", ncHtmlTask.Result);
 
         var gpwStocks = htmlParser.Parse(gpwHtmlTask.Result, "GPW");
         var ncStocks = htmlParser.Parse(ncHtmlTask.Result, "NewConnect");
