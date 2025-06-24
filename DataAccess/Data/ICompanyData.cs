@@ -7,6 +7,7 @@ public interface ICompanyData
     Task<IEnumerable<Company>> GetAllCompaniesAsync();
     Task<Company> GetCompanyAsync(int id);
     Task<int> GetCompanyID(string companyName);
-    Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount);
+    Task InsertCompanyAsync(Company company);
+    Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount, int noteCount);
     Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount, int noteCount);
 }

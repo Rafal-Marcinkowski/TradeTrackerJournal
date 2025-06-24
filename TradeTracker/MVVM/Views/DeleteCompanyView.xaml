@@ -1,5 +1,5 @@
 ﻿<mah:MetroContentControl
-    x:Class="TradeTracker.MVVM.Views.CompanyRenameView"
+    x:Class="TradeTracker.MVVM.Views.DeleteCompanyView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Conv="clr-namespace:SharedProject.Converters;assembly=SharedProject"
@@ -8,14 +8,12 @@
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:prism="http://prismlibrary.com/">
 
-
     <mah:MetroContentControl.Resources>
         <Conv:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
     </mah:MetroContentControl.Resources>
 
     <Grid Margin="5" VerticalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -31,12 +29,12 @@
                 Height="32"
                 Margin="0,0,10,0"
                 Foreground="White"
-                Kind="RenameBox" />
+                Kind="DeleteAlert" />
             <TextBlock
                 FontSize="24"
                 FontWeight="DemiBold"
                 Foreground="White"
-                Text="Zmiana nazwy spółki" />
+                Text="Usuwanie spółki" />
         </StackPanel>
 
         <Button
@@ -56,12 +54,12 @@
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="16"
-                        Text="Wybierz spółkę" />
-                    <iconPacks:PackIconFontisto
+                        Text="Wybierz spółkę do usunięcia" />
+                    <iconPacks:PackIconMaterial
                         Width="30"
                         Height="30"
                         Margin="10,0,0,0"
-                        Kind="LineChart" />
+                        Kind="AlertCircle" />
                 </StackPanel>
 
                 <TextBox
@@ -109,116 +107,70 @@
 
         <Border
             Grid.Row="2"
-            Margin="0,5,0,5"
+            Margin="0,20,0,0"
             Padding="20"
             HorizontalAlignment="Center"
-            BorderBrush="{DynamicResource AccentColorBrush}"
+            BorderBrush="{DynamicResource MahApps.Brushes.Accent4}"
             BorderThickness="1"
             CornerRadius="4"
             Visibility="{Binding SelectedCompany, Converter={StaticResource NullToVisibilityConverter}}">
-            <StackPanel MinWidth="400">
-                <StackPanel
-                    Margin="0,0,0,15"
-                    HorizontalAlignment="Left"
-                    Orientation="Horizontal">
+            <StackPanel>
+                <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="16"
+                    FontWeight="DemiBold"
+                    Foreground="White"
+                    Text="Czy na pewno chcesz usunąć tę spółkę?" />
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <iconPacks:PackIconMaterial
                         Width="24"
                         Height="24"
                         Margin="0,0,10,0"
                         Foreground="White"
-                        Kind="OfficeBuilding" />
+                        Kind="Alert" />
                     <TextBlock
-                        FontSize="18"
-                        FontWeight="DemiBold"
-                        Foreground="White"
-                        Text="Edycja nazwy spółki" />
-                </StackPanel>
-
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Margin="0,0,10,5"
                         FontSize="14"
-                        FontWeight="DemiBold"
-                        Foreground="White"
-                        Text="Obecna nazwa:" />
-                    <TextBlock
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Margin="0,0,0,10"
-                        FontSize="14"
+                        FontWeight="Bold"
                         Foreground="White"
                         Text="{Binding SelectedCompany.CompanyName}" />
+                </StackPanel>
 
-                    <!--<TextBlock Grid.Row="1" Grid.Column="0" Text="Rynek:" Margin="0,0,10,5" FontWeight="DemiBold" Foreground="White" FontSize="14"/>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedCompany.Market}" Margin="0,0,0,20" />-->
+                <TextBlock
+                    Margin="0,15,0,20"
+                    FontSize="12"
+                    Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                    Text="Uwaga: Ta operacja jest nieodwracalna!" />
 
-                    <TextBlock
-                        Grid.Row="2"
-                        Grid.Column="0"
-                        Margin="0,7,0,0"
-                        FontSize="14"
-                        FontWeight="DemiBold"
-                        Foreground="White"
-                        Text="Nowa nazwa:" />
-                    <TextBox
-                        Grid.Row="2"
-                        Grid.Column="1"
-                        MinWidth="300"
-                        mah:TextBoxHelper.Watermark="Wprowadź nową nazwę..."
-                        FontSize="14"
-                        Foreground="White"
-                        Style="{StaticResource MahApps.Styles.TextBox}"
-                        Text="{Binding NewCompanyName, UpdateSourceTrigger=PropertyChanged}">
-                        <TextBox.LayoutTransform>
-                            <ScaleTransform ScaleX="1" ScaleY="1.2" />
-                        </TextBox.LayoutTransform>
-                    </TextBox>
-                </Grid>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button
+                        Width="120"
+                        Height="40"
+                        Margin="0,0,10,0"
+                        Command="{Binding CancelCommand}"
+                        Content="Anuluj"
+                        Style="{StaticResource MahApps.Styles.Button.Square}" />
+
+                    <Button
+                        Width="150"
+                        Height="40"
+                        Command="{Binding DeleteCommand}"
+                        Content="Usuń spółkę">
+                        <Button.ContentTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial
+                                        Width="20"
+                                        Height="20"
+                                        Margin="0,0,5,0"
+                                        Kind="Delete" />
+                                    <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </Button.ContentTemplate>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Border>
-
-        <StackPanel
-            Grid.Row="3"
-            Margin="0,20,0,0"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal">
-            <Button
-                Width="120"
-                Height="40"
-                Margin="0,0,10,0"
-                Command="{Binding CancelCommand}"
-                Content="Anuluj" />
-
-            <Button
-                Width="150"
-                Height="40"
-                Command="{Binding SaveCommand}"
-                Content="Zapisz zmiany">
-                <Button.ContentTemplate>
-                    <DataTemplate>
-                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial
-                                Width="20"
-                                Height="20"
-                                Margin="0,0,10,0"
-                                Kind="ContentSave" />
-                            <TextBlock VerticalAlignment="Center" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </Button.ContentTemplate>
-            </Button>
-        </StackPanel>
     </Grid>
 </mah:MetroContentControl>

@@ -95,4 +95,35 @@ public class NotepadCompanyItemController(AppDbContext db, IMapper mapper) : Con
 
         return Ok();
     }
+
+    [HttpPut("{id}/name")]
+    public async Task<IActionResult> UpdateCompanyName(int id, [FromBody] UpdateCompanyNameDto dto)
+    {
+        var entity = await db.CompanyItems.FindAsync(id);
+        if (entity == null) return NotFound();
+
+        entity.CompanyName = dto.Name;
+        await db.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpGet("by-name/{companyName}")]
+    public async Task<ActionResult<int>> GetCompanyIdByName(string companyName)
+    {
+        var entity = await db.CompanyItems
+            .Where(x => x.CompanyName == companyName)
+            .Select(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        if (entity == 0)
+            return NotFound($"Spółka o nazwie '{companyName}' nie została znaleziona");
+
+        return Ok(entity);
+    }
+
+    public class UpdateCompanyNameDto
+    {
+        public string Name { get; set; }
+    }
 }

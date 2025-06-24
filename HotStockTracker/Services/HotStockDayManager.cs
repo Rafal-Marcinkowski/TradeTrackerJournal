@@ -142,6 +142,11 @@ public class HotStockDayManager(TTJApiClient apiClient, IHotStockParser htmlPars
 
     private async Task<List<HotStockItemDto>> GetTopMovers(List<HotStockItemDto> stocks)
     {
+        string[] excludedNames = ["LUON", "AQUATECH"];
+
+        bool IsExcluded(HotStockItemDto stock) =>
+        excludedNames.Any(ex => stock.Name.Contains(ex, StringComparison.OrdinalIgnoreCase));
+
         decimal ParseChange(string changeStr)
         {
             if (string.IsNullOrWhiteSpace(changeStr))
@@ -172,7 +177,7 @@ public class HotStockDayManager(TTJApiClient apiClient, IHotStockParser htmlPars
             ) && val >= 10000m;
         }
 
-        var validStocks = stocks.Where(s => IsValidTurnover(s.Turnover)).ToList();
+        var validStocks = stocks.Where(s => IsValidTurnover(s.Turnover) && !IsExcluded(s)).ToList();
 
         var gainers = validStocks
             .Where(s => s.ChangePercent.Contains("+"))

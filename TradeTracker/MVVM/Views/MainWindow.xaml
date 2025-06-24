@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:command="http://www.galasoft.ch/mvvmlight"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:SharedProject.Helpers;assembly=SharedProject"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:TradeTracker.MVVM.Views"
@@ -18,8 +19,11 @@
     TitleForeground="Black"
     mc:Ignorable="d">
 
+    <mah:MetroWindow.Resources>
+        <helpers:MenuProvider x:Key="MenuProvider" DataContext="{Binding}" />
+    </mah:MetroWindow.Resources>
 
-    <mah:MetroWindow.RightWindowCommands>
+    <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button x:Name="SettingsButton" ToolTip="Ustawienia">
                 <iconPacks:PackIconMaterial
@@ -28,23 +32,83 @@
                     Kind="Cog" />
 
                 <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding DataContext.NavigateToCompanyRenameCommand, RelativeSource={RelativeSource AncestorType=mah:MetroWindow}}" Header="Zmień nazwę spółki">
+                    <ContextMenu DataContext="{Binding DataContext, Source={StaticResource MenuProvider}}">
+                        <MenuItem Header="Spółki">
+                            <MenuItem.ItemsSource>
+                                <CompositeCollection>
+
+                                    <MenuItem Command="{Binding NavigateToCompanyRenameCommand}" Header="Zmień nazwę spółki">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Kind="RenameBox" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <MenuItem Command="{Binding NavigateToAddCompanyCommand}" Header="Dodaj nową spółkę">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Kind="PlusBox" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                    <MenuItem Command="{Binding NavigateToDeleteCompanyCommand}" Header="Usuń spółkę">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Kind="Delete" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+
+                                </CompositeCollection>
+                            </MenuItem.ItemsSource>
+                        </MenuItem>
+
+                        <Separator />
+
+                        <MenuItem Header="Narzędzia">
+                            <MenuItem.ItemsSource>
+                                <CompositeCollection>
+                                    <MenuItem Command="{Binding ShowStatsCommand}" Header="Statystyki">
+                                        <MenuItem.Icon>
+                                            <iconPacks:PackIconMaterial
+                                                Width="16"
+                                                Height="16"
+                                                Kind="ChartBar" />
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </CompositeCollection>
+                            </MenuItem.ItemsSource>
+                        </MenuItem>
+
+                        <Separator />
+
+                        <MenuItem Command="{Binding NavigateToSettingsCommand}" Header="Ustawienia aplikacji">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial
                                     Width="16"
                                     Height="16"
-                                    Kind="RenameBox" />
+                                    Kind="Cog" />
                             </MenuItem.Icon>
                         </MenuItem>
-
                     </ContextMenu>
                 </Button.ContextMenu>
 
-                
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Click">
+                        <i:ChangePropertyAction
+                            PropertyName="IsOpen"
+                            TargetObject="{Binding ContextMenu, ElementName=SettingsButton}"
+                            Value="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
             </Button>
         </mah:WindowCommands>
-    </mah:MetroWindow.RightWindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
 
     <Grid>
         <Grid.RowDefinitions>

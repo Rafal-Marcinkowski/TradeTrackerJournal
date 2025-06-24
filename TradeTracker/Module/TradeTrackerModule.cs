@@ -9,6 +9,8 @@ public class TradeTrackerModule : IModule
 
     public void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.Register<AddCompanyViewModel>();
+        containerRegistry.Register<DeleteCompanyViewModel>();
         containerRegistry.Register<MainWindowViewModel>();
         containerRegistry.Register<TransactionsJournalMenuViewModel>();
         containerRegistry.Register<AddTransactionViewModel>();
@@ -16,6 +18,8 @@ public class TradeTrackerModule : IModule
         containerRegistry.Register<CompanyRenameViewModel>();
         containerRegistry.Register<TransactionsOverviewViewModel>();
 
+        containerRegistry.RegisterForNavigation<DeleteCompanyView>();
+        containerRegistry.RegisterForNavigation<AddCompanyView>();
         containerRegistry.RegisterForNavigation<AddTransactionView>();
         containerRegistry.RegisterForNavigation<MainWindow>();
         containerRegistry.RegisterForNavigation<OpenPositionsView>();

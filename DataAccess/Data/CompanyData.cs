@@ -16,9 +16,14 @@ public class CompanyData(ISQLDataAccess dBAccess) : ICompanyData
         return companies.FirstOrDefault();
     }
 
-    public async Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount)
+    public async Task InsertCompanyAsync(Company company)
     {
-        await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount });
+        await InsertCompanyAsync(company.CompanyName, company.TransactionCount, company.EventCount, company.NoteCount);
+    }
+
+    public async Task InsertCompanyAsync(string companyName, int transactionCount, int eventCount, int noteCount)
+    {
+        await dBAccess.SaveDataAsync("InsertCompany", new { CompanyName = companyName, TransactionCount = transactionCount, EventCount = eventCount, NoteCount = noteCount });
     }
 
     public async Task UpdateCompanyAsync(int id, string companyName, int transactionCount, int eventCount, int noteCount)

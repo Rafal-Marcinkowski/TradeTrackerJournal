@@ -52,7 +52,7 @@ public class Initialize(ICompanyData companyData)
                 {
                     CompanyName = item.Value
                 };
-                companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount, company.EventCount);
+                companyData.InsertCompanyAsync(company.CompanyName, company.TransactionCount, company.EventCount, company.NoteCount);
             }
         }
         catch (Exception ex)

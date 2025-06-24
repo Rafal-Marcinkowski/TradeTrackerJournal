@@ -13,7 +13,6 @@
     d:DesignWidth="1675"
     mc:Ignorable="d">
 
-
     <mah:MetroContentControl.Resources>
         <Conv:SmartDecimalConverter x:Key="SmartDecimalConverter" />
     </mah:MetroContentControl.Resources>

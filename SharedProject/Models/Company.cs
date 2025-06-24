@@ -9,6 +9,7 @@ public class Company : BindableBase
     {
         transactionCount = 0;
         eventCount = 0;
+        noteCount = 0;
         Transactions = [];
         Events = [];
     }

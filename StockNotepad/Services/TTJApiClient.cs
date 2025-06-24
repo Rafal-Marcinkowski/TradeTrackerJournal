@@ -1,4 +1,5 @@
 ﻿using StockNotepad.MVVM.Models;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -64,5 +65,32 @@ public class TTJApiClient
         var response = await _http.DeleteAsync($"api/NotepadCompanyItem/note/{noteId}");
         return response.IsSuccessStatusCode;
     }
-}
 
+    public async Task<bool> UpdateCompanyNameAsync(int id, string newName)
+    {
+        var response = await _http.PutAsJsonAsync(
+            $"api/NotepadCompanyItem/{id}/name",
+            new { Name = newName },
+            _jsonOptions);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<int?> GetCompanyIdByNameAsync(string companyName)
+    {
+        try
+        {
+            var response = await _http.GetAsync($"api/NotepadCompanyItem/by-name/{Uri.EscapeDataString(companyName)}");
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            return await JsonSerializer.DeserializeAsync<int>(stream, _jsonOptions);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error getting company ID by name: {ex}");
+            return null;
+        }
+    }
+}
