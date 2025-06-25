@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.CommandWpf;
 using SharedProject.Models;
 using SharedProject.ViewModels;
+using SharedProject.Views;
 using StockNotepad.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -20,51 +21,40 @@ public class DeleteCompanyViewModel : BaseListViewModel<Company>
         set => SetProperty(ref _selectedCompany, value);
     }
 
-    public ICommand ConfirmCompanySelectionCommand { get; }
-    public ICommand DeleteCommand { get; }
-    public ICommand CancelCommand { get; }
+    public ICommand ConfirmCompanySelectionCommand => new RelayCommand<Company>(company => SelectedCompany = company);
+
+    public ICommand DeleteCommand => new RelayCommand(async () =>
+    {
+        var confirmationDialog = new ConfirmationDialog
+        {
+            DialogText = $"Na pewno usunąć {SelectedCompany?.CompanyName}?"
+        };
+
+        confirmationDialog.ShowDialog();
+        if (!confirmationDialog.Result) return;
+
+        var id = await _companyData.GetCompanyID(SelectedCompany.CompanyName);
+
+        await _companyData.DeleteCompanyAsync(id);
+
+        var apiCompanyId = await _apiClient.GetCompanyIdByNameAsync(SelectedCompany.CompanyName);
+        if (apiCompanyId is not null)
+        {
+            await _apiClient.DeleteNotepadCompanyItemAsync(apiCompanyId.Value);
+        }
+
+        Cancel();
+        _ = LoadCompanies();
+    }, () => SelectedCompany is not null);
+
+    public ICommand CancelCommand => new RelayCommand(Cancel);
 
     public DeleteCompanyViewModel(CompanyData companyData, TTJApiClient apiClient)
     {
         _companyData = companyData;
         _apiClient = apiClient;
 
-        ConfirmCompanySelectionCommand = new RelayCommand<Company>(company =>
-        {
-            SelectedCompany = company;
-        });
-
-        DeleteCommand = new RelayCommand(async () => await DeleteCompany());
-        CancelCommand = new RelayCommand(Cancel);
-
-        LoadCompanies();
-    }
-
-    private async Task DeleteCompany()
-    {
-        //if (SelectedCompany == null) return;
-
-        //try
-        //{
-        //    // Usunięcie z lokalnej bazy
-        //    await _companyData.DeleteCompanyAsync(SelectedCompany.ID);
-
-        //    // Usunięcie z API (jeśli potrzebne)
-        //    var apiCompanyId = await _apiClient.GetCompanyIdByNameAsync(SelectedCompany.CompanyName);
-        //    if (apiCompanyId.HasValue)
-        //    {
-        //        await _apiClient.DeleteCompanyAsync(apiCompanyId.Value);
-        //    }
-
-        //    SelectedCompany = null;
-        //    await LoadCompanies();
-
-        //    MessageBox.Show("Spółka została pomyślnie usunięta");
-        //}
-        //catch (Exception ex)
-        //{
-        //    MessageBox.Show($"Błąd podczas usuwania: {ex.Message}");
-        //}
+        _ = LoadCompanies();
     }
 
     private void Cancel()

@@ -93,4 +93,10 @@ public class TTJApiClient
             return null;
         }
     }
+
+    public async Task<bool> DeleteNotepadCompanyItemAsync(int id)
+    {
+        var response = await _http.DeleteAsync($"api/NotepadCompanyItem/{id}");
+        return response.IsSuccessStatusCode;
+    }
 }

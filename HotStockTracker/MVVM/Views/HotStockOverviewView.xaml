@@ -16,6 +16,7 @@
     <mah:MetroContentControl.Resources>
         <Conv:PolishDateConverter x:Key="PolishDateConverter" />
         <Conv:BooleanToEnabledConverter x:Key="BooleanToEnabledConverter" />
+        <Conv:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Conv:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
@@ -279,5 +280,23 @@
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
         </ScrollViewer>
+        <DockPanel>
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                FontSize="44"
+                Foreground="White"
+                Text="Trwa wczytywanie danych..."
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <iconPacks:PackIconForkAwesome
+                Width="50"
+                Height="50"
+                Margin="10,0,0,5"
+                VerticalAlignment="Bottom"
+                Foreground="White"
+                Kind="Spinner"
+                Spin="True"
+                Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </DockPanel>
     </Grid>
 </mah:MetroContentControl>

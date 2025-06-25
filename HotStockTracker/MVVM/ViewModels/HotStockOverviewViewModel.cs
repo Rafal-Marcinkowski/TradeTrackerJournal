@@ -10,9 +10,10 @@ public class HotStockOverviewViewModel : BindableBase
 {
     private readonly HotStockTrackerFacade facade;
     private readonly TTJApiClient hotStockApiClient;
-    private bool _isLoading;
 
     public ObservableCollection<HotStockDayViewModel> Days { get; set; }
+
+    private bool _isLoading = false;
     public bool IsLoading
     {
         get => _isLoading;

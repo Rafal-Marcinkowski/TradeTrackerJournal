@@ -122,6 +122,25 @@ public class NotepadCompanyItemController(AppDbContext db, IMapper mapper) : Con
         return Ok(entity);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteCompanyItem(int id)
+    {
+        var item = await db.CompanyItems
+            .Include(x => x.Summary)
+            .Include(x => x.Notes)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (item == null)
+            return NotFound();
+
+        db.CompanySummaries.RemoveRange(item.Summary);
+        db.CompanyNotes.RemoveRange(item.Notes);
+        db.CompanyItems.Remove(item);
+
+        await db.SaveChangesAsync();
+        return Ok();
+    }
+
     public class UpdateCompanyNameDto
     {
         public string Name { get; set; }

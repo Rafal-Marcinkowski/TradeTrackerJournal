@@ -117,29 +117,31 @@
             <StackPanel>
                 <TextBlock
                     Margin="0,0,0,10"
-                    FontSize="16"
+                    FontSize="20"
+                    HorizontalAlignment="Center"
                     FontWeight="DemiBold"
                     Foreground="White"
-                    Text="Czy na pewno chcesz usunąć tę spółkę?" />
+                    Text="Czy na pewno chcesz usunąć:" />
 
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                     <iconPacks:PackIconMaterial
-                        Width="24"
-                        Height="24"
+                        Width="28"
+                        Height="28"
                         Margin="0,0,10,0"
                         Foreground="White"
                         Kind="Alert" />
                     <TextBlock
-                        FontSize="14"
+                        FontSize="20"
                         FontWeight="Bold"
+                        HorizontalAlignment="Center"
                         Foreground="White"
                         Text="{Binding SelectedCompany.CompanyName}" />
                 </StackPanel>
 
                 <TextBlock
                     Margin="0,15,0,20"
-                    FontSize="12"
-                    Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                    FontSize="16"
+                    Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
                     Text="Uwaga: Ta operacja jest nieodwracalna!" />
 
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -148,8 +150,7 @@
                         Height="40"
                         Margin="0,0,10,0"
                         Command="{Binding CancelCommand}"
-                        Content="Anuluj"
-                        Style="{StaticResource MahApps.Styles.Button.Square}" />
+                        Content="Anuluj"/>
 
                     <Button
                         Width="150"
