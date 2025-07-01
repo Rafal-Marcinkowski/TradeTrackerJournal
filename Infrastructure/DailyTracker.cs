@@ -139,7 +139,7 @@ public class DailyTracker : IDailyTracker
         var trackingRecords = allRecords
                 .Where(q => q.Date >= trackable.EntryDate.Date)
                 .OrderBy(q => q.Date)
-                .Take(trackable.IsClosed ? 30 : allRecords.Count()).ToList();
+                .Take(trackable.IsClosed ? 20 : allRecords.Count()).ToList();
 
         if (trackingRecords.Count != 0)
         {
@@ -169,7 +169,7 @@ public class DailyTracker : IDailyTracker
         var recordsToAdd = newDataList
             .Where(d => oldestCurrentRecord == null || d.Date > oldestCurrentRecord.Date)
             .OrderBy(d => d.Date)
-            .Take(trackable.IsClosed ? 30 - currentDailyData.Count() : newDataList.Count)
+            .Take(trackable.IsClosed ? 20 - currentDailyData.Count() : newDataList.Count)
             .ToList();
 
         if (recordsToAdd.Count != 0)
@@ -215,7 +215,7 @@ public class DailyTracker : IDailyTracker
             _ => []
         };
 
-        if (!dailyDataCollection.Any() || dailyDataCollection.Count() < 30)
+        if (!dailyDataCollection.Any() || dailyDataCollection.Count() < 20)
         {
             return;
         }

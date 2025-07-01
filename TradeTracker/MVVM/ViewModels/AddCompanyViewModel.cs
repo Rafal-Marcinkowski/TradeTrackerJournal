@@ -1,5 +1,6 @@
 ﻿using DataAccess.Data;
 using GalaSoft.MvvmLight.CommandWpf;
+using SharedProject.Extensions;
 using SharedProject.Models;
 using SharedProject.Views;
 using StockNotepad.MVVM.Models;
@@ -52,6 +53,8 @@ public class AddCompanyViewModel(CompanyData companyData, TTJApiClient notepadAp
         var companyItemDto = new NotepadCompanyItemDto
         {
             CompanyName = CompanyName.ToUpper(),
+            Summary = new CompanySummaryDto { Content = string.Empty, UpdatedAt = DateTime.Now.Date.TrimToSeconds() },
+            Notes = []
         };
 
         await notepadApiClient.AddNotepadCompanyItemAsync(companyItemDto);
