@@ -193,6 +193,7 @@
                                                 Grid.Column="0"
                                                 Grid.ColumnSpan="2"
                                                 Margin="0,30,0,5"
+                                                VerticalAlignment="Center"
                                                 Text="{Binding CommentText}"
                                                 TextWrapping="Wrap"
                                                 Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=true}" />

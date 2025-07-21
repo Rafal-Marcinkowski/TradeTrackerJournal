@@ -25,4 +25,22 @@ public class MainWindowViewModel(ViewManager viewManager) : BindableBase
     public ICommand NavigateToAddCompanyCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(AddCompanyView)));
 
     public ICommand NavigateToDeleteCompanyCommand => new DelegateCommand(() => viewManager.NavigateTo(nameof(DeleteCompanyView)));
+
+    public ICommand NavigateToLast10TransactionsCommand => new DelegateCommand(() =>
+    {
+        var parameters = new NavigationParameters()
+                {
+                    {"lastx", 10 },
+                };
+        viewManager.NavigateTo(nameof(TransactionsOverviewView), parameters);
+    });
+
+    public ICommand NavigateToLast10EventsCommand => new DelegateCommand(() =>
+    {
+        var parameters = new NavigationParameters()
+                {
+                    {"lastx", 10 },
+                };
+        viewManager.NavigateTo(nameof(EventsOverviewView), parameters);
+    });
 }

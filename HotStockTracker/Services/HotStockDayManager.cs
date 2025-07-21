@@ -182,11 +182,13 @@ public class HotStockDayManager(TTJApiClient apiClient, IHotStockParser htmlPars
         var gainers = validStocks
             .Where(s => s.ChangePercent.Contains("+"))
             .OrderByDescending(s => ParseChange(s.ChangePercent))
+            .ThenByDescending(q => q.Turnover)
             .Take(10);
 
         var losers = validStocks
             .Where(s => s.ChangePercent.Contains("-"))
             .OrderBy(s => ParseChange(s.ChangePercent))
+            .ThenByDescending(q => q.Turnover)
             .Take(10);
 
         return [.. gainers, .. losers];

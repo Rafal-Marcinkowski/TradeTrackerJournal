@@ -58,6 +58,7 @@ public class AddCompanyViewModel(CompanyData companyData, TTJApiClient notepadAp
         };
 
         await notepadApiClient.AddNotepadCompanyItemAsync(companyItemDto);
+        CancelCommand.Execute(null);
     }, () => CanSave);
     public ICommand CancelCommand => new RelayCommand(() => CompanyName = string.Empty);
 }

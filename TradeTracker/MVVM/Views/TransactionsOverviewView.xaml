@@ -211,6 +211,7 @@
                                                 Grid.Row="1"
                                                 Grid.Column="0"
                                                 Grid.ColumnSpan="2"
+                                                VerticalAlignment="Center"
                                                 Margin="0,30,0,5"
                                                 Text="{Binding CommentText}"
                                                 TextWrapping="Wrap"

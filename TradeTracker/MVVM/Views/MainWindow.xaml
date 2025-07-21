@@ -141,6 +141,17 @@
                         VerticalAlignment="Center"
                         FontSize="20"
                         Text="Transakcje" />
+                    <Button
+                        Width="25"
+                        Height="25"
+                        VerticalAlignment="Top"
+                        mah:ControlsHelper.FocusBorderBrush="Black"
+                        mah:ControlsHelper.MouseOverBorderBrush="Gray"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        Command="{Binding NavigateToLast10TransactionsCommand}"
+                        Content="10"
+                        FontSize="10" />
                 </StackPanel>
             </Button>
             <Button
@@ -163,6 +174,17 @@
                         VerticalAlignment="Center"
                         FontSize="20"
                         Text="Zdarzenia" />
+                    <Button
+                        Width="25"
+                        Height="25"
+                        VerticalAlignment="Top"
+                        mah:ControlsHelper.FocusBorderBrush="Black"
+                        mah:ControlsHelper.MouseOverBorderBrush="Gray"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        Command="{Binding NavigateToLast10EventsCommand}"
+                        Content="10"
+                        FontSize="10" />
                 </StackPanel>
             </Button>
 

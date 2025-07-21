@@ -122,6 +122,7 @@
                         Height="30"
                         Margin="5,0,0,0"
                         Controls:TextBoxHelper.Watermark="X"
+                        Controls:TextBoxHelper.SelectAllOnFocus="True"
                         BorderBrush="DimGray"
                         BorderThickness="1"
                         FontSize="16"
